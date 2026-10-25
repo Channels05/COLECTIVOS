@@ -1,0 +1,43 @@
+# Blueprint de Render: API + PostgreSQL/PostGIS + Redis (Key Value), todo en el plan gratis.
+# En Render: New > Blueprint > elegir este repositorio. Ver README.md ("Desplegar en la nube").
+#
+# Límites del plan gratis: la API se duerme tras 15 min sin tráfico (~1 min en despertar), la base
+# vence a los 30 días (14 más de gracia para pasarla a pago) y Redis no persiste a disco.
+services:
+  - type: web
+    name: colectivos-api
+    runtime: docker
+    plan: free
+    region: virginia # la más cercana a Chile entre las disponibles
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: colectivos-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: colectivos-redis
+          type: keyvalue
+          property: connectionString
+      - key: ADMIN_API_KEY
+        generateValue: true # se ve en el panel de Render (Environment) para entrar a /admin
+      - key: RUN_WORKER_IN_PROCESS
+        value: "true" # los workers aparte no tienen plan gratis
+
+  - type: keyvalue
+    name: colectivos-redis
+    plan: free
+    region: virginia
+    maxmemoryPolicy: noeviction # el stream de ubicaciones no se debe perder por falta de memoria
+    ipAllowList: [] # solo accesible desde los servicios de Render
+
+databases:
+  - name: colectivos-db
+    plan: free
+    region: virginia
+    postgresMajorVersion: "16"
+    databaseName: colectivos
+    user: colectivos

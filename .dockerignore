@@ -1,0 +1,10 @@
+.venv/
+.env
+.demo/
+.pytest_cache/
+**/__pycache__/
+data/lake/
+data/overpass/
+data/gore/colectivos_la_florida.geojson
+tests/
+analytics/

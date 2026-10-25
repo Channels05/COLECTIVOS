@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Revisión de aportes · Colectivos</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --primary: #0b6e4f; --primary-soft: #e3f2ec; --bg: #f3f6f4; --surface: #fff; --text: #16201b;
+      --muted: #5f6b66; --border: #dce3df; --warning: #b7791f; --warning-bg: #fff7e6; --danger: #c5221f;
+      --official: #3f51b5; --raw: #8a958f;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    header h1 { font-size: 18px; margin: 0; color: var(--primary); }
+    header .key { margin-left: auto; display: flex; gap: 8px; }
+    input, textarea, button { font: inherit; }
+    input, textarea { border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+    button { border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); }
+    button:disabled { opacity: .5; cursor: default; }
+    main { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 57px); }
+    aside { overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .tabs { display: flex; gap: 4px; padding: 10px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tabs button { background: var(--bg); color: var(--muted); padding: 6px 10px; }
+    .tabs button.active { background: var(--primary); color: #fff; }
+    .item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .item:hover { background: var(--bg); }
+    .item.selected { background: var(--primary-soft); }
+    .item .title { font-weight: 700; }
+    .item .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 8px; margin: 4px 4px 0 0; }
+    .badge.warn { background: var(--warning-bg); color: var(--warning); }
+    .badge.new { background: #e8eaf6; color: var(--official); }
+    .badge.ok { background: var(--primary-soft); color: var(--primary); }
+    .badge.passenger { background: #f3e8fd; color: #7b1fa2; }
+    .modes { display: flex; gap: 4px; background: var(--bg); border-radius: 10px; padding: 3px; }
+    .modes button { background: transparent; color: var(--muted); padding: 6px 12px; }
+    .modes button.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    .field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); margin: 8px 0; }
+    .field input, .field select { width: 100%; color: var(--text); }
+    select { font: inherit; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; background: var(--surface); }
+    .quote { background: var(--bg); border-radius: 8px; padding: 8px 10px; font-size: 13px; margin: 6px 0; }
+    .empty { padding: 24px; color: var(--muted); text-align: center; }
+    section.view { position: relative; }
+    #map { position: absolute; inset: 0; }
+    .panel { position: absolute; z-index: 1000; right: 16px; top: 16px; width: 340px; max-height: calc(100% - 32px); overflow-y: auto;
+             background: var(--surface); border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.15); padding: 16px; }
+    .panel h2 { margin: 0 0 4px; font-size: 18px; }
+    .panel table { width: 100%; font-size: 13px; border-collapse: collapse; margin: 10px 0; }
+    .panel td { padding: 3px 0; } .panel td:last-child { text-align: right; font-weight: 600; }
+    .warning { background: var(--warning-bg); color: var(--warning); border-radius: 8px; padding: 8px 10px; font-size: 13px; margin: 6px 0; }
+    .legend { display: grid; gap: 4px; font-size: 12px; color: var(--muted); margin: 10px 0; }
+    .legend span::before { content: ""; display: inline-block; width: 22px; height: 0; border-top: 4px solid; margin-right: 8px; vertical-align: middle; }
+    .legend .proposed::before { border-color: var(--primary); }
+    .legend .raw::before { border-top: 2px dotted var(--raw); }
+    .legend .official::before { border-top: 3px dashed var(--official); }
+    /* Pantallas chicas: lista más angosta y el detalle abajo del mapa (no tapa el recorrido). */
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 250px 1fr; }
+      .panel { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 48%; }
+    }
+    .actions { display: flex; gap: 8px; margin-top: 10px; }
+    .actions button { flex: 1; }
+    textarea { width: 100%; min-height: 56px; resize: vertical; }
+    .status-line { font-size: 13px; color: var(--muted); }
+    .error { color: var(--danger); font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Revisión de aportes</h1>
+    <div class="modes" id="modes">
+      <button data-mode="recordings" class="active">Recorridos grabados</button>
+      <button data-mode="lines">Líneas propuestas</button>
+    </div>
+    <div class="key">
+      <input id="key" type="password" placeholder="Clave de administrador" autocomplete="off" />
+      <button class="btn-primary" id="enter">Entrar</button>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <div class="tabs" id="tabs"></div>
+      <div id="list"><div class="empty">Ingresa la clave de administrador.</div></div>
+    </aside>
+    <section class="view">
+      <div id="map"></div>
+      <div class="panel" id="panel" hidden></div>
+    </section>
+  </main>
+
+<script>
+// Página de revisión: consume la API de administración con la clave en el header X-Admin-Key.
+// La clave se guarda solo en sessionStorage (se borra al cerrar la pestaña).
+const API = "/api/v1";
+const DIR = { ida: "Ida", regreso: "Regreso" };
+const dirLabel = (d) => d ? DIR[d] : "Sentido sin indicar";
+// Dos bandejas: recorridos grabados (conductores y pasajeros) y líneas que propusieron pasajeros.
+const TABS = {
+  recordings: [["pending_review", "Pendientes"], ["approved", "Aprobadas"], ["rejected", "Rechazadas"],
+               ["cancelled", "Canceladas"], ["recording", "Grabando"]],
+  lines: [["pending_review", "Pendientes"], ["active", "Aprobadas"], ["rejected", "Rechazadas"]],
+};
+let mode = "recordings";
+let currentStatus = "pending_review";
+let selectedId = null;
+const layers = L.layerGroup();
+
+const map = L.map("map").setView([-33.45, -70.65], 11);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+}).addTo(map);
+layers.addTo(map);
+
+const keyInput = document.getElementById("key");
+keyInput.value = sessionStorage.getItem("adminKey") || "";
+
+async function api(path, options = {}) {
+  const res = await fetch(API + path, {
+    ...options,
+    headers: { "Content-Type": "application/json", "X-Admin-Key": keyInput.value, ...(options.headers || {}) },
+  });
+  if (!res.ok) {
+    let detail = `Error ${res.status}`;
+    try { const body = await res.json(); detail = typeof body.detail === "string" ? body.detail : detail; } catch {}
+    throw new Error(res.status === 403 ? "Clave de administrador incorrecta." : detail);
+  }
+  return res.json();
+}
+
+function el(tag, props = {}, ...children) {
+  const node = Object.assign(document.createElement(tag), props);
+  for (const child of children) node.append(child);
+  return node;
+}
+
+const fmtDate = (iso) => iso ? new Date(iso).toLocaleString("es-CL", { dateStyle: "short", timeStyle: "short" }) : "—";
+const km = (m) => m == null ? "—" : `${(m / 1000).toFixed(1).replace(".", ",")} km`;
+
+function renderTabs() {
+  document.getElementById("tabs").replaceChildren(...TABS[mode].map(([status, label]) =>
+    el("button", { className: status === currentStatus ? "active" : "", textContent: label, onclick: () => {
+      currentStatus = status;
+      closePanel();
+      renderTabs();
+      loadList();
+    } })));
+}
+
+function closePanel() {
+  selectedId = null;
+  layers.clearLayers();
+  document.getElementById("panel").hidden = true;
+}
+
+const recordedBy = (r) => r.recorded_by === "driver" ? `Conductor ${r.plate}` : "Pasajero";
+const lineLabel = (r) => r.line_name ? `${r.line_name} (${r.line_code})` : `Línea ${r.line_code}`;
+
+async function loadList() {
+  sessionStorage.setItem("adminKey", keyInput.value);
+  return mode === "lines" ? loadLines() : loadRecordings();
+}
+
+async function loadRecordings() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  try {
+    const items = await api(`/admin/recordings?status_filter=${currentStatus}`);
+    if (!items.length) {
+      list.replaceChildren(el("div", { className: "empty", textContent: "No hay grabaciones en este estado." }));
+      return;
+    }
+    list.replaceChildren(...items.map((r) => {
+      const badges = el("div");
+      if (r.recorded_by === "passenger") badges.append(el("span", { className: "badge passenger", textContent: "Aporte de pasajero" }));
+      if (r.line_status === "pending_review") badges.append(el("span", { className: "badge new", textContent: "Línea nueva propuesta" }));
+      else if (!r.line_has_official_route) badges.append(el("span", { className: "badge new", textContent: "Línea sin trazado oficial" }));
+      if (r.warnings.length) badges.append(el("span", { className: "badge warn", textContent: `${r.warnings.length} advertencia(s)` }));
+      if (r.status === "approved") badges.append(el("span", { className: "badge ok", textContent: "Aprobada" }));
+      const item = el("div", { className: "item" + (r.id === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: `${lineLabel(r)} · ${dirLabel(r.direction)}` }),
+        el("div", { className: "meta", textContent: `${recordedBy(r)} · ${fmtDate(r.started_at)} · ${km(r.stats?.length_m)} · ${r.stats?.used_points ?? "—"} puntos` }),
+        badges,
+      );
+      item.onclick = () => select(r.id);
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+async function select(id) {
+  selectedId = id;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(el("div", { className: "status-line", textContent: "Cargando…" }));
+  try {
+    const r = await api(`/admin/recordings/${id}`);
+    renderPanel(r); // primero el panel: drawMap mide su tamaño para encuadrar el recorrido
+    drawMap(r);
+    loadList();
+  } catch (err) {
+    panel.replaceChildren(el("div", { className: "error", textContent: err.message }));
+  }
+}
+
+async function drawMap(r) {
+  layers.clearLayers();
+  const bounds = [];
+  // Trazado oficial de la línea (si existe), para comparar con lo grabado.
+  try {
+    const routes = await fetch(`${API}/routes/${encodeURIComponent(r.line_code)}`).then((x) => x.ok ? x.json() : null);
+    for (const f of routes?.features || []) {
+      if (f.properties.source === "recorded") continue;
+      L.geoJSON(f.geometry, { style: { color: "#3f51b5", weight: 3, dashArray: "8 8", opacity: .8 } }).addTo(layers);
+    }
+  } catch {}
+  if (r.raw) {
+    const raw = L.geoJSON(r.raw, { style: { color: "#8a958f", weight: 2, dashArray: "2 6" } }).addTo(layers);
+    for (const [lon, lat] of r.raw.coordinates) {
+      L.circleMarker([lat, lon], { radius: 2, color: "#8a958f", weight: 1, fillOpacity: .8 }).addTo(layers);
+    }
+    bounds.push(raw.getBounds());
+  }
+  if (r.proposed) {
+    const proposed = L.geoJSON(r.proposed, { style: { color: "#0b6e4f", weight: 6, opacity: .9 } }).addTo(layers);
+    bounds.push(proposed.getBounds());
+  }
+  if (bounds.length) map.fitBounds(bounds.reduce((a, b) => a.extend(b)), panelPadding());
+}
+
+// Encuadra el recorrido en el espacio que deja libre el panel de detalle (a la derecha en
+// pantallas anchas, abajo en las chicas).
+function panelPadding() {
+  const panel = document.getElementById("panel");
+  const mapBox = document.getElementById("map").getBoundingClientRect();
+  const box = panel.hidden ? null : panel.getBoundingClientRect();
+  if (!box) return { padding: [40, 40] };
+  const onRight = box.left > mapBox.left + mapBox.width / 2;
+  return onRight
+    ? { paddingTopLeft: [40, 40], paddingBottomRight: [mapBox.right - box.left + 20, 40] }
+    : { paddingTopLeft: [40, 40], paddingBottomRight: [40, mapBox.bottom - box.top + 20] };
+}
+
+function renderPanel(r) {
+  const panel = document.getElementById("panel");
+  const s = r.stats || {};
+  const rows = [
+    ["Grabó", r.recorded_by === "driver" ? `Conductor (${r.plate})` : "Pasajero (anónimo)"], ["Grabada", fmtDate(r.started_at)], ["Largo", km(s.length_m)],
+    ["Duración", s.duration_min != null ? `${s.duration_min} min` : "—"],
+    ["Puntos usados / recibidos", s.used_points != null ? `${s.used_points} / ${s.raw_points}` : "—"],
+    ["Saltos de GPS descartados", s.outliers_dropped ?? "—"], ["Puntos detenido descartados", s.stationary_dropped ?? "—"],
+    ["Mayor tramo sin señal", s.max_gap_m != null ? `${s.max_gap_m} m` : "—"],
+  ];
+  const table = el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) }))));
+  const legend = el("div", { className: "legend" },
+    el("span", { className: "proposed", textContent: "Trazado propuesto" }),
+    el("span", { className: "raw", textContent: "Puntos GPS recibidos" }),
+    el("span", { className: "official", textContent: "Trazado oficial actual (si existe)" }),
+  );
+  const content = [
+    el("h2", { textContent: `${lineLabel(r)} · ${dirLabel(r.direction)}` }),
+    el("div", { className: "status-line", textContent: r.line_status === "pending_review"
+      ? "Línea nueva propuesta por un pasajero: al aprobar este recorrido también se aprueba la línea."
+      : r.line_has_official_route
+      ? "La línea ya tiene trazado oficial: compara antes de aprobar."
+      : "La línea no tiene trazado oficial: al aprobar, este pasa a ser su trazado." }),
+    ...(r.comment ? [el("div", { className: "quote", textContent: `Comentario: “${r.comment}”` })] : []),
+    legend, table,
+    ...r.warnings.map((w) => el("div", { className: "warning", textContent: w })),
+  ];
+  if (r.status === "pending_review") {
+    const note = el("textarea", { placeholder: "Nota (opcional): por qué se aprueba o rechaza" });
+    const error = el("div", { className: "error" });
+    // El pasajero puede no saber el sentido: el administrador lo elige comparando con el oficial.
+    const direction = el("select", {},
+      el("option", { value: "", textContent: "Elegir…" }),
+      el("option", { value: "ida", textContent: "Ida" }),
+      el("option", { value: "regreso", textContent: "Regreso" }));
+    if (r.direction) direction.value = r.direction;
+    const act = (action) => async () => {
+      if (action === "approve" && !direction.value) {
+        error.textContent = "Elige si el recorrido es de ida o de regreso.";
+        return;
+      }
+      buttons.forEach((b) => (b.disabled = true));
+      try {
+        const body = { note: note.value || null, ...(action === "approve" ? { direction: direction.value } : {}) };
+        await api(`/admin/recordings/${r.id}/${action}`, { method: "POST", body: JSON.stringify(body) });
+        closePanel();
+        loadList();
+      } catch (err) {
+        error.textContent = err.message;
+        buttons.forEach((b) => (b.disabled = false));
+      }
+    };
+    const approve = el("button", { className: "btn-primary", textContent: "Aprobar trazado", onclick: act("approve") });
+    const reject = el("button", { className: "btn-danger", textContent: "Rechazar", onclick: act("reject") });
+    const buttons = [approve, reject];
+    content.push(el("label", { className: "field" }, "Sentido", direction), note,
+      el("div", { className: "actions" }, approve, reject), error);
+  } else if (r.review_note) {
+    content.push(el("div", { className: "status-line", textContent: `Nota: ${r.review_note}` }));
+  }
+  panel.replaceChildren(...content);
+}
+
+// --- Líneas propuestas por pasajeros ---
+
+async function loadLines() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  try {
+    let items = await api(`/admin/lines?status_filter=${currentStatus}`);
+    // "Aprobadas" muestra solo las que vinieron de pasajeros, no las ~400 del registro oficial.
+    if (currentStatus === "active") items = items.filter((l) => l.source === "contributed");
+    if (!items.length) {
+      list.replaceChildren(el("div", { className: "empty", textContent: "No hay líneas en este estado." }));
+      return;
+    }
+    list.replaceChildren(...items.map((l) => {
+      const item = el("div", { className: "item" + (l.code === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: l.name || l.code }),
+        el("div", { className: "meta", textContent: `${l.code} · ${l.commune || "Comuna sin indicar"} · ${fmtDate(l.created_at)}` }),
+        el("div", {}, el("span", { className: "badge " + (l.recordings ? "ok" : "warn"),
+          textContent: l.recordings ? `${l.recordings} grabación(es)` : "Sin recorrido grabado" })),
+      );
+      item.dataset.code = l.code;
+      item.onclick = () => selectLine(l);
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function selectLine(l) {
+  selectedId = l.code;
+  layers.clearLayers();
+  document.querySelectorAll(".item").forEach((n) => n.classList.toggle("selected", n.dataset.code === l.code));
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  const content = [
+    el("h2", { textContent: l.name || l.code }),
+    el("div", { className: "status-line", textContent: `Código asignado ${l.code} · propuesta el ${fmtDate(l.created_at)}` }),
+    ...(l.description ? [el("div", { className: "quote", textContent: `“${l.description}”` })] : []),
+    el("div", { className: "status-line", textContent: l.recordings
+      ? `Tiene ${l.recordings} grabación(es): revísalas en "Recorridos grabados". Aprobar un recorrido aprueba también la línea.`
+      : "Aún no tiene recorrido grabado: si la apruebas, aparecerá en la búsqueda de líneas pero sin trazado." }),
+  ];
+  if (l.status === "pending_review") {
+    const name = el("input", { value: l.name || "" });
+    const commune = el("input", { value: l.commune || "", placeholder: "Ej. La Florida" });
+    const note = el("textarea", { placeholder: "Nota (opcional), p. ej. “duplicada de 233010”" });
+    const error = el("div", { className: "error" });
+    const act = (action) => async () => {
+      buttons.forEach((b) => (b.disabled = true));
+      try {
+        const body = { note: note.value || null, name: name.value || null, commune: commune.value || null };
+        await api(`/admin/lines/${encodeURIComponent(l.code)}/${action}`, { method: "POST", body: JSON.stringify(body) });
+        closePanel();
+        loadList();
+      } catch (err) {
+        error.textContent = err.message;
+        buttons.forEach((b) => (b.disabled = false));
+      }
+    };
+    const approve = el("button", { className: "btn-primary", textContent: "Aprobar línea", onclick: act("approve") });
+    const reject = el("button", { className: "btn-danger", textContent: "Rechazar", onclick: act("reject") });
+    const buttons = [approve, reject];
+    content.push(
+      el("label", { className: "field" }, "Letrero / nombre", name),
+      el("label", { className: "field" }, "Comuna", commune),
+      note, el("div", { className: "actions" }, approve, reject), error,
+      el("div", { className: "status-line", textContent: "Rechazar la línea también rechaza sus grabaciones pendientes." }),
+    );
+  } else if (l.review_note) {
+    content.push(el("div", { className: "status-line", textContent: `Nota: ${l.review_note}` }));
+  }
+  panel.replaceChildren(...content);
+}
+
+document.getElementById("modes").onclick = (e) => {
+  const next = e.target.dataset?.mode;
+  if (!next || next === mode) return;
+  mode = next;
+  currentStatus = "pending_review";
+  document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
+  closePanel();
+  renderTabs();
+  loadList();
+};
+renderTabs();
+document.getElementById("enter").onclick = loadList;
+keyInput.onkeydown = (e) => { if (e.key === "Enter") loadList(); };
+if (keyInput.value) loadList();
+</script>
+</body>
+</html>
