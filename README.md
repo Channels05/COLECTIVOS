@@ -130,22 +130,29 @@ python -m scripts.simulate_driver --api http://localhost:8000 --vehicle-id <id> 
 
 Analítica del día (hora de Santiago): `python -m analytics.daily_report 2026-10-24`.
 
-## Desplegar en la nube (Render, plan gratis)
+## Desplegar en la nube (Render + Neon, plan gratis)
 
-`render.yaml` (Blueprint) crea la API (Docker), PostgreSQL 16 con PostGIS y Redis (Key Value).
-Al arrancar, el contenedor (`docker-entrypoint.sh`) aplica las migraciones y, si la base está
-vacía, importa los 410 trazados del GORE (`scripts/seed_routes.py`) y describe las líneas por sus
-calles (`scripts/describe_lines.py`). El persistidor de
+- **API y Redis en Render** (`render.yaml`, Blueprint): no vencen; la API se duerme tras 15 min
+  sin tráfico (la primera petición tarda ~1 min) y Redis no persiste a disco.
+- **Base de datos en [Neon](https://neon.com)**: Postgres con PostGIS, gratis y sin vencimiento
+  (1 GB; la compute se apaga sola tras 5 min sin uso). La base gratis de Render vence a los 30
+  días, por eso no se usa.
+
+Al arrancar, el contenedor (`docker-entrypoint.sh`) aplica las migraciones (crean PostGIS) y, si la
+base está vacía, importa los 410 trazados del GORE (`scripts/seed_routes.py`) y describe las líneas
+por sus calles (`scripts/describe_lines.py`): una base nueva queda lista sola. El persistidor de
 ubicaciones corre dentro de la API (`RUN_WORKER_IN_PROCESS=true`) porque los workers aparte no
-tienen plan gratis.
+tienen plan gratis, y borra el historial de posiciones de más de `LOCATION_RETENTION_DAYS` días
+(30 por defecto) para no llenar la base.
 
 1. Subir esta carpeta (`backend/`) a un repositorio **privado** de GitHub (`.env` y `.demo/` quedan fuera por `.gitignore`).
-2. En [render.com](https://render.com): New → Blueprint → elegir el repositorio → Apply.
-3. La URL queda como `https://colectivos-api.onrender.com` (o con un sufijo si el nombre está
+2. En Neon: crear un proyecto en **AWS US East 1 (N. Virginia)**, la misma zona que Render (otra
+   región hace lenta cada consulta). Copiar la URL de conexión (Dashboard → Connect).
+3. En [render.com](https://render.com): New → Blueprint → elegir el repositorio → Apply. Pide
+   `DATABASE_URL`: pegar la de Neon tal cual (la app quita `channel_binding`, cambia `sslmode` por
+   `ssl` y usa el endpoint directo en vez del `-pooler`, que no funciona con asyncpg).
+4. La URL queda como `https://colectivos-api.onrender.com` (o con un sufijo si el nombre está
    tomado). La clave de `/admin` está en el servicio → Environment → `ADMIN_API_KEY`.
-
-Límites del plan gratis: la API se duerme tras 15 min sin tráfico (la primera petición tarda
-~1 min), la base vence a los 30 días (14 de gracia para pasarla a pago) y Redis no persiste.
 
 Probar la imagen en local contra una base vacía:
 

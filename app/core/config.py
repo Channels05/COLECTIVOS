@@ -1,4 +1,5 @@
 from functools import lru_cache
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -14,15 +15,32 @@ class Settings(BaseSettings):
     # En la nube con un solo servicio (p. ej. el plan gratis de Render, sin workers aparte), el
     # persistidor de ubicaciones corre dentro del proceso de la API en vez de como proceso propio.
     run_worker_in_process: bool = False
+    # Historial de posiciones (location_updates): lo más viejo se borra para no llenar la base
+    # (el plan gratis de Neon tiene 1 GB; cada auto transmitiendo todo el día suma ~1,5 MB).
+    # 0 = no borrar nunca.
+    location_retention_days: int = 30
 
     @field_validator("database_url")
     @classmethod
     def use_asyncpg(cls, url: str) -> str:
-        """Acepta la URL tal como la entregan los proveedores ("postgres://…?sslmode=require")."""
+        """Acepta la URL tal como la entregan los proveedores (Render, Neon).
+
+        - "postgres://" / "postgresql://" -> driver asyncpg.
+        - asyncpg usa `ssl` y no `sslmode`, y no conoce `channel_binding` (Neon lo agrega).
+        - El endpoint "-pooler" de Neon es PgBouncer en modo transacción, que rompe los
+          prepared statements de asyncpg: se usa el endpoint directo (mismo host sin "-pooler").
+        """
         for prefix in ("postgres://", "postgresql://"):
             if url.startswith(prefix):
                 url = "postgresql+asyncpg://" + url.removeprefix(prefix)
-        return url.replace("sslmode=", "ssl=")  # asyncpg usa `ssl`, no `sslmode`
+        parts = urlsplit(url)
+        query = [
+            ("ssl" if key == "sslmode" else key, value)
+            for key, value in parse_qsl(parts.query)
+            if key != "channel_binding"
+        ]
+        netloc = parts.netloc.replace("-pooler.", ".")
+        return urlunsplit(parts._replace(netloc=netloc, query=urlencode(query)))
 
     # --- Tiempo real ---
     vehicle_ttl_s: int = 30  # sin ping en 30 s => el colectivo deja de aparecer como activo

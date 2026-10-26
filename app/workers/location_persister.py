@@ -10,11 +10,14 @@ Se pueden levantar varias réplicas: el consumer group reparte los mensajes.
 import asyncio
 import logging
 import socket
-from datetime import datetime
+import time
+from datetime import UTC, datetime, timedelta
 
 from redis.asyncio import Redis
 from redis.exceptions import RedisError, ResponseError
+from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.config import get_settings
@@ -29,6 +32,7 @@ CONSUMER = socket.gethostname()
 BATCH_SIZE = 1000
 BLOCK_MS = 5000  # espera máxima de XREADGROUP cuando no hay mensajes nuevos
 MAX_BACKOFF_S = 30.0
+PRUNE_EVERY_S = 3600  # a lo más una limpieza del historial por hora
 
 
 def _opt_float(value: str) -> float | None:
@@ -57,6 +61,18 @@ async def _ensure_group(redis: Redis) -> None:
             raise
 
 
+async def prune_old_locations(session: AsyncSession, retention_days: int) -> int:
+    """Borra el historial de posiciones más viejo que `retention_days` (0 = no borra nada).
+
+    Las grabaciones de recorridos no dependen de esto: al terminar guardan su propio trazado.
+    """
+    if retention_days <= 0:
+        return 0
+    cutoff = datetime.now(UTC) - timedelta(days=retention_days)
+    result = await session.execute(delete(LocationUpdate).where(LocationUpdate.recorded_at < cutoff))
+    return result.rowcount
+
+
 async def run() -> None:
     # El timeout del socket debe superar el bloqueo de XREADGROUP; si no, una espera
     # normal sin mensajes se confunde con un Redis caído (redis-py >= 8 usa 5 s por defecto).
@@ -68,6 +84,8 @@ async def run() -> None:
 
     stream_id = "0"  # "0" = primero mis pendientes de una caída anterior; luego ">" = mensajes nuevos
     backoff_s = 1.0
+    retention_days = get_settings().location_retention_days
+    last_prune = 0.0
     while True:
         try:
             response = await redis.xreadgroup(
@@ -83,6 +101,14 @@ async def run() -> None:
                 await session.execute(insert_stmt, rows)
             await redis.xack(STREAM_KEY, GROUP, *[msg_id for msg_id, _ in messages])
             logger.info("Persistidos %d pings", len(rows))
+            # Se limpia justo después de escribir: la base ya está despierta (en Neon, despertarla
+            # solo para limpiar gastaría horas de cómputo del plan gratis).
+            if time.monotonic() - last_prune > PRUNE_EVERY_S:
+                last_prune = time.monotonic()
+                async with SessionLocal() as session, session.begin():
+                    pruned = await prune_old_locations(session, retention_days)
+                if pruned:
+                    logger.info("Historial: borrados %d pings de más de %d días", pruned, retention_days)
             backoff_s = 1.0
         except (RedisError, SQLAlchemyError, OSError) as exc:
             # Un corte breve de Redis/PostgreSQL (pausa de Docker, PC suspendido) no debe matar al

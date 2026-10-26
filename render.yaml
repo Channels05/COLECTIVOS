@@ -1,8 +1,9 @@
-# Blueprint de Render: API + PostgreSQL/PostGIS + Redis (Key Value), todo en el plan gratis.
+# Blueprint de Render: API + Redis (Key Value) en el plan gratis. La base de datos va en Neon
+# (Postgres gratis que no vence, con PostGIS): su URL se pega a mano en DATABASE_URL.
 # En Render: New > Blueprint > elegir este repositorio. Ver README.md ("Desplegar en la nube").
 #
-# Límites del plan gratis: la API se duerme tras 15 min sin tráfico (~1 min en despertar), la base
-# vence a los 30 días (14 más de gracia para pasarla a pago) y Redis no persiste a disco.
+# Límites del plan gratis: la API se duerme tras 15 min sin tráfico (~1 min en despertar) y Redis
+# no persiste a disco. (La base gratis de Render vence a los 30 días: por eso se usa Neon.)
 services:
   - type: web
     name: colectivos-api
@@ -14,9 +15,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: colectivos-db
-          property: connectionString
+        sync: false # la de Neon (Dashboard > Connect), tal cual; la app la adapta a asyncpg
       - key: REDIS_URL
         fromService:
           name: colectivos-redis
