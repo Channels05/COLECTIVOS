@@ -1,0 +1,2782 @@
+{
+ "20088": {
+  "description": "Por Av. Libertador Bernardo O'Higgins, Balmaceda y Carampangue",
+  "streets": [
+   "Av. Libertador Bernardo O'Higgins",
+   "Balmaceda",
+   "Carampangue"
+  ]
+ },
+ "20348": {
+  "description": "Por Av. Francisco Bilbao, Av. Vicuña Mackenna y Av. Balmaceda",
+  "streets": [
+   "Av. Francisco Bilbao",
+   "Av. Vicuña Mackenna",
+   "Av. Balmaceda"
+  ]
+ },
+ "20403": {
+  "description": "Por Av. Balmaceda, Av. Vicuña Mackenna y Av. 21 de Mayo",
+  "streets": [
+   "Av. Balmaceda",
+   "Av. Vicuña Mackenna",
+   "Av. 21 de Mayo"
+  ]
+ },
+ "20415": {
+  "description": "Por Carampangue, Camino a Lonquén y Camino El Oliveto",
+  "streets": [
+   "Carampangue",
+   "Camino a Lonquén",
+   "Camino El Oliveto"
+  ]
+ },
+ "20427": {
+  "description": "Por Av. Peñaflor, Esmeralda y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Peñaflor",
+   "Esmeralda",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "20445": {
+  "description": "Por Av. Balmaceda, Av. Vicuña Mackenna y Av. Larraín",
+  "streets": [
+   "Av. Balmaceda",
+   "Av. Vicuña Mackenna",
+   "Av. Larraín"
+  ]
+ },
+ "20449": {
+  "description": "Por Av. Libertador Bernardo O'Higgins, Balmaceda y Lucas Pacheco",
+  "streets": [
+   "Av. Libertador Bernardo O'Higgins",
+   "Balmaceda",
+   "Lucas Pacheco"
+  ]
+ },
+ "20483": {
+  "description": "Por Esmeralda, Gral. San Martín y Autopista Los Libertadores",
+  "streets": [
+   "Esmeralda",
+   "Gral. San Martín",
+   "Autopista Los Libertadores"
+  ]
+ },
+ "20493": {
+  "description": "Por Gral. San Martín, Fontt y Esmeralda",
+  "streets": [
+   "Gral. San Martín",
+   "Fontt",
+   "Esmeralda"
+  ]
+ },
+ "20567": {
+  "description": "Por Av. Senador Jaime Guzmán Errázuriz, Av. 21 de Mayo y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Senador Jaime Guzmán Errázuriz",
+   "Av. 21 de Mayo",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "20572": {
+  "description": "Por Camino El Oliveto, Av. Balmaceda y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Camino El Oliveto",
+   "Av. Balmaceda",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "20590": {
+  "description": "Por Av. Libertador Bernardo O'Higgins, Esmeralda y Av. Peñaflor",
+  "streets": [
+   "Av. Libertador Bernardo O'Higgins",
+   "Esmeralda",
+   "Av. Peñaflor"
+  ]
+ },
+ "20606": {
+  "description": "Por Av. Vicuña Mackenna, Av. 21 de Mayo y Ruta G-380",
+  "streets": [
+   "Av. Vicuña Mackenna",
+   "Av. 21 de Mayo",
+   "Ruta G-380"
+  ]
+ },
+ "20612": {
+  "description": "Por Gral. San Martín, Esmeralda y Aconcagua",
+  "streets": [
+   "Gral. San Martín",
+   "Esmeralda",
+   "Aconcagua"
+  ]
+ },
+ "20618": {
+  "description": "Por Gral. San Martín, Esmeralda y Fontt",
+  "streets": [
+   "Gral. San Martín",
+   "Esmeralda",
+   "Fontt"
+  ]
+ },
+ "20671": {
+  "description": "Por Av. Libertador Bernardo O'Higgins, Esmeralda y Los Aromos",
+  "streets": [
+   "Av. Libertador Bernardo O'Higgins",
+   "Esmeralda",
+   "Los Aromos"
+  ]
+ },
+ "20701": {
+  "description": "Por Av. Calera de Tango, Camino a Lonquén y Los Tilos",
+  "streets": [
+   "Av. Calera de Tango",
+   "Camino a Lonquén",
+   "Los Tilos"
+  ]
+ },
+ "20706": {
+  "description": "Por Av. Calera de Tango, Camino a Lonquén y Los Tilos",
+  "streets": [
+   "Av. Calera de Tango",
+   "Camino a Lonquén",
+   "Los Tilos"
+  ]
+ },
+ "20740": {
+  "description": "Por Gral. San Martín, Fontt y Esmeralda",
+  "streets": [
+   "Gral. San Martín",
+   "Fontt",
+   "Esmeralda"
+  ]
+ },
+ "20742": {
+  "description": "Por Av. Chicureo, Av. Chamisero y Gral. San Martín",
+  "streets": [
+   "Av. Chicureo",
+   "Av. Chamisero",
+   "Gral. San Martín"
+  ]
+ },
+ "20746": {
+  "description": "Por Camino Padre Hurtado, El Recurso y Caletera Ruta 5",
+  "streets": [
+   "Camino Padre Hurtado",
+   "El Recurso",
+   "Caletera Ruta 5"
+  ]
+ },
+ "20751": {
+  "description": "Por Gral. San Martín, Fontt y Esmeralda",
+  "streets": [
+   "Gral. San Martín",
+   "Fontt",
+   "Esmeralda"
+  ]
+ },
+ "20752": {
+  "description": "Por Av. La Montaña, Av. Presidente Eduardo Frei Montalva y Cacique Colin",
+  "streets": [
+   "Av. La Montaña",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Cacique Colin"
+  ]
+ },
+ "20755": {
+  "description": "Por Camino Padre Hurtado",
+  "streets": [
+   "Camino Padre Hurtado"
+  ]
+ },
+ "20772": {
+  "description": "Por Gral. San Martín, Francisco Flores del Campo y Fontt",
+  "streets": [
+   "Gral. San Martín",
+   "Francisco Flores del Campo",
+   "Fontt"
+  ]
+ },
+ "20774": {
+  "description": "Por Camino a Lonquén, Av. Calera de Tango y Alfonso Ruiz-Tagle",
+  "streets": [
+   "Camino a Lonquén",
+   "Av. Calera de Tango",
+   "Alfonso Ruiz-Tagle"
+  ]
+ },
+ "20775": {
+  "description": "Por Ruta G-12, Cacique Colin y Av. Presidente Eduardo Frei Montalva",
+  "streets": [
+   "Ruta G-12",
+   "Cacique Colin",
+   "Av. Presidente Eduardo Frei Montalva"
+  ]
+ },
+ "20777": {
+  "description": "Por Esmeralda, Av. Balmaceda y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Esmeralda",
+   "Av. Balmaceda",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "230001": {
+  "description": "Por Av. Santa María, Av. Vitacura y Av. Andrés Bello",
+  "streets": [
+   "Av. Santa María",
+   "Av. Vitacura",
+   "Av. Andrés Bello"
+  ]
+ },
+ "230003": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Escuela Agrícola y Luis Valenzuela Aris",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Escuela Agrícola",
+   "Luis Valenzuela Aris"
+  ]
+ },
+ "230005": {
+  "description": "Por Yungay, Av. Mapocho y Av. Ricardo Cumming",
+  "streets": [
+   "Yungay",
+   "Av. Mapocho",
+   "Av. Ricardo Cumming"
+  ]
+ },
+ "230007": {
+  "description": "Por Av. Cardenal José María Caro, Av. Andrés Bello y Av. Vitacura",
+  "streets": [
+   "Av. Cardenal José María Caro",
+   "Av. Andrés Bello",
+   "Av. Vitacura"
+  ]
+ },
+ "230009": {
+  "description": "Por Pedro Montt, Bascuñán Guerrero y San Alfonso",
+  "streets": [
+   "Pedro Montt",
+   "Bascuñán Guerrero",
+   "San Alfonso"
+  ]
+ },
+ "230010": {
+  "description": "Por Av. General Rondizzoni, Ñuble y Franklin",
+  "streets": [
+   "Av. General Rondizzoni",
+   "Ñuble",
+   "Franklin"
+  ]
+ },
+ "231001": {
+  "description": "Por Av. Américo Vespucio Norte, Av. Luis Pasteur y Av. Santa María",
+  "streets": [
+   "Av. Américo Vespucio Norte",
+   "Av. Luis Pasteur",
+   "Av. Santa María"
+  ]
+ },
+ "231002": {
+  "description": "Por Av. Américo Vespucio Norte, Las Hualtatas y Av. Vitacura",
+  "streets": [
+   "Av. Américo Vespucio Norte",
+   "Las Hualtatas",
+   "Av. Vitacura"
+  ]
+ },
+ "231003": {
+  "description": "Por Camino El Alba, Camino La Fuente y Camino Otoñal",
+  "streets": [
+   "Camino El Alba",
+   "Camino La Fuente",
+   "Camino Otoñal"
+  ]
+ },
+ "231006": {
+  "description": "Por Av. Américo Vespucio Norte, Autopista Vespucio Oriente y Av. Santa María",
+  "streets": [
+   "Av. Américo Vespucio Norte",
+   "Autopista Vespucio Oriente",
+   "Av. Santa María"
+  ]
+ },
+ "231008": {
+  "description": "Por Av. Las Condes, Av. Camino Real y Av. Paseo Pie Andino",
+  "streets": [
+   "Av. Las Condes",
+   "Av. Camino Real",
+   "Av. Paseo Pie Andino"
+  ]
+ },
+ "231009": {
+  "description": "Por Camino El Bajo y Pastor Fernández",
+  "streets": [
+   "Camino El Bajo",
+   "Pastor Fernández"
+  ]
+ },
+ "231010": {
+  "description": "Por Camino El Bajo, Pastor Fernández y Camino El Refugio del Arrayán",
+  "streets": [
+   "Camino El Bajo",
+   "Pastor Fernández",
+   "Camino El Refugio del Arrayán"
+  ]
+ },
+ "231011": {
+  "description": "Por Comandante Malbec, El Gabino y Av. Lo Barnechea",
+  "streets": [
+   "Comandante Malbec",
+   "El Gabino",
+   "Av. Lo Barnechea"
+  ]
+ },
+ "231012": {
+  "description": "Por San Josemaría Escrivá de Balaguer, Av. El Rodeo y Av. Raúl Labbé",
+  "streets": [
+   "San Josemaría Escrivá de Balaguer",
+   "Av. El Rodeo",
+   "Av. Raúl Labbé"
+  ]
+ },
+ "232001": {
+  "description": "Por Froilán Roa, Exequiel Fernández y Av. Pedro de Valdivia",
+  "streets": [
+   "Froilán Roa",
+   "Exequiel Fernández",
+   "Av. Pedro de Valdivia"
+  ]
+ },
+ "232002": {
+  "description": "Por Av. Monseñor Carlos Casanueva, Av. Escuela Agrícola y Av. Pedro de Valdivia",
+  "streets": [
+   "Av. Monseñor Carlos Casanueva",
+   "Av. Escuela Agrícola",
+   "Av. Pedro de Valdivia"
+  ]
+ },
+ "232003": {
+  "description": "Por Obispo Arturo Espinoza Campos, Av. Pedro de Valdivia y Castillo Urizar",
+  "streets": [
+   "Obispo Arturo Espinoza Campos",
+   "Av. Pedro de Valdivia",
+   "Castillo Urizar"
+  ]
+ },
+ "232004": {
+  "description": "Por Lo Encalada, Av. Antonio Varas y Av. Manuel Montt",
+  "streets": [
+   "Lo Encalada",
+   "Av. Antonio Varas",
+   "Av. Manuel Montt"
+  ]
+ },
+ "232005": {
+  "description": "Por Álvaro Casanova, Av. Alcalde Fernando Castillo Velasco y Av. Irarrázaval",
+  "streets": [
+   "Álvaro Casanova",
+   "Av. Alcalde Fernando Castillo Velasco",
+   "Av. Irarrázaval"
+  ]
+ },
+ "232006": {
+  "description": "Por Av. Campos de Deportes, Av. Antonio Varas y Av. Manuel Montt",
+  "streets": [
+   "Av. Campos de Deportes",
+   "Av. Antonio Varas",
+   "Av. Manuel Montt"
+  ]
+ },
+ "232007": {
+  "description": "Por Av. Quilín, Av. Las Torres y Av. Grecia",
+  "streets": [
+   "Av. Quilín",
+   "Av. Las Torres",
+   "Av. Grecia"
+  ]
+ },
+ "232008": {
+  "description": "Por Av. Capitán Ignacio Carrera Pinto, Av. Grecia y Av. Pedro de Valdivia",
+  "streets": [
+   "Av. Capitán Ignacio Carrera Pinto",
+   "Av. Grecia",
+   "Av. Pedro de Valdivia"
+  ]
+ },
+ "232009": {
+  "description": "Por Ramón Cruz Montt, Av. Presidente José Batlle y Ordóñez y Av. Los Leones",
+  "streets": [
+   "Ramón Cruz Montt",
+   "Av. Presidente José Batlle y Ordóñez",
+   "Av. Los Leones"
+  ]
+ },
+ "232011": {
+  "description": "Por Av. San Luis de Macul, Av. Quilín y Av. Los Presidentes",
+  "streets": [
+   "Av. San Luis de Macul",
+   "Av. Quilín",
+   "Av. Los Presidentes"
+  ]
+ },
+ "232012": {
+  "description": "Por Av. Las Torres, Av. Consistorial y Av. Los Presidentes",
+  "streets": [
+   "Av. Las Torres",
+   "Av. Consistorial",
+   "Av. Los Presidentes"
+  ]
+ },
+ "232014": {
+  "description": "Por Av. Echeñique, Av. Príncipe de Gales y Av. Tobalaba",
+  "streets": [
+   "Av. Echeñique",
+   "Av. Príncipe de Gales",
+   "Av. Tobalaba"
+  ]
+ },
+ "232015": {
+  "description": "Por Diagonal Las Torres, Av. Grecia y Av. Américo Vespucio",
+  "streets": [
+   "Diagonal Las Torres",
+   "Av. Grecia",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "232016": {
+  "description": "Por Av. Las Torres, Av. San Luis de Macul y Av. Tobalaba",
+  "streets": [
+   "Av. Las Torres",
+   "Av. San Luis de Macul",
+   "Av. Tobalaba"
+  ]
+ },
+ "232017": {
+  "description": "Por Av. Américo Vespucio, Av. San Luis de Macul y Av. Grecia",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. San Luis de Macul",
+   "Av. Grecia"
+  ]
+ },
+ "232018": {
+  "description": "Por Av. Pintor Benito Rebolledo, Av. Presidente Salvador Allende Gossens y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. Pintor Benito Rebolledo",
+   "Av. Presidente Salvador Allende Gossens",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "232033": {
+  "description": "Por Río Claro, Calle Diputada Laura Rodríguez Riccomini y Av. Alcalde Fernando Castillo Velasco",
+  "streets": [
+   "Río Claro",
+   "Calle Diputada Laura Rodríguez Riccomini",
+   "Av. Alcalde Fernando Castillo Velasco"
+  ]
+ },
+ "233001": {
+  "description": "Por Sebastopol, Av. Lo Ovalle y Froilán Lagos Sepúlveda",
+  "streets": [
+   "Sebastopol",
+   "Av. Lo Ovalle",
+   "Froilán Lagos Sepúlveda"
+  ]
+ },
+ "233003": {
+  "description": "Por Av. Santa Rosa, Tomé y Fresia",
+  "streets": [
+   "Av. Santa Rosa",
+   "Tomé",
+   "Fresia"
+  ]
+ },
+ "233004": {
+  "description": "Por Perú, Av. Vicuña Mackenna Oriente y José Miguel Carrera",
+  "streets": [
+   "Perú",
+   "Av. Vicuña Mackenna Oriente",
+   "José Miguel Carrera"
+  ]
+ },
+ "233005": {
+  "description": "Por Av. San Gregorio, Ecuador y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. San Gregorio",
+   "Ecuador",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "233006": {
+  "description": "Por Santa Amalia, Enrique Olivares y Av. Vicuña Mackenna Oriente",
+  "streets": [
+   "Santa Amalia",
+   "Enrique Olivares",
+   "Av. Vicuña Mackenna Oriente"
+  ]
+ },
+ "233007": {
+  "description": "Por Enrique Olivares, Santa Amalia y Av. Vicuña Mackenna Oriente",
+  "streets": [
+   "Enrique Olivares",
+   "Santa Amalia",
+   "Av. Vicuña Mackenna Oriente"
+  ]
+ },
+ "233008": {
+  "description": "Por Av. Santa Raquel, José Miguel Carrera y Manutara",
+  "streets": [
+   "Av. Santa Raquel",
+   "José Miguel Carrera",
+   "Manutara"
+  ]
+ },
+ "233009": {
+  "description": "Por Av. Santa Raquel, Los Clarines y Turquesa",
+  "streets": [
+   "Av. Santa Raquel",
+   "Los Clarines",
+   "Turquesa"
+  ]
+ },
+ "233010": {
+  "description": "Por Av. Vicuña Mackenna Oriente, Av. Colombia y Av. San José de La Estrella",
+  "streets": [
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Colombia",
+   "Av. San José de La Estrella"
+  ]
+ },
+ "233012": {
+  "description": "Por Av. Joaquín Edwards Bello, Av. Isla Adelaida y Av. Américo Vespucio",
+  "streets": [
+   "Av. Joaquín Edwards Bello",
+   "Av. Isla Adelaida",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "233013": {
+  "description": "Por Av. Américo Vespucio, Av. Punta Arenas y Av. Isla Adelaida",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Punta Arenas",
+   "Av. Isla Adelaida"
+  ]
+ },
+ "233014": {
+  "description": "Por Av. Departamental, Av. San Luis de Macul y Av. Quebrada de Macul",
+  "streets": [
+   "Av. Departamental",
+   "Av. San Luis de Macul",
+   "Av. Quebrada de Macul"
+  ]
+ },
+ "233015": {
+  "description": "Por Av. Vicuña Mackenna Oriente, Perú y José Miguel Carrera",
+  "streets": [
+   "Av. Vicuña Mackenna Oriente",
+   "Perú",
+   "José Miguel Carrera"
+  ]
+ },
+ "233016": {
+  "description": "Por Av. Santa Rosa, Av. Américo Vespucio y Padre Juan Meyer",
+  "streets": [
+   "Av. Santa Rosa",
+   "Av. Américo Vespucio",
+   "Padre Juan Meyer"
+  ]
+ },
+ "233018": {
+  "description": "Por Av. Vicuña Mackenna Poniente, Perpetua Freire y Av. Vicuña Mackenna Oriente",
+  "streets": [
+   "Av. Vicuña Mackenna Poniente",
+   "Perpetua Freire",
+   "Av. Vicuña Mackenna Oriente"
+  ]
+ },
+ "233019": {
+  "description": "Por Rojas Magallanes, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna Poniente",
+  "streets": [
+   "Rojas Magallanes",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna Poniente"
+  ]
+ },
+ "233021": {
+  "description": "Por Las Higueras, Av. Departamental y Av. Américo Vespucio",
+  "streets": [
+   "Las Higueras",
+   "Av. Departamental",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "233022": {
+  "description": "Por María Angélica, Las Higueras y Av. Departamental",
+  "streets": [
+   "María Angélica",
+   "Las Higueras",
+   "Av. Departamental"
+  ]
+ },
+ "233023": {
+  "description": "Por Av. Grecia, Av. Macul y Av. La Florida",
+  "streets": [
+   "Av. Grecia",
+   "Av. Macul",
+   "Av. La Florida"
+  ]
+ },
+ "233025": {
+  "description": "Por Teniente de Marina Rolando Froden, Av. La Florida y Av. El Parque",
+  "streets": [
+   "Teniente de Marina Rolando Froden",
+   "Av. La Florida",
+   "Av. El Parque"
+  ]
+ },
+ "233027": {
+  "description": "Por Av. Walker Martínez, El Hualle y Av. Central",
+  "streets": [
+   "Av. Walker Martínez",
+   "El Hualle",
+   "Av. Central"
+  ]
+ },
+ "233028": {
+  "description": "Por Av. Walker Martínez, Palena y María Angélica",
+  "streets": [
+   "Av. Walker Martínez",
+   "Palena",
+   "María Angélica"
+  ]
+ },
+ "233029": {
+  "description": "Por María Elena, Av. Santa Raquel y Santa Julia",
+  "streets": [
+   "María Elena",
+   "Av. Santa Raquel",
+   "Santa Julia"
+  ]
+ },
+ "233030": {
+  "description": "Por Julio César, Av. Santa Raquel y Lircay",
+  "streets": [
+   "Julio César",
+   "Av. Santa Raquel",
+   "Lircay"
+  ]
+ },
+ "233031": {
+  "description": "Por Rafael Matus, Av. Santa Raquel y Av. Américo Vespucio",
+  "streets": [
+   "Rafael Matus",
+   "Av. Santa Raquel",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "233032": {
+  "description": "Por Gerónimo de Alderete, Av. Walker Martínez y Teniente de Marina Rolando Froden",
+  "streets": [
+   "Gerónimo de Alderete",
+   "Av. Walker Martínez",
+   "Teniente de Marina Rolando Froden"
+  ]
+ },
+ "233033": {
+  "description": "Por Av. Américo Vespucio, Alonso de Ercilla y Av. Walker Martínez",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Alonso de Ercilla",
+   "Av. Walker Martínez"
+  ]
+ },
+ "233034": {
+  "description": "Por Av. Walker Martínez, Av. Macul y Av. Grecia",
+  "streets": [
+   "Av. Walker Martínez",
+   "Av. Macul",
+   "Av. Grecia"
+  ]
+ },
+ "233035": {
+  "description": "Por Rojas Magallanes, Gerónimo de Alderete y Av. Walker Martínez",
+  "streets": [
+   "Rojas Magallanes",
+   "Gerónimo de Alderete",
+   "Av. Walker Martínez"
+  ]
+ },
+ "233036": {
+  "description": "Por Camino del Monte, Av. Departamental y Av. San Luis de Macul",
+  "streets": [
+   "Camino del Monte",
+   "Av. Departamental",
+   "Av. San Luis de Macul"
+  ]
+ },
+ "234001": {
+  "description": "Por La Colonia, Av. Ejército Libertador y Av. Sargento Menadier",
+  "streets": [
+   "La Colonia",
+   "Av. Ejército Libertador",
+   "Av. Sargento Menadier"
+  ]
+ },
+ "234002": {
+  "description": "Por Av. El Peral, Av. Concha y Toro y Av. Ejército Libertador",
+  "streets": [
+   "Av. El Peral",
+   "Av. Concha y Toro",
+   "Av. Ejército Libertador"
+  ]
+ },
+ "234004": {
+  "description": "Por Av. San José, Av. Eyzaguirre y Camino El Mariscal",
+  "streets": [
+   "Av. San José",
+   "Av. Eyzaguirre",
+   "Camino El Mariscal"
+  ]
+ },
+ "234005": {
+  "description": "Por Av. Circunvalación, Av. Eyzaguirre y Av. Concha y Toro",
+  "streets": [
+   "Av. Circunvalación",
+   "Av. Eyzaguirre",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234006": {
+  "description": "Por Av. Luis Matte Larraín, Av. Concha y Toro y Los Mañíos",
+  "streets": [
+   "Av. Luis Matte Larraín",
+   "Av. Concha y Toro",
+   "Los Mañíos"
+  ]
+ },
+ "234007": {
+  "description": "Por Valle Central, Av. Eyzaguirre y Av. Concha y Toro",
+  "streets": [
+   "Valle Central",
+   "Av. Eyzaguirre",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234009": {
+  "description": "Por Av. Diego Portales, San Jorge y Av. Colombia",
+  "streets": [
+   "Av. Diego Portales",
+   "San Jorge",
+   "Av. Colombia"
+  ]
+ },
+ "234011": {
+  "description": "Por San Guillermo, Av. Eyzaguirre y Av. Ernesto Alvear",
+  "streets": [
+   "San Guillermo",
+   "Av. Eyzaguirre",
+   "Av. Ernesto Alvear"
+  ]
+ },
+ "234012": {
+  "description": "Por José Luis Coo, José Manuel Irarrázaval y Av. Eyzaguirre",
+  "streets": [
+   "José Luis Coo",
+   "José Manuel Irarrázaval",
+   "Av. Eyzaguirre"
+  ]
+ },
+ "234014": {
+  "description": "Por Camino al Volcán, Camino a San José de Maipo y Av. Eyzaguirre",
+  "streets": [
+   "Camino al Volcán",
+   "Camino a San José de Maipo",
+   "Av. Eyzaguirre"
+  ]
+ },
+ "234015": {
+  "description": "Por Av. Concha y Toro, Av. El Peñón y Av. Camilo Henríquez",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. El Peñón",
+   "Av. Camilo Henríquez"
+  ]
+ },
+ "234016": {
+  "description": "Por Av. Ejército Libertador, Av. Sargento Menadier y Av. Concha y Toro",
+  "streets": [
+   "Av. Ejército Libertador",
+   "Av. Sargento Menadier",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234017": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234018": {
+  "description": "Por Av. Vicuña Mackenna, Av. Concha y Toro y Av. Vicuña Mackenna Oriente",
+  "streets": [
+   "Av. Vicuña Mackenna",
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente"
+  ]
+ },
+ "234019": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234021": {
+  "description": "Por Av. Trinidad Oriente, Av. Trinidad y Av. México",
+  "streets": [
+   "Av. Trinidad Oriente",
+   "Av. Trinidad",
+   "Av. México"
+  ]
+ },
+ "234022": {
+  "description": "Por Av. Vicuña Mackenna, Av. Concha y Toro y Av. Vicuña Mackenna Oriente",
+  "streets": [
+   "Av. Vicuña Mackenna",
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente"
+  ]
+ },
+ "234023": {
+  "description": "Por Av. Los Toros, Av. México y Av. Concha y Toro",
+  "streets": [
+   "Av. Los Toros",
+   "Av. México",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234025": {
+  "description": "Por Av. Luis Matte Larraín, Ángel Pimentel y San Hugo",
+  "streets": [
+   "Av. Luis Matte Larraín",
+   "Ángel Pimentel",
+   "San Hugo"
+  ]
+ },
+ "234026": {
+  "description": "Por Ángel Pimentel, San Hugo y Av. Luis Matte Larraín",
+  "streets": [
+   "Ángel Pimentel",
+   "San Hugo",
+   "Av. Luis Matte Larraín"
+  ]
+ },
+ "234027": {
+  "description": "Por Av. Luis Matte Larraín, Ángel Pimentel y Av. Concha y Toro",
+  "streets": [
+   "Av. Luis Matte Larraín",
+   "Ángel Pimentel",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234028": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234029": {
+  "description": "Por Av. Eyzaguirre, Camino a San José de Maipo y Camino al Volcán",
+  "streets": [
+   "Av. Eyzaguirre",
+   "Camino a San José de Maipo",
+   "Camino al Volcán"
+  ]
+ },
+ "234030": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234031": {
+  "description": "Por Av. Ejército Libertador, Av. Sargento Menadier y Av. Concha y Toro",
+  "streets": [
+   "Av. Ejército Libertador",
+   "Av. Sargento Menadier",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234032": {
+  "description": "Por Ángel Pimentel, Nemesio Vicuña y Av. Concha y Toro",
+  "streets": [
+   "Ángel Pimentel",
+   "Nemesio Vicuña",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234034": {
+  "description": "Por Ángel Pimentel, Av. Las Nieves Oriente y Av. Concha y Toro",
+  "streets": [
+   "Ángel Pimentel",
+   "Av. Las Nieves Oriente",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234035": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234036": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234038": {
+  "description": "Por Av. Concha y Toro, Av. Circunvalación y Av. Eyzaguirre",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Circunvalación",
+   "Av. Eyzaguirre"
+  ]
+ },
+ "234039": {
+  "description": "Por Tocornal Grez, Av. Ejército Libertador y Av. Sargento Menadier",
+  "streets": [
+   "Tocornal Grez",
+   "Av. Ejército Libertador",
+   "Av. Sargento Menadier"
+  ]
+ },
+ "234040": {
+  "description": "Por Av. Ejército Libertador, Av. Sargento Menadier y Av. Concha y Toro",
+  "streets": [
+   "Av. Ejército Libertador",
+   "Av. Sargento Menadier",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234042": {
+  "description": "Por Av. Gabriela Poniente, Av. Concha y Toro y Creta Norte",
+  "streets": [
+   "Av. Gabriela Poniente",
+   "Av. Concha y Toro",
+   "Creta Norte"
+  ]
+ },
+ "234043": {
+  "description": "Por Av. San Carlos, Cardenal Oviedo y Av. Concha y Toro",
+  "streets": [
+   "Av. San Carlos",
+   "Cardenal Oviedo",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234044": {
+  "description": "Por Av. Ejército Libertador, Av. Concha y Toro y Av. Gabriela Oriente",
+  "streets": [
+   "Av. Ejército Libertador",
+   "Av. Concha y Toro",
+   "Av. Gabriela Oriente"
+  ]
+ },
+ "234045": {
+  "description": "Por Av. Concha y Toro, Av. Gabriela Oriente y Av. Camilo Henríquez",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Gabriela Oriente",
+   "Av. Camilo Henríquez"
+  ]
+ },
+ "234046": {
+  "description": "Por Av. Gabriela Poniente, Av. Ejército Libertador y Av. Concha y Toro",
+  "streets": [
+   "Av. Gabriela Poniente",
+   "Av. Ejército Libertador",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234047": {
+  "description": "Por Av. Doctor Eduardo Cordero, Profesor Alcaíno y Av. Concha y Toro",
+  "streets": [
+   "Av. Doctor Eduardo Cordero",
+   "Profesor Alcaíno",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234048": {
+  "description": "Por Quitalmahue, Av. Eyzaguirre y Av. Ernesto Alvear",
+  "streets": [
+   "Quitalmahue",
+   "Av. Eyzaguirre",
+   "Av. Ernesto Alvear"
+  ]
+ },
+ "234049": {
+  "description": "Por San Guillermo, Av. Eyzaguirre y Av. Ernesto Alvear",
+  "streets": [
+   "San Guillermo",
+   "Av. Eyzaguirre",
+   "Av. Ernesto Alvear"
+  ]
+ },
+ "234050": {
+  "description": "Por Av. 27 de Septiembre, Av. Eyzaguirre y Av. Concha y Toro",
+  "streets": [
+   "Av. 27 de Septiembre",
+   "Av. Eyzaguirre",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234051": {
+  "description": "Por Tocornal, Nocedal y Av. Ernesto Alvear",
+  "streets": [
+   "Tocornal",
+   "Nocedal",
+   "Av. Ernesto Alvear"
+  ]
+ },
+ "234053": {
+  "description": "Por Av. Ejército Libertador, Av. Domingo Tocornal y Tocornal",
+  "streets": [
+   "Av. Ejército Libertador",
+   "Av. Domingo Tocornal",
+   "Tocornal"
+  ]
+ },
+ "234054": {
+  "description": "Por Curaco de Vélez, Av. Eyzaguirre y Av. Concha y Toro",
+  "streets": [
+   "Curaco de Vélez",
+   "Av. Eyzaguirre",
+   "Av. Concha y Toro"
+  ]
+ },
+ "234055": {
+  "description": "Por Alcalde Manuel Muñoz Bahamondes, Tocornal y Av. Ernesto Alvear",
+  "streets": [
+   "Alcalde Manuel Muñoz Bahamondes",
+   "Tocornal",
+   "Av. Ernesto Alvear"
+  ]
+ },
+ "234056": {
+  "description": "Por Alcalde Manuel Muñoz Bahamondes, Genaro Prieto y Tocornal",
+  "streets": [
+   "Alcalde Manuel Muñoz Bahamondes",
+   "Genaro Prieto",
+   "Tocornal"
+  ]
+ },
+ "234057": {
+  "description": "Por Av. Ernesto Alvear, Av. Eyzaguirre y Av. Juanita",
+  "streets": [
+   "Av. Ernesto Alvear",
+   "Av. Eyzaguirre",
+   "Av. Juanita"
+  ]
+ },
+ "234058": {
+  "description": "Por Av. Concha y Toro, Av. Vicuña Mackenna Oriente y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Vicuña Mackenna Oriente",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "234059": {
+  "description": "Por Alcalde Hernán Prieto, Virginia Subercaseaux y Av. Concha y Toro",
+  "streets": [
+   "Alcalde Hernán Prieto",
+   "Virginia Subercaseaux",
+   "Av. Concha y Toro"
+  ]
+ },
+ "235001": {
+  "description": "Por Av. Lo Blanco, Santa Marta y Av. Presidente Jorge Alessandri Rodríguez",
+  "streets": [
+   "Av. Lo Blanco",
+   "Santa Marta",
+   "Av. Presidente Jorge Alessandri Rodríguez"
+  ]
+ },
+ "235002": {
+  "description": "Por Santa Marta, Av. Padre Hurtado y Av. Lo Blanco",
+  "streets": [
+   "Santa Marta",
+   "Av. Padre Hurtado",
+   "Av. Lo Blanco"
+  ]
+ },
+ "235003": {
+  "description": "Por Uruguay, Argentina y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Uruguay",
+   "Argentina",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235004": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. José Joaquín Prieto Vial y Autopista Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central"
+  ]
+ },
+ "235005": {
+  "description": "Por Gran Avenida José Miguel Carrera, José Domingo Gómez y Rengo",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "José Domingo Gómez",
+   "Rengo"
+  ]
+ },
+ "235006": {
+  "description": "Por Indio Jerónimo, Gral. Korner y Víctor Plaza Mayorga",
+  "streets": [
+   "Indio Jerónimo",
+   "Gral. Korner",
+   "Víctor Plaza Mayorga"
+  ]
+ },
+ "235007": {
+  "description": "Por Augusto Biaut, Av. Américo Vespucio y Av. Ossa",
+  "streets": [
+   "Augusto Biaut",
+   "Av. Américo Vespucio",
+   "Av. Ossa"
+  ]
+ },
+ "235008": {
+  "description": "Por Av. Lo Espejo, Gran Avenida José Miguel Carrera y Trinidad Ramírez",
+  "streets": [
+   "Av. Lo Espejo",
+   "Gran Avenida José Miguel Carrera",
+   "Trinidad Ramírez"
+  ]
+ },
+ "235009": {
+  "description": "Por Av. Lo Martínez, Los Raulíes y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. Lo Martínez",
+   "Los Raulíes",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235010": {
+  "description": "Por Autopista Central, Caletera Ruta 5 y Av. Viel",
+  "streets": [
+   "Autopista Central",
+   "Caletera Ruta 5",
+   "Av. Viel"
+  ]
+ },
+ "235011": {
+  "description": "Por Esperanza, Av. Santa Rosa y Tomé",
+  "streets": [
+   "Esperanza",
+   "Av. Santa Rosa",
+   "Tomé"
+  ]
+ },
+ "235012": {
+  "description": "Por Camino Padre Hurtado, Av. Padre Hurtado y Av. San José",
+  "streets": [
+   "Camino Padre Hurtado",
+   "Av. Padre Hurtado",
+   "Av. San José"
+  ]
+ },
+ "235013": {
+  "description": "Por Camino del Inca, Pedro Sancho de la Hoz y Av. Colón Sur",
+  "streets": [
+   "Camino del Inca",
+   "Pedro Sancho de la Hoz",
+   "Av. Colón Sur"
+  ]
+ },
+ "235014": {
+  "description": "Por Av. Lo Blanco, Av. Padre Hurtado y Santa Marta",
+  "streets": [
+   "Av. Lo Blanco",
+   "Av. Padre Hurtado",
+   "Santa Marta"
+  ]
+ },
+ "235015": {
+  "description": "Por Av. José Joaquín Prieto Vial, Autopista Central y Av. San Francisco",
+  "streets": [
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central",
+   "Av. San Francisco"
+  ]
+ },
+ "235016": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Urmeneta y Ramón Freire",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Urmeneta",
+   "Ramón Freire"
+  ]
+ },
+ "235017": {
+  "description": "Por Barros Arana, Ramón Freire y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Barros Arana",
+   "Ramón Freire",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235018": {
+  "description": "Por Av. Lo Blanco, Santa Marta y Barros Arana",
+  "streets": [
+   "Av. Lo Blanco",
+   "Santa Marta",
+   "Barros Arana"
+  ]
+ },
+ "235019": {
+  "description": "Por Santa Marta, San Martín y Av. Lo Blanco",
+  "streets": [
+   "Santa Marta",
+   "San Martín",
+   "Av. Lo Blanco"
+  ]
+ },
+ "235020": {
+  "description": "Por Vecinal Sur, Av. Padre Hurtado y Baquedano",
+  "streets": [
+   "Vecinal Sur",
+   "Av. Padre Hurtado",
+   "Baquedano"
+  ]
+ },
+ "235021": {
+  "description": "Por Av. Lo Blanco, Av. Padre Hurtado y Santa Marta",
+  "streets": [
+   "Av. Lo Blanco",
+   "Av. Padre Hurtado",
+   "Santa Marta"
+  ]
+ },
+ "235022": {
+  "description": "Por Av. Santa Rosa, Bernardino Parada y Santa Marta",
+  "streets": [
+   "Av. Santa Rosa",
+   "Bernardino Parada",
+   "Santa Marta"
+  ]
+ },
+ "235023": {
+  "description": "Por Barros Arana, Av. América y José Joaquín Pérez",
+  "streets": [
+   "Barros Arana",
+   "Av. América",
+   "José Joaquín Pérez"
+  ]
+ },
+ "235025": {
+  "description": "Por Nacimiento, Av. América y Av. San José",
+  "streets": [
+   "Nacimiento",
+   "Av. América",
+   "Av. San José"
+  ]
+ },
+ "235026": {
+  "description": "Por Gral. Freire, Av. Santa Ana y Linares",
+  "streets": [
+   "Gral. Freire",
+   "Av. Santa Ana",
+   "Linares"
+  ]
+ },
+ "235028": {
+  "description": "Por Lincoln, Av. Lo Ovalle y Briones Luco",
+  "streets": [
+   "Lincoln",
+   "Av. Lo Ovalle",
+   "Briones Luco"
+  ]
+ },
+ "235029": {
+  "description": "Por Av. Américo Vespucio, Violeta Parra y Av. Padre Hurtado",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Violeta Parra",
+   "Av. Padre Hurtado"
+  ]
+ },
+ "235030": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Américo Vespucio y Paulina",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Américo Vespucio",
+   "Paulina"
+  ]
+ },
+ "235031": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Portales y Av. Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Portales",
+   "Av. Central"
+  ]
+ },
+ "235032": {
+  "description": "Por O'Higgins Oriente, Av. Central y Av. Presidente Jorge Alessandri Rodríguez",
+  "streets": [
+   "O'Higgins Oriente",
+   "Av. Central",
+   "Av. Presidente Jorge Alessandri Rodríguez"
+  ]
+ },
+ "235033": {
+  "description": "Por Gran Avenida José Miguel Carrera, Barros Arana y Av. Portales",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Barros Arana",
+   "Av. Portales"
+  ]
+ },
+ "235034": {
+  "description": "Por Santa Marta, Av. Padre Hurtado y Av. Ossa",
+  "streets": [
+   "Santa Marta",
+   "Av. Padre Hurtado",
+   "Av. Ossa"
+  ]
+ },
+ "235035": {
+  "description": "Por Av. Padre Hurtado, Alejandro Guzmán y Av. Ossa",
+  "streets": [
+   "Av. Padre Hurtado",
+   "Alejandro Guzmán",
+   "Av. Ossa"
+  ]
+ },
+ "235036": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Elías Fernández Albano y Paulina",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Elías Fernández Albano",
+   "Paulina"
+  ]
+ },
+ "235037": {
+  "description": "Por El Barrancón, Av. Portales y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "El Barrancón",
+   "Av. Portales",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235038": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. Portales y Ramón Freire",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. Portales",
+   "Ramón Freire"
+  ]
+ },
+ "235039": {
+  "description": "Por Gran Avenida José Miguel Carrera, Julio Covarrubias y Av. Observatorio",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Julio Covarrubias",
+   "Av. Observatorio"
+  ]
+ },
+ "235040": {
+  "description": "Por Av. Central Cardenal Raúl Silva Henríquez, Av. Lo Ovalle y Briones Luco",
+  "streets": [
+   "Av. Central Cardenal Raúl Silva Henríquez",
+   "Av. Lo Ovalle",
+   "Briones Luco"
+  ]
+ },
+ "235041": {
+  "description": "Por Av. Central Cardenal Raúl Silva Henríquez, Av. General Velásquez y Av. San Alberto Hurtado",
+  "streets": [
+   "Av. Central Cardenal Raúl Silva Henríquez",
+   "Av. General Velásquez",
+   "Av. San Alberto Hurtado"
+  ]
+ },
+ "235042": {
+  "description": "Por Av. San José, Ramón Freire y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. San José",
+   "Ramón Freire",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235043": {
+  "description": "Por Av. América, Barros Arana y Av. Portales",
+  "streets": [
+   "Av. América",
+   "Barros Arana",
+   "Av. Portales"
+  ]
+ },
+ "235044": {
+  "description": "Por Ochagavía, Av. América y Barros Arana",
+  "streets": [
+   "Ochagavía",
+   "Av. América",
+   "Barros Arana"
+  ]
+ },
+ "235045": {
+  "description": "Por Av. Central, Av. Portales Oriente y Av. América",
+  "streets": [
+   "Av. Central",
+   "Av. Portales Oriente",
+   "Av. América"
+  ]
+ },
+ "235046": {
+  "description": "Por Av. Portales, Barros Arana y Av. Presidente Jorge Alessandri Rodríguez",
+  "streets": [
+   "Av. Portales",
+   "Barros Arana",
+   "Av. Presidente Jorge Alessandri Rodríguez"
+  ]
+ },
+ "235049": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. José Joaquín Prieto Vial y Autopista Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central"
+  ]
+ },
+ "235050": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. José Joaquín Prieto Vial y Autopista Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central"
+  ]
+ },
+ "235051": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. José Joaquín Prieto Vial y Autopista Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central"
+  ]
+ },
+ "235052": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. José Joaquín Prieto Vial y Autopista Central",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. José Joaquín Prieto Vial",
+   "Autopista Central"
+  ]
+ },
+ "235053": {
+  "description": "Por Santa Anita, Obispo Javier Vásquez Valencia y Av. Lo Ovalle",
+  "streets": [
+   "Santa Anita",
+   "Obispo Javier Vásquez Valencia",
+   "Av. Lo Ovalle"
+  ]
+ },
+ "235054": {
+  "description": "Por Av. El Parrón, Combarbalá y Tomé",
+  "streets": [
+   "Av. El Parrón",
+   "Combarbalá",
+   "Tomé"
+  ]
+ },
+ "235055": {
+  "description": "Por Locarno y Zürich Norte",
+  "streets": [
+   "Locarno",
+   "Zürich Norte"
+  ]
+ },
+ "235056": {
+  "description": "Por Av. San Francisco, Av. Gabriela y Av. Gabriela Poniente",
+  "streets": [
+   "Av. San Francisco",
+   "Av. Gabriela",
+   "Av. Gabriela Poniente"
+  ]
+ },
+ "235057": {
+  "description": "Por Esperanza, Vicuña Mackenna y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Esperanza",
+   "Vicuña Mackenna",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "235059": {
+  "description": "Por El Barrancón, Av. Calera de Tango y Camino a Lonquén",
+  "streets": [
+   "El Barrancón",
+   "Av. Calera de Tango",
+   "Camino a Lonquén"
+  ]
+ },
+ "235060": {
+  "description": "Por Camino Catemito, Av. Calera de Tango y Camino a Lonquén",
+  "streets": [
+   "Camino Catemito",
+   "Av. Calera de Tango",
+   "Camino a Lonquén"
+  ]
+ },
+ "235061": {
+  "description": "Por Bolivia, Av. Joaquín Edwards Bello y Av. San José de La Estrella",
+  "streets": [
+   "Bolivia",
+   "Av. Joaquín Edwards Bello",
+   "Av. San José de La Estrella"
+  ]
+ },
+ "235064": {
+  "description": "Por Camino Padre Hurtado, Av. San José y Av. Colón Norte",
+  "streets": [
+   "Camino Padre Hurtado",
+   "Av. San José",
+   "Av. Colón Norte"
+  ]
+ },
+ "235065": {
+  "description": "Por Violeta Parra, Antonio Machado y Av. Santa Rosa",
+  "streets": [
+   "Violeta Parra",
+   "Antonio Machado",
+   "Av. Santa Rosa"
+  ]
+ },
+ "235066": {
+  "description": "Por José Ureta, Av. Padre Esteban Gumucio Vives y Av. Yungay",
+  "streets": [
+   "José Ureta",
+   "Av. Padre Esteban Gumucio Vives",
+   "Av. Yungay"
+  ]
+ },
+ "235067": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. San José y Almirante Riveros",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. San José",
+   "Almirante Riveros"
+  ]
+ },
+ "235068": {
+  "description": "Por Gran Avenida José Miguel Carrera, Av. San José y Ramón Freire",
+  "streets": [
+   "Gran Avenida José Miguel Carrera",
+   "Av. San José",
+   "Ramón Freire"
+  ]
+ },
+ "235070": {
+  "description": "Por José Ureta, Gral. Freire y Av. Santa Ana",
+  "streets": [
+   "José Ureta",
+   "Gral. Freire",
+   "Av. Santa Ana"
+  ]
+ },
+ "235071": {
+  "description": "Por Av. San Francisco, Av. Santa Rosa y Linares",
+  "streets": [
+   "Av. San Francisco",
+   "Av. Santa Rosa",
+   "Linares"
+  ]
+ },
+ "235073": {
+  "description": "Por Autopista Central, Caletera Ruta 5 y Av. Presidente Jorge Alessandri Rodríguez",
+  "streets": [
+   "Autopista Central",
+   "Caletera Ruta 5",
+   "Av. Presidente Jorge Alessandri Rodríguez"
+  ]
+ },
+ "235074": {
+  "description": "Por Av. Calera de Tango, Camino Catemito y Eyzaguirre",
+  "streets": [
+   "Av. Calera de Tango",
+   "Camino Catemito",
+   "Eyzaguirre"
+  ]
+ },
+ "235075": {
+  "description": "Por Av. San Francisco, Alejandro Guzmán y Luis Barros Borgoño",
+  "streets": [
+   "Av. San Francisco",
+   "Alejandro Guzmán",
+   "Luis Barros Borgoño"
+  ]
+ },
+ "235076": {
+  "description": "Por Gral. Korner, Alejandro Guzmán y Av. Padre Hurtado",
+  "streets": [
+   "Gral. Korner",
+   "Alejandro Guzmán",
+   "Av. Padre Hurtado"
+  ]
+ },
+ "235077": {
+  "description": "Por Autopista Central, Caletera Ruta 5 y Av. Presidente Jorge Alessandri Rodríguez",
+  "streets": [
+   "Autopista Central",
+   "Caletera Ruta 5",
+   "Av. Presidente Jorge Alessandri Rodríguez"
+  ]
+ },
+ "235078": {
+  "description": "Por Camino Nos a Los Morros, Av. Portales y Ramón Freire",
+  "streets": [
+   "Camino Nos a Los Morros",
+   "Av. Portales",
+   "Ramón Freire"
+  ]
+ },
+ "235079": {
+  "description": "Por Camino a Lonquén, Av. Calera de Tango y San José de Tango",
+  "streets": [
+   "Camino a Lonquén",
+   "Av. Calera de Tango",
+   "San José de Tango"
+  ]
+ },
+ "235080": {
+  "description": "Por El Romeral, El Barrancón y Eyzaguirre",
+  "streets": [
+   "El Romeral",
+   "El Barrancón",
+   "Eyzaguirre"
+  ]
+ },
+ "235083": {
+  "description": "Por Av. Lo Blanco, Av. Padre Hurtado y Santa Marta",
+  "streets": [
+   "Av. Lo Blanco",
+   "Av. Padre Hurtado",
+   "Santa Marta"
+  ]
+ },
+ "235084": {
+  "description": "Por Av. San Francisco, Av. Lo Blanco y Pedro Sancho de la Hoz",
+  "streets": [
+   "Av. San Francisco",
+   "Av. Lo Blanco",
+   "Pedro Sancho de la Hoz"
+  ]
+ },
+ "235085": {
+  "description": "Por Santa Mercedes, Santa Marta y Av. Colón Sur",
+  "streets": [
+   "Santa Mercedes",
+   "Santa Marta",
+   "Av. Colón Sur"
+  ]
+ },
+ "235087": {
+  "description": "Por Av. Padre Hurtado, Carlos Condell y Av. San José",
+  "streets": [
+   "Av. Padre Hurtado",
+   "Carlos Condell",
+   "Av. San José"
+  ]
+ },
+ "235088": {
+  "description": "Por Carlos Condell, Gran Avenida José Miguel Carrera y Av. Urmeneta",
+  "streets": [
+   "Carlos Condell",
+   "Gran Avenida José Miguel Carrera",
+   "Av. Urmeneta"
+  ]
+ },
+ "235089": {
+  "description": "Por Martín de Solís, Av. Colón Sur y Av. Central",
+  "streets": [
+   "Martín de Solís",
+   "Av. Colón Sur",
+   "Av. Central"
+  ]
+ },
+ "235090": {
+  "description": "Por Av. Presidente Jorge Alessandri Rodríguez, Las Acacias y Ramón Freire",
+  "streets": [
+   "Av. Presidente Jorge Alessandri Rodríguez",
+   "Las Acacias",
+   "Ramón Freire"
+  ]
+ },
+ "235091": {
+  "description": "Por San Miguel, María Elena y Elisa Correa Sanfuentes",
+  "streets": [
+   "San Miguel",
+   "María Elena",
+   "Elisa Correa Sanfuentes"
+  ]
+ },
+ "235092": {
+  "description": "Por Av. Concha y Toro, Av. Gabriela Poniente y Av. Gabriela",
+  "streets": [
+   "Av. Concha y Toro",
+   "Av. Gabriela Poniente",
+   "Av. Gabriela"
+  ]
+ },
+ "235093": {
+  "description": "Por Av. Américo Vespucio, Autopista Vespucio Sur y Av. El Descanso",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Autopista Vespucio Sur",
+   "Av. El Descanso"
+  ]
+ },
+ "235094": {
+  "description": "Por Av. Américo Vespucio, Av. Lo Errázuriz y Av. 5 de Abril",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Lo Errázuriz",
+   "Av. 5 de Abril"
+  ]
+ },
+ "235095": {
+  "description": "Por Av. Américo Vespucio, Av. Lo Errázuriz y Av. 5 de Abril",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Lo Errázuriz",
+   "Av. 5 de Abril"
+  ]
+ },
+ "235096": {
+  "description": "Por Av. Américo Vespucio, Av. Lo Errázuriz y Av. 5 de Abril",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Lo Errázuriz",
+   "Av. 5 de Abril"
+  ]
+ },
+ "235098": {
+  "description": "Por Av. Américo Vespucio, Av. Santa Rosa y Av. Padre Hurtado",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Santa Rosa",
+   "Av. Padre Hurtado"
+  ]
+ },
+ "235099": {
+  "description": "Por Av. Santa Rosa, Violeta Parra y Av. Padre Hurtado",
+  "streets": [
+   "Av. Santa Rosa",
+   "Violeta Parra",
+   "Av. Padre Hurtado"
+  ]
+ },
+ "235100": {
+  "description": "Por Los Raulíes, Av. Padre Hurtado y Santa Marta",
+  "streets": [
+   "Los Raulíes",
+   "Av. Padre Hurtado",
+   "Santa Marta"
+  ]
+ },
+ "235101": {
+  "description": "Por Av. Padre Hurtado, Av. San José y Camino Padre Hurtado",
+  "streets": [
+   "Av. Padre Hurtado",
+   "Av. San José",
+   "Camino Padre Hurtado"
+  ]
+ },
+ "235102": {
+  "description": "Por Carlos Condell, Los Pétalos y Av. Padre Hurtado",
+  "streets": [
+   "Carlos Condell",
+   "Los Pétalos",
+   "Av. Padre Hurtado"
+  ]
+ },
+ "235144": {
+  "description": "Por Av. Santa Rosa, Batallón Chacabuco y Av. Gabriela Poniente",
+  "streets": [
+   "Av. Santa Rosa",
+   "Batallón Chacabuco",
+   "Av. Gabriela Poniente"
+  ]
+ },
+ "236001": {
+  "description": "Por El Conquistador, Av. 4 Poniente y Av. Portales",
+  "streets": [
+   "El Conquistador",
+   "Av. 4 Poniente",
+   "Av. Portales"
+  ]
+ },
+ "236002": {
+  "description": "Por El Conquistador, Camino a Rinconada y Av. Segunda Transversal",
+  "streets": [
+   "El Conquistador",
+   "Camino a Rinconada",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236003": {
+  "description": "Por El Conquistador, Camino a Rinconada y Av. Los Pajaritos",
+  "streets": [
+   "El Conquistador",
+   "Camino a Rinconada",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236004": {
+  "description": "Por Camino a Rinconada, Av. Los Pajaritos y Av. Longitudinal",
+  "streets": [
+   "Camino a Rinconada",
+   "Av. Los Pajaritos",
+   "Av. Longitudinal"
+  ]
+ },
+ "236005": {
+  "description": "Por Av. Nueva San Martín, Av. Los Pajaritos y Av. Gladys Marín",
+  "streets": [
+   "Av. Nueva San Martín",
+   "Av. Los Pajaritos",
+   "Av. Gladys Marín"
+  ]
+ },
+ "236006": {
+  "description": "Por Camino La Farfana, Av. La Sinfonía y Av. Los Pajaritos",
+  "streets": [
+   "Camino La Farfana",
+   "Av. La Sinfonía",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236007": {
+  "description": "Por Camino La Farfana, Av. La Farfana y Av. Los Pajaritos",
+  "streets": [
+   "Camino La Farfana",
+   "Av. La Farfana",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236008": {
+  "description": "Por Av. Los Pajaritos, Camino La Farfana y Av. La Farfana",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Camino La Farfana",
+   "Av. La Farfana"
+  ]
+ },
+ "236009": {
+  "description": "Por Camino La Farfana, Av. La Farfana y Av. Los Pajaritos",
+  "streets": [
+   "Camino La Farfana",
+   "Av. La Farfana",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236010": {
+  "description": "Por Av. Los Pajaritos, Alberto Llona y Camino a Rinconada",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Alberto Llona",
+   "Camino a Rinconada"
+  ]
+ },
+ "236012": {
+  "description": "Por Camino a Rinconada, Av. Segunda Transversal y Av. Central Gonzalo Pérez Llona",
+  "streets": [
+   "Camino a Rinconada",
+   "Av. Segunda Transversal",
+   "Av. Central Gonzalo Pérez Llona"
+  ]
+ },
+ "236013": {
+  "description": "Por Camino a Rinconada, Primera Transversal y Av. Segunda Transversal",
+  "streets": [
+   "Camino a Rinconada",
+   "Primera Transversal",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236015": {
+  "description": "Por Camino a Rinconada, Av. Los Pajaritos y Av. Longitudinal",
+  "streets": [
+   "Camino a Rinconada",
+   "Av. Los Pajaritos",
+   "Av. Longitudinal"
+  ]
+ },
+ "236016": {
+  "description": "Por Camino a Rinconada, Av. Los Pajaritos y Av. Segunda Transversal",
+  "streets": [
+   "Camino a Rinconada",
+   "Av. Los Pajaritos",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236018": {
+  "description": "Por Av. Los Pajaritos, Av. Longitudinal y Av. General Óscar Bonilla",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. Longitudinal",
+   "Av. General Óscar Bonilla"
+  ]
+ },
+ "236019": {
+  "description": "Por Av. Portales, Av. Los Pajaritos y Av. Longitudinal",
+  "streets": [
+   "Av. Portales",
+   "Av. Los Pajaritos",
+   "Av. Longitudinal"
+  ]
+ },
+ "236020": {
+  "description": "Por René Olivares Becerra, Av. El Olimpo y Camino a Rinconada",
+  "streets": [
+   "René Olivares Becerra",
+   "Av. El Olimpo",
+   "Camino a Rinconada"
+  ]
+ },
+ "236021": {
+  "description": "Por René Olivares Becerra, Camino a Rinconada y Av. 4 Poniente",
+  "streets": [
+   "René Olivares Becerra",
+   "Camino a Rinconada",
+   "Av. 4 Poniente"
+  ]
+ },
+ "236022": {
+  "description": "Por Av. El Olimpo, Primera Transversal y Av. Segunda Transversal",
+  "streets": [
+   "Av. El Olimpo",
+   "Primera Transversal",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236023": {
+  "description": "Por René Olivares Becerra, Primera Transversal y Av. Segunda Transversal",
+  "streets": [
+   "René Olivares Becerra",
+   "Primera Transversal",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236025": {
+  "description": "Por Av. Nueva San Martín, Camino a Rinconada y Av. Portales",
+  "streets": [
+   "Av. Nueva San Martín",
+   "Camino a Rinconada",
+   "Av. Portales"
+  ]
+ },
+ "236026": {
+  "description": "Por Av. Los Pajaritos, Av. Segunda Transversal y Av. del Ferrocarril",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. Segunda Transversal",
+   "Av. del Ferrocarril"
+  ]
+ },
+ "236027": {
+  "description": "Por Av. Nueva San Martín, Av. Los Pajaritos y Alberto Llona",
+  "streets": [
+   "Av. Nueva San Martín",
+   "Av. Los Pajaritos",
+   "Alberto Llona"
+  ]
+ },
+ "236028": {
+  "description": "Por Camino La Farfana, Av. El Rosal y Av. Las Parcelas",
+  "streets": [
+   "Camino La Farfana",
+   "Av. El Rosal",
+   "Av. Las Parcelas"
+  ]
+ },
+ "236029": {
+  "description": "Por Camino La Farfana, Av. Simón Bolívar y Av. 5 de Abril",
+  "streets": [
+   "Camino La Farfana",
+   "Av. Simón Bolívar",
+   "Av. 5 de Abril"
+  ]
+ },
+ "236030": {
+  "description": "Por Camino La Farfana, Av. El Rosal y Av. 5 de Abril",
+  "streets": [
+   "Camino La Farfana",
+   "Av. El Rosal",
+   "Av. 5 de Abril"
+  ]
+ },
+ "236031": {
+  "description": "Por José Manuel Borgoño, Cuatro Álamos y Av. Segunda Transversal",
+  "streets": [
+   "José Manuel Borgoño",
+   "Cuatro Álamos",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236032": {
+  "description": "Por Camino a Rinconada, Primera Transversal y Av. Segunda Transversal",
+  "streets": [
+   "Camino a Rinconada",
+   "Primera Transversal",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236033": {
+  "description": "Por Camino a Rinconada, Central y Machicura",
+  "streets": [
+   "Camino a Rinconada",
+   "Central",
+   "Machicura"
+  ]
+ },
+ "236034": {
+  "description": "Por Av. 4 Poniente, Av. El Olimpo y Av. Segunda Transversal",
+  "streets": [
+   "Av. 4 Poniente",
+   "Av. El Olimpo",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236035": {
+  "description": "Por Av. 4 Poniente, Camino a Rinconada y Av. Segunda Transversal",
+  "streets": [
+   "Av. 4 Poniente",
+   "Camino a Rinconada",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236036": {
+  "description": "Por Av. Portales, Av. 3 Poniente y Av. Los Pajaritos",
+  "streets": [
+   "Av. Portales",
+   "Av. 3 Poniente",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236038": {
+  "description": "Por Av. Nueva San Martín, Av. Segunda Transversal y Av. 4 Poniente",
+  "streets": [
+   "Av. Nueva San Martín",
+   "Av. Segunda Transversal",
+   "Av. 4 Poniente"
+  ]
+ },
+ "236039": {
+  "description": "Por Av. 4 Poniente, Camino a Rinconada y Av. Segunda Transversal",
+  "streets": [
+   "Av. 4 Poniente",
+   "Camino a Rinconada",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236040": {
+  "description": "Por Av. Los Pajaritos, Av. La Farfana y Av. Américo Vespucio",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. La Farfana",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "236041": {
+  "description": "Por Primera Transversal, 3 Norte y Av. Lumen",
+  "streets": [
+   "Primera Transversal",
+   "3 Norte",
+   "Av. Lumen"
+  ]
+ },
+ "236042": {
+  "description": "Por Primera Transversal, Las Golondrinas y Isabel Riquelme Sur",
+  "streets": [
+   "Primera Transversal",
+   "Las Golondrinas",
+   "Isabel Riquelme Sur"
+  ]
+ },
+ "236043": {
+  "description": "Por Av. Esquina Blanca, Av. del Ferrocarril y Av. Lumen",
+  "streets": [
+   "Av. Esquina Blanca",
+   "Av. del Ferrocarril",
+   "Av. Lumen"
+  ]
+ },
+ "236044": {
+  "description": "Por Av. Segunda Transversal, Av. Simón Bolívar y Av. 5 de Abril",
+  "streets": [
+   "Av. Segunda Transversal",
+   "Av. Simón Bolívar",
+   "Av. 5 de Abril"
+  ]
+ },
+ "236045": {
+  "description": "Por San Alberto Hurtado, Av. Los Pajaritos y Av. Longitudinal",
+  "streets": [
+   "San Alberto Hurtado",
+   "Av. Los Pajaritos",
+   "Av. Longitudinal"
+  ]
+ },
+ "236046": {
+  "description": "Por Av. Portales, Av. Los Pajaritos y Av. La Sinfonía",
+  "streets": [
+   "Av. Portales",
+   "Av. Los Pajaritos",
+   "Av. La Sinfonía"
+  ]
+ },
+ "236047": {
+  "description": "Por El Conquistador, Av. 4 Poniente y Av. Segunda Transversal",
+  "streets": [
+   "El Conquistador",
+   "Av. 4 Poniente",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236048": {
+  "description": "Por Camino a Rinconada, Av. Segunda Transversal y Av. Lumen",
+  "streets": [
+   "Camino a Rinconada",
+   "Av. Segunda Transversal",
+   "Av. Lumen"
+  ]
+ },
+ "236049": {
+  "description": "Por Camino La Farfana, Av. Los Pajaritos y Av. Gladys Marín",
+  "streets": [
+   "Camino La Farfana",
+   "Av. Los Pajaritos",
+   "Av. Gladys Marín"
+  ]
+ },
+ "236050": {
+  "description": "Por Primera Transversal, Camino a Melipilla y Av. Parque Central Oriente",
+  "streets": [
+   "Primera Transversal",
+   "Camino a Melipilla",
+   "Av. Parque Central Oriente"
+  ]
+ },
+ "236051": {
+  "description": "Por Av. 4 Poniente, Camino a Rinconada y Av. Segunda Transversal",
+  "streets": [
+   "Av. 4 Poniente",
+   "Camino a Rinconada",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236052": {
+  "description": "Por Av. 4 Poniente, Av. Alfredo Silva Carvallo y Av. Lumen",
+  "streets": [
+   "Av. 4 Poniente",
+   "Av. Alfredo Silva Carvallo",
+   "Av. Lumen"
+  ]
+ },
+ "236053": {
+  "description": "Por Primera Transversal, Camino San Alberto Hurtado y Camino a Melipilla",
+  "streets": [
+   "Primera Transversal",
+   "Camino San Alberto Hurtado",
+   "Camino a Melipilla"
+  ]
+ },
+ "236054": {
+  "description": "Por Primera Transversal, Camino San Alberto Hurtado y Camino a Melipilla",
+  "streets": [
+   "Primera Transversal",
+   "Camino San Alberto Hurtado",
+   "Camino a Melipilla"
+  ]
+ },
+ "236055": {
+  "description": "Por Primera Transversal, Camino a Melipilla y Av. 4 Poniente",
+  "streets": [
+   "Primera Transversal",
+   "Camino a Melipilla",
+   "Av. 4 Poniente"
+  ]
+ },
+ "236056": {
+  "description": "Por Primera Transversal, Camino a Melipilla y Av. Parque Central Oriente",
+  "streets": [
+   "Primera Transversal",
+   "Camino a Melipilla",
+   "Av. Parque Central Oriente"
+  ]
+ },
+ "236057": {
+  "description": "Por Av. Nueva San Martín, El Carmen y Av. Segunda Transversal",
+  "streets": [
+   "Av. Nueva San Martín",
+   "El Carmen",
+   "Av. Segunda Transversal"
+  ]
+ },
+ "236058": {
+  "description": "Por René Olivares Becerra, Av. El Olimpo y Av. Los Pajaritos",
+  "streets": [
+   "René Olivares Becerra",
+   "Av. El Olimpo",
+   "Av. Los Pajaritos"
+  ]
+ },
+ "236059": {
+  "description": "Por Camino San Alberto Hurtado, Camino a Melipilla y Av. Parque Central Oriente",
+  "streets": [
+   "Camino San Alberto Hurtado",
+   "Camino a Melipilla",
+   "Av. Parque Central Oriente"
+  ]
+ },
+ "236061": {
+  "description": "Por Av. Américo Vespucio, Av. Pedro Aguirre Cerda y Exposición",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Pedro Aguirre Cerda",
+   "Exposición"
+  ]
+ },
+ "236062": {
+  "description": "Por Av. Las Naciones, Av. Nueva San Martín y Av. Esquina Blanca",
+  "streets": [
+   "Av. Las Naciones",
+   "Av. Nueva San Martín",
+   "Av. Esquina Blanca"
+  ]
+ },
+ "236063": {
+  "description": "Por Av. Alfredo Silva Carvallo, Av. El Olimpo y Av. Nueva San Martín",
+  "streets": [
+   "Av. Alfredo Silva Carvallo",
+   "Av. El Olimpo",
+   "Av. Nueva San Martín"
+  ]
+ },
+ "236064": {
+  "description": "Por El Carmen, Av. Los Pajaritos y Av. Longitudinal",
+  "streets": [
+   "El Carmen",
+   "Av. Los Pajaritos",
+   "Av. Longitudinal"
+  ]
+ },
+ "236065": {
+  "description": "Por Padre Vicente Irarrázaval, Av. Padre Jaime Larraín y Av. 5 de Abril",
+  "streets": [
+   "Padre Vicente Irarrázaval",
+   "Av. Padre Jaime Larraín",
+   "Av. 5 de Abril"
+  ]
+ },
+ "236066": {
+  "description": "Por Av. Los Pajaritos, Av. Gladys Marín y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. Gladys Marín",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "236067": {
+  "description": "Por Av. Nueva San Martín, Av. Los Pajaritos y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Nueva San Martín",
+   "Av. Los Pajaritos",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "236068": {
+  "description": "Por Av. Los Pajaritos, Av. Gladys Marín y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. Gladys Marín",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "236069": {
+  "description": "Por Av. Los Pajaritos, Av. Gladys Marín y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Los Pajaritos",
+   "Av. Gladys Marín",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "236070": {
+  "description": "Por Av. Américo Vespucio, El Mirador y Av. Pedro Aguirre Cerda",
+  "streets": [
+   "Av. Américo Vespucio",
+   "El Mirador",
+   "Av. Pedro Aguirre Cerda"
+  ]
+ },
+ "237001": {
+  "description": "Por Av. Costanera Sur, Av. Carrascal y Matucana",
+  "streets": [
+   "Av. Costanera Sur",
+   "Av. Carrascal",
+   "Matucana"
+  ]
+ },
+ "237002": {
+  "description": "Por Av. Costanera Sur, Av. Carrascal y Matucana",
+  "streets": [
+   "Av. Costanera Sur",
+   "Av. Carrascal",
+   "Matucana"
+  ]
+ },
+ "237003": {
+  "description": "Por Av. Costanera Sur, Av. Carrascal y Av. Las Rejas Sur",
+  "streets": [
+   "Av. Costanera Sur",
+   "Av. Carrascal",
+   "Av. Las Rejas Sur"
+  ]
+ },
+ "237004": {
+  "description": "Por Av. Presidente Balmaceda, Av. Costanera Sur y Av. Carrascal",
+  "streets": [
+   "Av. Presidente Balmaceda",
+   "Av. Costanera Sur",
+   "Av. Carrascal"
+  ]
+ },
+ "237005": {
+  "description": "Por Av. Carrascal, Av. Mapocho y Av. Presidente Balmaceda",
+  "streets": [
+   "Av. Carrascal",
+   "Av. Mapocho",
+   "Av. Presidente Balmaceda"
+  ]
+ },
+ "237006": {
+  "description": "Por Av. Carrascal, Av. Mapocho y Av. Presidente Balmaceda",
+  "streets": [
+   "Av. Carrascal",
+   "Av. Mapocho",
+   "Av. Presidente Balmaceda"
+  ]
+ },
+ "237007": {
+  "description": "Por Av. La Laguna Sur, Av. Gladys Marín y Ruta 68",
+  "streets": [
+   "Av. La Laguna Sur",
+   "Av. Gladys Marín",
+   "Ruta 68"
+  ]
+ },
+ "237008": {
+  "description": "Por Av. Gladys Marín, Av. La Travesía y Av. General Óscar Bonilla",
+  "streets": [
+   "Av. Gladys Marín",
+   "Av. La Travesía",
+   "Av. General Óscar Bonilla"
+  ]
+ },
+ "237009": {
+  "description": "Por Sergio Valdovinos, Av. Mapocho y Av. Mapocho Norte",
+  "streets": [
+   "Sergio Valdovinos",
+   "Av. Mapocho",
+   "Av. Mapocho Norte"
+  ]
+ },
+ "237010": {
+  "description": "Por Serrano, San Pablo y Rosas",
+  "streets": [
+   "Serrano",
+   "San Pablo",
+   "Rosas"
+  ]
+ },
+ "237011": {
+  "description": "Por Av. General Óscar Bonilla, Serrano y Av. El Tranque",
+  "streets": [
+   "Av. General Óscar Bonilla",
+   "Serrano",
+   "Av. El Tranque"
+  ]
+ },
+ "237012": {
+  "description": "Por Av. Costanera Sur, Huelén y Av. Carrascal",
+  "streets": [
+   "Av. Costanera Sur",
+   "Huelén",
+   "Av. Carrascal"
+  ]
+ },
+ "237013": {
+  "description": "Por Juan Martínez de Rozas, Av. Mapocho y Salvador Gutiérrez",
+  "streets": [
+   "Juan Martínez de Rozas",
+   "Av. Mapocho",
+   "Salvador Gutiérrez"
+  ]
+ },
+ "237017": {
+  "description": "Por Ruta 68, San Pablo y Av. Neptuno",
+  "streets": [
+   "Ruta 68",
+   "San Pablo",
+   "Av. Neptuno"
+  ]
+ },
+ "238002": {
+  "description": "Por Av. Manuel Antonio Matta, Av. Américo Vespucio y Av. Presidente Eduardo Frei Montalva",
+  "streets": [
+   "Av. Manuel Antonio Matta",
+   "Av. Américo Vespucio",
+   "Av. Presidente Eduardo Frei Montalva"
+  ]
+ },
+ "238003": {
+  "description": "Por Av. Manuel Antonio Matta, Av. Américo Vespucio y Av. Presidente Eduardo Frei Montalva",
+  "streets": [
+   "Av. Manuel Antonio Matta",
+   "Av. Américo Vespucio",
+   "Av. Presidente Eduardo Frei Montalva"
+  ]
+ },
+ "238004": {
+  "description": "Por Av. Barón de Juras Reales, Av. Presidente Eduardo Frei Montalva y Matucana",
+  "streets": [
+   "Av. Barón de Juras Reales",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Matucana"
+  ]
+ },
+ "238005": {
+  "description": "Por Av. Condell, Av. Carrascal y Matucana",
+  "streets": [
+   "Av. Condell",
+   "Av. Carrascal",
+   "Matucana"
+  ]
+ },
+ "238006": {
+  "description": "Por Av. Condell, Av. Carrascal y Av. Presidente Balmaceda",
+  "streets": [
+   "Av. Condell",
+   "Av. Carrascal",
+   "Av. Presidente Balmaceda"
+  ]
+ },
+ "238007": {
+  "description": "Por Av. Dorsal, Nueva de Matte y Av. Independencia",
+  "streets": [
+   "Av. Dorsal",
+   "Nueva de Matte",
+   "Av. Independencia"
+  ]
+ },
+ "238008": {
+  "description": "Por Av. Presidente Eduardo Frei Montalva, Av. Barón de Juras Reales y Av. Independencia",
+  "streets": [
+   "Av. Presidente Eduardo Frei Montalva",
+   "Av. Barón de Juras Reales",
+   "Av. Independencia"
+  ]
+ },
+ "238009": {
+  "description": "Por Salomón Sack, Av. Presidente Eduardo Frei Montalva y Matucana",
+  "streets": [
+   "Salomón Sack",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Matucana"
+  ]
+ },
+ "238012": {
+  "description": "Por Salomón Sack, Av. Presidente Eduardo Frei Montalva y Matucana",
+  "streets": [
+   "Salomón Sack",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Matucana"
+  ]
+ },
+ "238013": {
+  "description": "Por Av. José Miguel Infante, Av. Jorge Hirmas y Av. Vicuña Mackenna",
+  "streets": [
+   "Av. José Miguel Infante",
+   "Av. Jorge Hirmas",
+   "Av. Vicuña Mackenna"
+  ]
+ },
+ "238014": {
+  "description": "Por Av. José Miguel Infante, Av. José Manuel Balmaceda y Av. Joaquín Walker Martínez",
+  "streets": [
+   "Av. José Miguel Infante",
+   "Av. José Manuel Balmaceda",
+   "Av. Joaquín Walker Martínez"
+  ]
+ },
+ "238015": {
+  "description": "Por Nueva de Matte, Av. Independencia y Av. La Paz",
+  "streets": [
+   "Nueva de Matte",
+   "Av. Independencia",
+   "Av. La Paz"
+  ]
+ },
+ "238017": {
+  "description": "Por Gral. San Martín, Autopista Los Libertadores y Av. Independencia",
+  "streets": [
+   "Gral. San Martín",
+   "Autopista Los Libertadores",
+   "Av. Independencia"
+  ]
+ },
+ "238018": {
+  "description": "Por Av. Independencia, Autopista Los Libertadores y Gral. San Martín",
+  "streets": [
+   "Av. Independencia",
+   "Autopista Los Libertadores",
+   "Gral. San Martín"
+  ]
+ },
+ "238022": {
+  "description": "Por Av. Bernardo O'Higgins, San Luis y Av. Santa Luisa",
+  "streets": [
+   "Av. Bernardo O'Higgins",
+   "San Luis",
+   "Av. Santa Luisa"
+  ]
+ },
+ "238023": {
+  "description": "Por Camino Lo Echevers, Av. Américo Vespucio y Av. Presidente Eduardo Frei Montalva",
+  "streets": [
+   "Camino Lo Echevers",
+   "Av. Américo Vespucio",
+   "Av. Presidente Eduardo Frei Montalva"
+  ]
+ },
+ "238024": {
+  "description": "Por San Luis, Ramón Rosales y Av. Santa Luisa",
+  "streets": [
+   "San Luis",
+   "Ramón Rosales",
+   "Av. Santa Luisa"
+  ]
+ },
+ "238025": {
+  "description": "Por Av. Manuel Antonio Matta, Lo Cruzat y Av. Américo Vespucio",
+  "streets": [
+   "Av. Manuel Antonio Matta",
+   "Lo Cruzat",
+   "Av. Américo Vespucio"
+  ]
+ },
+ "238027": {
+  "description": "Por Av. Presidente Eduardo Frei Montalva, Ruta 5 Norte y Autopista Central",
+  "streets": [
+   "Av. Presidente Eduardo Frei Montalva",
+   "Ruta 5 Norte",
+   "Autopista Central"
+  ]
+ },
+ "238028": {
+  "description": "Por Av. Pedro Fontova, Av. Américo Vespucio y Camino de Cintura",
+  "streets": [
+   "Av. Pedro Fontova",
+   "Av. Américo Vespucio",
+   "Camino de Cintura"
+  ]
+ },
+ "238031": {
+  "description": "Por Av. Américo Vespucio, Autopista Vespucio Norte y Ruta 5 Norte",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Autopista Vespucio Norte",
+   "Ruta 5 Norte"
+  ]
+ },
+ "238033": {
+  "description": "Por Av. La Montaña, Av. Presidente Eduardo Frei Montalva y Ruta 5 Norte",
+  "streets": [
+   "Av. La Montaña",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Ruta 5 Norte"
+  ]
+ },
+ "238035": {
+  "description": "Por La Rinconada, Av. del Parque y Av. El Salto",
+  "streets": [
+   "La Rinconada",
+   "Av. del Parque",
+   "Av. El Salto"
+  ]
+ },
+ "238042": {
+  "description": "Por Av. Américo Vespucio, Av. Presidente Eduardo Frei Montalva y Ruta 5 Norte",
+  "streets": [
+   "Av. Américo Vespucio",
+   "Av. Presidente Eduardo Frei Montalva",
+   "Ruta 5 Norte"
+  ]
+ },
+ "239001": {
+  "description": "Por Sebastopol, Mirador Azul y Froilán Roa",
+  "streets": [
+   "Sebastopol",
+   "Mirador Azul",
+   "Froilán Roa"
+  ]
+ },
+ "239002": {
+  "description": "Por Av. Clotario Blest, Av. Departamental y Av. Club Hípico",
+  "streets": [
+   "Av. Clotario Blest",
+   "Av. Departamental",
+   "Av. Club Hípico"
+  ]
+ },
+ "239003": {
+  "description": "Por Carmen Mena, Varas Mena y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Carmen Mena",
+   "Varas Mena",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239004": {
+  "description": "Por 2 de Abril, Llano Subercaseaux y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "2 de Abril",
+   "Llano Subercaseaux",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239005": {
+  "description": "Por Av. Alcalde Carlos Valdovinos, Bascuñán Guerrero y El Mirador",
+  "streets": [
+   "Av. Alcalde Carlos Valdovinos",
+   "Bascuñán Guerrero",
+   "El Mirador"
+  ]
+ },
+ "239006": {
+  "description": "Por Av. Alcalde Carlos Valdovinos, Av. Libertador Bernardo O'Higgins y Club Hípico",
+  "streets": [
+   "Av. Alcalde Carlos Valdovinos",
+   "Av. Libertador Bernardo O'Higgins",
+   "Club Hípico"
+  ]
+ },
+ "239007": {
+  "description": "Por Vecinal, Ingeniero Budge y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Vecinal",
+   "Ingeniero Budge",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239008": {
+  "description": "Por Ingeniero Budge, Av. Berlín y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Ingeniero Budge",
+   "Av. Berlín",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239009": {
+  "description": "Por Av. Departamental, Pirámide y Llico",
+  "streets": [
+   "Av. Departamental",
+   "Pirámide",
+   "Llico"
+  ]
+ },
+ "239010": {
+  "description": "Por Comercio, Alcalde Pedro Alarcón y Álvarez de Toledo",
+  "streets": [
+   "Comercio",
+   "Alcalde Pedro Alarcón",
+   "Álvarez de Toledo"
+  ]
+ },
+ "239012": {
+  "description": "Por Av. La Marina, San Ignacio de Loyola y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. La Marina",
+   "San Ignacio de Loyola",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239014": {
+  "description": "Por Varas Mena, Carmen Mena y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Varas Mena",
+   "Carmen Mena",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239016": {
+  "description": "Por San Nicolás, San Ignacio de Loyola y Lord Cochrane",
+  "streets": [
+   "San Nicolás",
+   "San Ignacio de Loyola",
+   "Lord Cochrane"
+  ]
+ },
+ "239017": {
+  "description": "Por Av. Beaucheff, Almirante Latorre y Av. Libertador Bernardo O'Higgins",
+  "streets": [
+   "Av. Beaucheff",
+   "Almirante Latorre",
+   "Av. Libertador Bernardo O'Higgins"
+  ]
+ },
+ "239018": {
+  "description": "Por Av. Pintor Benito Rebolledo, Froilán Roa y San Nicolás",
+  "streets": [
+   "Av. Pintor Benito Rebolledo",
+   "Froilán Roa",
+   "San Nicolás"
+  ]
+ },
+ "239019": {
+  "description": "Por Av. Departamental, Lazo y Gran Avenida José Miguel Carrera",
+  "streets": [
+   "Av. Departamental",
+   "Lazo",
+   "Gran Avenida José Miguel Carrera"
+  ]
+ },
+ "239020": {
+  "description": "Por Av. Lo Ovalle, Av. Federico Haydn y Av. Departamental",
+  "streets": [
+   "Av. Lo Ovalle",
+   "Av. Federico Haydn",
+   "Av. Departamental"
+  ]
+ }
+}

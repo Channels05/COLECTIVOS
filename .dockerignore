@@ -8,3 +8,4 @@ data/overpass/
 data/gore/colectivos_la_florida.geojson
 tests/
 analytics/
+data/osm/

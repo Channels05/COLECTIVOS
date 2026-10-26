@@ -68,6 +68,15 @@ async def search_lines(
     ]
 
 
+@public_router.get("/lines/{code}", response_model=LineRead)
+async def get_line(code: str, db: DbSession) -> Line:
+    """Una línea del catálogo: la app muestra su letrero o las calles por donde pasa."""
+    line = await db.get(Line, code)
+    if line is None or line.status == LineStatus.REJECTED:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Línea no encontrada.")
+    return line
+
+
 # --- Pasajero aportante (X-Contributor-Id + X-Contributor-Token) --------------------------------
 
 
@@ -85,7 +94,9 @@ async def start_contribution(
     body: ContributionStart, contributor: AuthenticatedContributor, db: DbSession
 ) -> RouteRecording:
     try:
-        return await recordings.start_contribution(db, contributor, body.line_code, body.direction, body.comment)
+        return await recordings.start_contribution(
+            db, contributor, body.line_code, body.direction, body.comment, body.sign_text
+        )
     except ServiceError as exc:
         raise _http(exc) from None
 

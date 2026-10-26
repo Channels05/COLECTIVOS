@@ -16,6 +16,7 @@ class ContributionStart(BaseModel):
     line_code: str = Field(min_length=1, max_length=20)
     direction: RouteDirection | None = None
     comment: str | None = Field(default=None, max_length=300, examples=["Va hacia Metro Bellavista"])
+    sign_text: str | None = Field(default=None, max_length=120, examples=["Metro Bellavista – Av. La Florida"])
 
 
 class PointIn(BaseModel):
@@ -41,6 +42,8 @@ class RecordingReview(BaseModel):
 class RecordingApproval(RecordingReview):
     # Obligatorio si quien grabó (un pasajero) no indicó el sentido.
     direction: RouteDirection | None = None
+    # Lo que dice el letrero (p. ej. el que anotó el pasajero): queda como nombre de la línea.
+    line_name: str | None = Field(default=None, max_length=120)
 
 
 class RecordingRead(BaseModel):
@@ -50,6 +53,7 @@ class RecordingRead(BaseModel):
     line_code: str
     direction: RouteDirection | None
     comment: str | None = None
+    sign_text: str | None = None
     status: RecordingStatus
     started_at: datetime
     finished_at: datetime | None

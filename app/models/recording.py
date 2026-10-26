@@ -68,6 +68,9 @@ class RouteRecording(Base):
     direction: Mapped[RouteDirection | None] = mapped_column(_pg_enum(RouteDirection, "route_direction"))
     # Comentario de quien grabó (p. ej. "va hacia Metro Bellavista"): ayuda a elegir el sentido.
     comment: Mapped[str | None] = mapped_column(String(300))
+    # Pasajero: lo que dice el letrero del auto, si la línea aún no lo tiene. El administrador
+    # lo copia al catálogo (lines.name) al aprobar.
+    sign_text: Mapped[str | None] = mapped_column(String(120))
     status: Mapped[RecordingStatus] = mapped_column(
         _pg_enum(RecordingStatus, "recording_status"), default=RecordingStatus.RECORDING
     )

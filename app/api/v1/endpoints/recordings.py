@@ -134,7 +134,7 @@ async def approve_recording(
 
     `direction` es obligatorio si quien grabó (un pasajero) no indicó el sentido."""
     try:
-        recording = await recordings.approve(db, recording_id, body.note, body.direction)
+        recording = await recordings.approve(db, recording_id, body.note, body.direction, body.line_name)
     except recordings.RecordingError as exc:
         raise _http(exc) from None
     # Con varios workers de uvicorn, los demás lo verán al reiniciar o con POST /routes/reload.

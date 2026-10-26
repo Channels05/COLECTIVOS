@@ -4,3 +4,4 @@ __pycache__/
 data/lake/
 .demo/
 .pytest_cache/
+data/osm/

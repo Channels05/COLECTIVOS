@@ -91,6 +91,17 @@ se omite `236038 _`, que no trae sentido. En La Florida: 61 líneas que pasan po
   la resolución de cada línea).
 - **Código de línea**: es el código del registro (ej. `233010`); puede no coincidir con el número
   del letrero del auto. Hay que mapearlo al registrar vehículos.
+- **Letrero y calles**: el registro no trae el texto del letrero. Cada línea se describe por sus
+  calles principales ("Por Av. Vicuña Mackenna, Av. Colombia y …"), calculadas con OpenStreetMap
+  por `scripts/build_line_streets.py` (348 de 408 líneas; las rurales fuera del Gran Santiago
+  quedan sin descripción). El resultado, `data/gore/line_streets.json`, va en git y
+  `scripts/describe_lines.py` lo aplica al arrancar. El letrero lo anotan los pasajeros al grabar
+  y el administrador lo pasa al catálogo al aprobar. Para recalcular las calles:
+  ```bash
+  pip install osmium
+  curl -o data/osm/Santiago.osm.pbf https://download.bbbike.org/osm/bbbike/Santiago/Santiago.osm.pbf
+  python -m scripts.build_line_streets
+  ```
 - **Licencia**: la capa no declara licencia; confirmar con el GORE antes de redistribuir.
 
 **OSM** (`fetch_overpass_routes`) queda como fuente secundaria: hoy no hay colectivos
@@ -123,7 +134,8 @@ Analítica del día (hora de Santiago): `python -m analytics.daily_report 2026-1
 
 `render.yaml` (Blueprint) crea la API (Docker), PostgreSQL 16 con PostGIS y Redis (Key Value).
 Al arrancar, el contenedor (`docker-entrypoint.sh`) aplica las migraciones y, si la base está
-vacía, importa los 410 trazados del GORE (`scripts/seed_routes.py`). El persistidor de
+vacía, importa los 410 trazados del GORE (`scripts/seed_routes.py`) y describe las líneas por sus
+calles (`scripts/describe_lines.py`). El persistidor de
 ubicaciones corre dentro de la API (`RUN_WORKER_IN_PROCESS=true`) porque los workers aparte no
 tienen plan gratis.
 
@@ -169,6 +181,8 @@ Al revisar una migración autogenerada:
 | Método | Ruta | Quién |
 |---|---|---|
 | POST | `/api/v1/vehicles` (header `X-Admin-Key`) | admin: registra auto, devuelve `device_token` una vez |
+| GET | `/api/v1/vehicles` (admin) | admin: vehículos registrados (sin tokens) |
+| POST | `/api/v1/vehicles/{id}/token` (admin) | admin: token nuevo (QR nuevo); el anterior deja de servir |
 | POST | `/api/v1/vehicles/{id}/location` (header `X-Device-Token`) | app conductor, cada 5 s |
 | GET | `/api/v1/vehicles/nearby?lat=&lon=&radius_m=2000&line_code=&min_seats=` | app pasajero |
 | GET | `/api/v1/routes/{line_code}` | app pasajero: trazado en GeoJSON (`source`: `gore_rm` / `osm` / `recorded`) |
@@ -177,17 +191,18 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/vehicles/{id}/recordings/active` (device token) | conductor: retomar grabación en curso |
 | POST | `/api/v1/vehicles/{id}/recordings/{rid}/finish` · `/cancel` (device token) | conductor: terminar (propone trazado) o cancelar |
 | GET | `/api/v1/admin/recordings?status_filter=` · `/{rid}` (admin) | admin: bandeja y detalle con GeoJSON |
-| POST | `/api/v1/admin/recordings/{rid}/approve` · `/reject` `{note}` (admin) | admin: aprobar (crea la ruta) o rechazar |
+| POST | `/api/v1/admin/recordings/{rid}/approve` · `/reject` `{note, direction?, line_name?}` (admin) | admin: aprobar (crea la ruta; `line_name` guarda el letrero) o rechazar |
 | POST | `/api/v1/contributors` | app pasajero: registro anónimo (id + token), máx. 10 por IP y hora |
-| GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas (con lat/lon: las que pasan cerca) |
+| GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas por código, letrero o calle (con lat/lon: las que pasan cerca) |
+| GET | `/api/v1/lines/{code}` | app pasajero: una línea (letrero y calles) para la tarjeta del colectivo |
 | POST | `/api/v1/contributions/lines` `{name, description, commune}` (aportante) | pasajero: proponer una línea que falta (código `P00001`…) |
-| POST | `/api/v1/contributions/recordings` `{line_code, direction?, comment?}` (aportante) | pasajero: empezar a grabar su viaje |
+| POST | `/api/v1/contributions/recordings` `{line_code, direction?, comment?, sign_text?}` (aportante) | pasajero: empezar a grabar su viaje |
 | POST | `/api/v1/contributions/recordings/{rid}/points` `{points: [...]}` (aportante) | pasajero: lote de puntos GPS (idempotente) |
 | GET | `/api/v1/contributions/recordings` · `/active` (aportante) | pasajero: mis aportes / retomar |
 | POST | `/api/v1/contributions/recordings/{rid}/finish` · `/cancel` (aportante) | pasajero: terminar o descartar |
 | GET | `/api/v1/admin/lines?status_filter=` (admin) | admin: líneas propuestas por pasajeros |
 | POST | `/api/v1/admin/lines/{code}/approve` · `/reject` (admin) | admin: aprobar (puede corregir letrero y comuna) o rechazar |
-| GET | `/admin` | página web de revisión (recorridos grabados + líneas propuestas) |
+| GET | `/admin` | página web: recorridos grabados, líneas propuestas y vehículos (registrar y entregar el QR del conductor) |
 
 ## Grabación de recorridos (líneas sin trazado o recorridos que cambiaron)
 

@@ -1,4 +1,7 @@
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import DbSession, require_admin
@@ -22,5 +25,28 @@ async def register_vehicle(body: VehicleCreate, db: DbSession) -> VehicleCreated
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status.HTTP_409_CONFLICT, f"La patente {body.plate} ya está registrada") from None
+    await db.refresh(vehicle)
+    return VehicleCreated(**VehicleRead.model_validate(vehicle).model_dump(), device_token=token)
+
+
+@router.get("", response_model=list[VehicleRead])
+async def list_vehicles(db: DbSession) -> list[Vehicle]:
+    """Vehículos registrados (para la página /admin)."""
+    return list(await db.scalars(select(Vehicle).order_by(Vehicle.line_code, Vehicle.plate)))
+
+
+@router.post("/{vehicle_id}/token", response_model=VehicleCreated)
+async def rotate_token(vehicle_id: uuid.UUID, db: DbSession) -> VehicleCreated:
+    """Token nuevo (y QR nuevo) para un vehículo: el anterior deja de funcionar.
+
+    El token solo se guarda como hash, así que no se puede volver a mostrar: si el conductor
+    perdió el QR o cambió de teléfono, se genera otro.
+    """
+    vehicle = await db.get(Vehicle, vehicle_id)
+    if vehicle is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Vehículo no encontrado.")
+    token = generate_device_token()
+    vehicle.device_token_hash = hash_token(token)
+    await db.commit()
     await db.refresh(vehicle)
     return VehicleCreated(**VehicleRead.model_validate(vehicle).model_dump(), device_token=token)

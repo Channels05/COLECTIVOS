@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Revisión de aportes · Colectivos</title>
+  <title>Administración · Colectivos</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <style>
     :root {
       --primary: #0b6e4f; --primary-soft: #e3f2ec; --bg: #f3f6f4; --surface: #fff; --text: #16201b;
@@ -70,14 +71,18 @@
     textarea { width: 100%; min-height: 56px; resize: vertical; }
     .status-line { font-size: 13px; color: var(--muted); }
     .error { color: var(--danger); font-size: 13px; margin-top: 8px; }
+    .qr { display: grid; justify-items: center; gap: 8px; margin: 12px 0; }
+    .qr img { width: 240px; height: 240px; image-rendering: pixelated; border: 1px solid var(--border); border-radius: 8px; }
+    .secret { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; background: var(--bg); border-radius: 8px; padding: 6px 8px; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Revisión de aportes</h1>
+    <h1>Colectivos · Administración</h1>
     <div class="modes" id="modes">
       <button data-mode="recordings" class="active">Recorridos grabados</button>
       <button data-mode="lines">Líneas propuestas</button>
+      <button data-mode="vehicles">Vehículos</button>
     </div>
     <div class="key">
       <input id="key" type="password" placeholder="Clave de administrador" autocomplete="off" />
@@ -106,6 +111,7 @@ const TABS = {
   recordings: [["pending_review", "Pendientes"], ["approved", "Aprobadas"], ["rejected", "Rechazadas"],
                ["cancelled", "Canceladas"], ["recording", "Grabando"]],
   lines: [["pending_review", "Pendientes"], ["active", "Aprobadas"], ["rejected", "Rechazadas"]],
+  vehicles: [["all", "Todos"]],
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -164,7 +170,7 @@ const lineLabel = (r) => r.line_name ? `${r.line_name} (${r.line_code})` : `Lín
 
 async function loadList() {
   sessionStorage.setItem("adminKey", keyInput.value);
-  return mode === "lines" ? loadLines() : loadRecordings();
+  return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles() : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -274,6 +280,7 @@ function renderPanel(r) {
       ? "La línea ya tiene trazado oficial: compara antes de aprobar."
       : "La línea no tiene trazado oficial: al aprobar, este pasa a ser su trazado." }),
     ...(r.comment ? [el("div", { className: "quote", textContent: `Comentario: “${r.comment}”` })] : []),
+    ...(r.sign_text ? [el("div", { className: "quote", textContent: `Letrero según quien grabó: “${r.sign_text}”` })] : []),
     legend, table,
     ...r.warnings.map((w) => el("div", { className: "warning", textContent: w })),
   ];
@@ -286,6 +293,8 @@ function renderPanel(r) {
       el("option", { value: "ida", textContent: "Ida" }),
       el("option", { value: "regreso", textContent: "Regreso" }));
     if (r.direction) direction.value = r.direction;
+    // El registro oficial no trae el letrero: lo que anotó el pasajero queda como nombre de la línea.
+    const lineName = el("input", { value: r.sign_text || r.line_name || "", placeholder: "Ej. Metro Bellavista – Av. La Florida" });
     const act = (action) => async () => {
       if (action === "approve" && !direction.value) {
         error.textContent = "Elige si el recorrido es de ida o de regreso.";
@@ -293,7 +302,12 @@ function renderPanel(r) {
       }
       buttons.forEach((b) => (b.disabled = true));
       try {
-        const body = { note: note.value || null, ...(action === "approve" ? { direction: direction.value } : {}) };
+        const newName = lineName.value.trim();
+        const body = {
+          note: note.value || null,
+          ...(action === "approve" ? { direction: direction.value } : {}),
+          ...(action === "approve" && newName && newName !== r.line_name ? { line_name: newName } : {}),
+        };
         await api(`/admin/recordings/${r.id}/${action}`, { method: "POST", body: JSON.stringify(body) });
         closePanel();
         loadList();
@@ -305,7 +319,8 @@ function renderPanel(r) {
     const approve = el("button", { className: "btn-primary", textContent: "Aprobar trazado", onclick: act("approve") });
     const reject = el("button", { className: "btn-danger", textContent: "Rechazar", onclick: act("reject") });
     const buttons = [approve, reject];
-    content.push(el("label", { className: "field" }, "Sentido", direction), note,
+    content.push(el("label", { className: "field" }, "Sentido", direction),
+      el("label", { className: "field" }, "Letrero de la línea (opcional)", lineName), note,
       el("div", { className: "actions" }, approve, reject), error);
   } else if (r.review_note) {
     content.push(el("div", { className: "status-line", textContent: `Nota: ${r.review_note}` }));
@@ -388,11 +403,108 @@ function selectLine(l) {
   panel.replaceChildren(...content);
 }
 
+// --- Vehículos: registrar y entregar el QR que vincula el teléfono del conductor ---
+
+// El QR es un enlace que abre la app del conductor (o se escanea desde ella). El token solo se
+// guarda como hash en el servidor: se muestra esta vez y, si se pierde, se genera otro.
+function showCredentials(v, title) {
+  const link = `colectivos://driver?vehicle=${v.id}&token=${encodeURIComponent(v.device_token)}`;
+  const qr = qrcode(0, "M");
+  qr.addData(link);
+  qr.make();
+  const src = qr.createDataURL(8, 16);
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: title }),
+    el("div", { className: "status-line", textContent: `${v.plate} · línea ${v.line_code} · ${v.max_capacity} asientos` }),
+    el("div", { className: "qr" },
+      el("img", { src, alt: "Código QR para vincular el teléfono del conductor" }),
+      el("a", { href: src, download: `qr-${v.plate}.gif`, textContent: "Descargar imagen del QR" })),
+    el("div", { className: "warning", textContent: "Guárdalo o envíaselo al conductor ahora: por seguridad no se puede volver a mostrar." }),
+    el("div", { className: "status-line", textContent: "En la app: Soy conductor → Escanear código QR. Si prefiere escribirlos:" }),
+    el("div", { className: "field" }, "ID del vehículo", el("div", { className: "secret", textContent: v.id })),
+    el("div", { className: "field" }, "Token del dispositivo", el("div", { className: "secret", textContent: v.device_token })),
+  );
+}
+
+async function loadVehicles() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  try {
+    const items = await api("/vehicles");
+    const add = el("div", { className: "item" }, el("div", { className: "title", textContent: "+ Registrar vehículo" }),
+      el("div", { className: "meta", textContent: "Crea el auto y entrega el QR al conductor" }));
+    add.onclick = newVehicleForm;
+    list.replaceChildren(add, ...items.map((v) => {
+      const item = el("div", { className: "item" + (v.id === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: `${v.plate} · línea ${v.line_code}` }),
+        el("div", { className: "meta", textContent: `${v.max_capacity} asientos · registrado ${fmtDate(v.created_at)}${v.is_active ? "" : " · desactivado"}` }));
+      item.onclick = () => selectVehicle(v);
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function newVehicleForm() {
+  closePanel();
+  const plate = el("input", { placeholder: "BCDF12" });
+  const line = el("input", { placeholder: "Ej. 233010" });
+  const capacity = el("input", { type: "number", min: 1, max: 6, value: 4 });
+  const error = el("div", { className: "error" });
+  const save = el("button", { className: "btn-primary", textContent: "Registrar y generar QR", onclick: async () => {
+    save.disabled = true;
+    error.textContent = "";
+    try {
+      const v = await api("/vehicles", { method: "POST", body: JSON.stringify({
+        plate: plate.value, line_code: line.value.trim(), max_capacity: Number(capacity.value) }) });
+      selectedId = v.id;
+      showCredentials(v, "Vehículo registrado");
+      loadList();
+    } catch (err) {
+      error.textContent = err.message;
+      save.disabled = false;
+    }
+  } });
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(el("h2", { textContent: "Registrar vehículo" }),
+    el("label", { className: "field" }, "Patente", plate),
+    el("label", { className: "field" }, "Código de la línea (registro del MTT o uno propuesto)", line),
+    el("label", { className: "field" }, "Asientos para pasajeros", capacity),
+    el("div", { className: "actions" }, save), error);
+}
+
+function selectVehicle(v) {
+  selectedId = v.id;
+  layers.clearLayers();
+  const error = el("div", { className: "error" });
+  const rotate = el("button", { className: "btn-primary", textContent: "Generar QR nuevo", onclick: async () => {
+    if (!confirm("El QR anterior dejará de funcionar y el conductor tendrá que vincular su teléfono de nuevo. ¿Seguir?")) return;
+    rotate.disabled = true;
+    try {
+      showCredentials(await api(`/vehicles/${v.id}/token`, { method: "POST" }), "QR nuevo");
+    } catch (err) {
+      error.textContent = err.message;
+      rotate.disabled = false;
+    }
+  } });
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(el("h2", { textContent: v.plate }),
+    el("div", { className: "status-line", textContent: `Línea ${v.line_code} · ${v.max_capacity} asientos · registrado ${fmtDate(v.created_at)}` }),
+    el("div", { className: "status-line", textContent: "El QR se muestra solo al registrar. Si el conductor lo perdió o cambió de teléfono, genera uno nuevo." }),
+    el("div", { className: "actions" }, rotate), error);
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
-  currentStatus = "pending_review";
+  currentStatus = mode === "vehicles" ? "all" : "pending_review";
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();
   renderTabs();

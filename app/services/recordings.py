@@ -75,6 +75,7 @@ async def start_contribution(
     line_code: str,
     direction: RouteDirection | None,
     comment: str | None,
+    sign_text: str | None = None,
 ) -> RouteRecording:
     """Pasajero: elige la línea en la que va (o una que acaba de proponer)."""
     line = await lines.usable_by(db, contributor, line_code)
@@ -85,6 +86,7 @@ async def start_contribution(
             line_code=line.code,
             direction=direction,
             comment=(comment or "").strip() or None,
+            sign_text=(sign_text or "").strip() or None,
         ),
     )
 
@@ -217,7 +219,11 @@ async def _pending(db: AsyncSession, recording_id: int) -> RouteRecording:
 
 
 async def approve(
-    db: AsyncSession, recording_id: int, note: str | None, direction: RouteDirection | None = None
+    db: AsyncSession,
+    recording_id: int,
+    note: str | None,
+    direction: RouteDirection | None = None,
+    line_name: str | None = None,
 ) -> RouteRecording:
     """Convierte el trazado propuesto en una Route activa de la línea (reemplaza la grabada anterior).
 
@@ -235,6 +241,8 @@ async def approve(
         raise RecordingError("La línea de esta grabación fue rechazada.")
     if line is not None and line.status == LineStatus.PENDING_REVIEW:
         lines.activate(line, "Aprobada junto con su recorrido grabado")
+    if line is not None and (line_name or "").strip():
+        line.name = line_name.strip()
 
     geom_ewkt = await db.scalar(
         select(func.ST_AsEWKT(func.ST_Multi(RouteRecording.proposed_geom))).where(RouteRecording.id == recording.id)

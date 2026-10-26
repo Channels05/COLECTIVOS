@@ -15,7 +15,7 @@ COPY alembic.ini docker-entrypoint.sh ./
 COPY alembic ./alembic
 COPY app ./app
 COPY scripts ./scripts
-COPY data/gore/colectivos_rm.geojson ./data/gore/colectivos_rm.geojson
+COPY data/gore/colectivos_rm.geojson data/gore/line_streets.json ./data/gore/
 
 # Por si el script se editó en Windows (CRLF rompe el shebang).
 RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh \
