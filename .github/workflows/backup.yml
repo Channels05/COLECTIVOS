@@ -1,0 +1,50 @@
+# Respaldo semanal de la base de Neon (grabaciones, marcas, líneas, aportantes).
+# Guarda un pg_dump en formato custom como artefacto del workflow durante 90 días (el máximo de
+# GitHub): Actions → "Respaldo de la base" → la ejecución → Artifacts.
+#
+# Requiere el secreto NEON_DATABASE_URL (Settings → Secrets and variables → Actions) con la URL
+# de conexión de Neon, la directa (sin "-pooler"). Restaurar en una base vacía:
+#   pg_restore --no-owner --no-acl -d "<url de destino>" colectivos.dump
+name: Respaldo de la base
+
+on:
+  schedule:
+    - cron: "0 7 * * 1" # lunes 07:00 UTC (madrugada en Chile)
+  workflow_dispatch: # para correrlo a mano
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Revisar que exista el secreto
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Falta el secreto NEON_DATABASE_URL (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      # La imagen oficial de Postgres trae pg_dump de la misma versión que Neon (18).
+      - name: pg_dump
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: |
+          docker run --rm -e DATABASE_URL -v "$PWD:/out" postgres:18 \
+            sh -c 'pg_dump --format=custom --no-owner --no-acl --file=/out/colectivos.dump "$DATABASE_URL"'
+          ls -la colectivos.dump
+
+      - name: Verificar el respaldo
+        run: |
+          docker run --rm -v "$PWD:/out" postgres:18 pg_restore --list /out/colectivos.dump > contenido.txt
+          echo "Objetos en el respaldo: $(grep -c '' contenido.txt)"
+          grep -q "TABLE DATA public route_recordings" contenido.txt
+          grep -q "TABLE DATA public sightings" contenido.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: colectivos-${{ github.run_number }}-${{ github.run_id }}
+          path: colectivos.dump
+          retention-days: 90
+          compression-level: 0 # el formato custom ya viene comprimido
