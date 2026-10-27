@@ -75,6 +75,16 @@
     .error { color: var(--danger); font-size: 13px; margin-top: 8px; }
     .qr { display: grid; justify-items: center; gap: 8px; margin: 12px 0; }
     .qr img { width: 240px; height: 240px; image-rendering: pixelated; border: 1px solid var(--border); border-radius: 8px; }
+    .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+    .kpi { background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+    .kpi b { display: block; font-size: 22px; color: var(--primary); font-variant-numeric: tabular-nums; }
+    .kpi span { font-size: 12px; color: var(--muted); }
+    .panel h3 { font-size: 14px; margin: 14px 0 4px; }
+    .zone { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border);
+            font-size: 13px; cursor: pointer; }
+    .zone:hover { color: var(--primary); }
+    .legend .sightings::before { border-top: 8px solid rgba(11, 110, 79, .6); }
+    .legend .recordings::before { border-top: 8px solid rgba(224, 122, 31, .6); }
     .secret { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; background: var(--bg); border-radius: 8px; padding: 6px 8px; }
   </style>
 </head>
@@ -85,6 +95,7 @@
       <button data-mode="recordings" class="active">Recorridos grabados</button>
       <button data-mode="lines">Líneas propuestas</button>
       <button data-mode="vehicles">Vehículos</button>
+      <button data-mode="stats">Datos</button>
     </div>
     <div class="key">
       <input id="key" type="password" placeholder="Clave de administrador" autocomplete="off" />
@@ -114,6 +125,7 @@ const TABS = {
                ["cancelled", "Canceladas"], ["recording", "Grabando"]],
   lines: [["pending_review", "Pendientes"], ["active", "Aprobadas"], ["rejected", "Rechazadas"]],
   vehicles: [["all", "Todos"]],
+  stats: [["28", "4 semanas"], ["7", "7 días"], ["90", "3 meses"]],  // período en días
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -172,7 +184,8 @@ const lineLabel = (r) => r.line_name ? `${r.line_name} (${r.line_code})` : `Lín
 
 async function loadList() {
   sessionStorage.setItem("adminKey", keyInput.value);
-  return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles() : loadRecordings();
+  return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles()
+    : mode === "stats" ? loadStats() : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -515,11 +528,122 @@ function selectVehicle(v) {
   document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
 }
 
+// --- Datos: aportes de pasajeros por línea y por zona -------------------------------------------
+let stats = null;
+const fmtInt = (n) => (n ?? 0).toLocaleString("es-CL");
+const lineTitle = (l) => l.name || l.description || `Línea ${l.line_code}`;
+const communeLabel = (c) => !c || c === "Sin asignar" ? "Sin comuna" : c;
+
+async function loadStats() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  try {
+    stats = await api(`/admin/stats?days=${currentStatus}`);
+    list.replaceChildren(
+      el("div", { className: "item", onclick: showStatsSummary },
+        el("div", { className: "title", textContent: "Resumen y zonas" }),
+        el("div", { className: "meta", textContent: "Totales del período y mapa de dónde se aporta" })),
+      ...(stats.lines.length ? stats.lines.map((l) => {
+        const parts = [
+          `${fmtInt(l.sightings)} marca${l.sightings === 1 ? "" : "s"}`,
+          `${l.recordings_approved} grab. aprobada${l.recordings_approved === 1 ? "" : "s"}`,
+          ...(l.recordings_pending ? [`${l.recordings_pending} pendiente${l.recordings_pending === 1 ? "" : "s"}`] : []),
+          ...(l.recorded_km ? [`${km(l.recorded_km * 1000)} grabados`] : []),
+        ];
+        const item = el("div", { className: "item" + (l.line_code === selectedId ? " selected" : "") },
+          el("div", { className: "title", textContent: `${l.line_code} · ${lineTitle(l)}` }),
+          el("div", { className: "meta", textContent: parts.join(" · ") }),
+          el("div", { className: "meta", textContent: l.last_activity ? `Última actividad ${fmtDate(l.last_activity)}` : "Sin actividad en el período" }));
+        item.onclick = () => selectStatsLine(l, item);
+        return item;
+      }) : [el("div", { className: "empty", textContent: "Aún no hay aportes en este período." })]));
+    showStatsSummary();
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function showStatsSummary() {
+  if (!stats) return;
+  selectedId = null;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  const t = stats.totals;
+  const rec = t.recordings;
+  const kpi = (value, label) => el("div", { className: "kpi" }, el("b", { textContent: value }), el("span", { textContent: label }));
+  const zones = [...stats.zones].sort((a, b) => (b.sightings + b.recordings) - (a.sightings + a.recordings));
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: "Datos de los pasajeros" }),
+    el("div", { className: "status-line", textContent: `Últimos ${stats.days} días` }),
+    el("div", { className: "kpis" },
+      kpi(fmtInt(t.active_contributors), `pasajeros activos (de ${fmtInt(t.contributors)} registrados)`),
+      kpi(fmtInt(t.sightings), `marcas "pasó un colectivo" (${fmtInt(t.sightings_7d)} en 7 días)`),
+      kpi(fmtInt(rec.approved || 0), `grabaciones aprobadas${rec.pending_review ? ` · ${rec.pending_review} por revisar` : ""}`),
+      kpi(km(t.recorded_km * 1000), `grabados en ${t.lines_with_recorded_route} línea${t.lines_with_recorded_route === 1 ? "" : "s"}`),
+      kpi(fmtInt(t.lines_active), "líneas activas"),
+      kpi(fmtInt(t.lines_pending), "líneas propuestas sin revisar")),
+    el("div", { className: "legend" },
+      el("span", { className: "sightings", textContent: "Zona con marcas (~1 km)" }),
+      el("span", { className: "recordings", textContent: "Zona donde empezaron grabaciones" })),
+    el("h3", { textContent: "Zonas más activas" }),
+    ...(zones.length ? zones.slice(0, 12).map((z) => el("div", { className: "zone", onclick: () => map.setView([z.lat, z.lon], 15) },
+      el("span", { textContent: `${communeLabel(z.commune)} · ${z.lines} línea${z.lines === 1 ? "" : "s"}` }),
+      el("b", { textContent: `${fmtInt(z.sightings)} marca${z.sightings === 1 ? "" : "s"} · ${fmtInt(z.recordings)} grab.` })))
+      : [el("div", { className: "status-line", textContent: "Sin aportes en el período." })]),
+  );
+  drawZones(zones);
+}
+
+// Un círculo por celda: verde si hay más marcas, naranjo si hay más inicios de grabación;
+// el tamaño crece con la cantidad (raíz cuadrada, para que una zona muy activa no tape el resto).
+function drawZones(zones) {
+  layers.clearLayers();
+  if (!zones.length) return;
+  for (const z of zones) {
+    const total = z.sightings + z.recordings;
+    const color = z.sightings >= z.recordings ? "#0b6e4f" : "#e07a1f";
+    L.circleMarker([z.lat, z.lon], { radius: 6 + 4 * Math.sqrt(total), color, weight: 1, fillColor: color, fillOpacity: .45 })
+      .bindPopup(`<b>${communeLabel(z.commune)}</b><br>${z.sightings} marca(s) · ${z.recordings} grabación(es)<br>${z.lines} línea(s)`)
+      .addTo(layers);
+  }
+  map.fitBounds(L.latLngBounds(zones.map((z) => [z.lat, z.lon])).pad(0.3), { maxZoom: 14, ...panelPadding() });
+}
+
+async function selectStatsLine(l, item) {
+  selectedId = l.line_code;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  item.classList.add("selected");
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: `Línea ${l.line_code}` }),
+    el("div", { className: "status-line", textContent: [lineTitle(l), communeLabel(l.commune)].join(" · ") }),
+    el("div", { className: "kpis" },
+      el("div", { className: "kpi" }, el("b", { textContent: fmtInt(l.sightings) }), el("span", { textContent: "marcas en el período" })),
+      el("div", { className: "kpi" }, el("b", { textContent: km(l.recorded_km * 1000) }), el("span", { textContent: "recorrido grabado y aprobado" })),
+      el("div", { className: "kpi" }, el("b", { textContent: fmtInt(l.recordings_approved) }), el("span", { textContent: "grabaciones aprobadas" })),
+      el("div", { className: "kpi" }, el("b", { textContent: fmtInt(l.recordings_pending) }), el("span", { textContent: "grabaciones por revisar" }))),
+    el("div", { className: "legend" },
+      el("span", { className: "official", textContent: "Trazado oficial" }),
+      el("span", { className: "recorded", textContent: "Grabado por pasajeros o conductores" })),
+    el("div", { className: "actions" }, el("button", { className: "btn-ghost", textContent: "Volver al resumen", onclick: showStatsSummary })),
+  );
+  layers.clearLayers();
+  try {
+    const routes = await fetch(`${API}/routes/${encodeURIComponent(l.line_code)}`).then((x) => x.ok ? x.json() : null);
+    const drawn = (routes?.features || []).map((f) => L.geoJSON(f.geometry, { style: f.properties.source === "recorded"
+      ? { color: "#e07a1f", weight: 8, opacity: .55 } : { color: "#3f51b5", weight: 3, dashArray: "8 8", opacity: .8 } }).addTo(layers));
+    if (drawn.length) map.fitBounds(drawn.reduce((b, g) => b.extend(g.getBounds()), drawn[0].getBounds()), panelPadding());
+    else panel.append(el("div", { className: "status-line", textContent: "Esta línea aún no tiene trazado." }));
+  } catch {}
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
-  currentStatus = mode === "vehicles" ? "all" : "pending_review";
+  currentStatus = mode === "vehicles" ? "all" : mode === "stats" ? "28" : "pending_review";
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();
   renderTabs();
