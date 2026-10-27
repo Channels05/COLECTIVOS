@@ -288,6 +288,9 @@ function renderPanel(r) {
     ["Puntos usados / recibidos", s.used_points != null ? `${s.used_points} / ${s.raw_points}` : "—"],
     ["Saltos de GPS descartados", s.outliers_dropped ?? "—"], ["Puntos detenido descartados", s.stationary_dropped ?? "—"],
     ["Mayor tramo sin señal", s.max_gap_m != null ? `${s.max_gap_m} m` : "—"],
+    // Lo ajusta OSRM en segundo plano unos segundos después de terminar la grabación.
+    ["Ajustado a las calles", !s.map_matching ? (r.status === "pending_review" ? "Procesando… (recarga en unos segundos)" : "—")
+      : s.map_matching.applied ? `Sí (confianza ${Math.round(s.map_matching.confidence * 100)} %)` : `No: ${s.map_matching.reason}`],
   ];
   const tableOf = () => el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) }))));
   const legend = el("div", { className: "legend" },

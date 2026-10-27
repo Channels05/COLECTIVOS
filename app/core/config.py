@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     route_buffer_m: float = 40.0  # tolerancia = error GPS (~10-20 m) + ancho de calzada
     off_route_strikes: int = 3  # pings consecutivos fuera (≈15 s) antes de alertar
     metric_crs: str = "EPSG:32719"  # WGS84 / UTM 19S: distancias en metros para Santiago
+    # OSRM para ajustar a las calles los recorridos grabados (app/services/map_matching.py).
+    # Vacío = no ajustar. El de demostración es de uso no comercial y sin garantías.
+    map_matching_url: str = "https://router.project-osrm.org"
     # Horario en que valen los "trazados nocturnos" [inicio, fin), hora de Santiago.
     # SUPUESTO: confirmar el horario con la resolución del MTT para cada línea.
     night_hours: tuple[int, int] = (22, 6)

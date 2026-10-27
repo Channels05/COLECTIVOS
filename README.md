@@ -237,8 +237,13 @@ Al revisar una migración autogenerada:
    Con `replace_previous` (casilla "Reemplazar" en el panel) se desactiva lo grabado antes, para
    corregir un trazado malo. Se recarga la validación de desvíos de inmediato.
 
-No hace *map matching* a calles: el administrador valida visualmente. Siguiente paso posible:
-ajustar a la red vial con OSRM/Valhalla.
+**Ajuste a las calles** (`services/map_matching.py`): al terminar la grabación, en segundo plano,
+el trazado se pega a la red vial con OSRM (datos de OpenStreetMap). Usa el servidor de
+demostración (`MAP_MATCHING_URL`, uso no comercial, 1 consulta por segundo y ~10 puntos por
+consulta): se muestrea un punto cada ≥ 50 m y se ajusta por tramos (≈ 15 s). Si algún tramo
+falla, el largo cambia más de 25 % o se aleja más de 60 m, queda el trazado suavizado. En una
+prueba con ruido GPS de 8 m, la distancia media al trazado oficial bajó de 8 a 3 m. `/admin`
+muestra si se ajustó y por qué no; el administrador igual valida visualmente.
 
 ### Aportes de pasajeros
 

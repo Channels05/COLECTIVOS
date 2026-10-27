@@ -30,6 +30,7 @@ from app.models import (
 )
 from app.services import lines
 from app.services.errors import ServiceError as RecordingError
+from app.services.map_matching import schedule_map_matching
 from app.services.route_inference import NotEnoughPoints, build_proposal
 
 # Quien graba: el vehículo del conductor o el pasajero (aportante anónimo).
@@ -191,6 +192,8 @@ async def finish(db: AsyncSession, author: Author, recording_id: int) -> RouteRe
     recording.status = RecordingStatus.PENDING_REVIEW
     await db.commit()
     await db.refresh(recording)
+    # Pegar el trazado a las calles (OSRM) en segundo plano; si no se puede, queda el suavizado.
+    schedule_map_matching(recording.id)
     return recording
 
 
