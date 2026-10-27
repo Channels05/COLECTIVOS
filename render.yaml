@@ -32,11 +32,3 @@ services:
     region: virginia
     maxmemoryPolicy: noeviction # el stream de ubicaciones no se debe perder por falta de memoria
     ipAllowList: [] # solo accesible desde los servicios de Render
-
-databases:
-  - name: colectivos-db
-    plan: free
-    region: virginia
-    postgresMajorVersion: "16"
-    databaseName: colectivos
-    user: colectivos
