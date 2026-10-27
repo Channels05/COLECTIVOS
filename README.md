@@ -203,6 +203,8 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/admin/recordings?status_filter=` · `/{rid}` (admin) | admin: bandeja y detalle con GeoJSON |
 | POST | `/api/v1/admin/recordings/{rid}/approve` · `/reject` `{note, direction?, line_name?, replace_previous?}` (admin) | admin: aprobar (suma el tramo nuevo; `line_name` guarda el letrero) o rechazar |
 | GET | `/api/v1/admin/stats?days=28` (admin) | admin: panel "Datos" — pasajeros activos, marcas y grabaciones por línea y por zona (celdas de ~1 km) |
+| POST | `/api/v1/client-errors` `{errors: [...]}` | app: reporta sus errores de JavaScript (anónimos; máx. 60 por IP y hora; se guardan 90 días) |
+| GET | `/api/v1/admin/errors?days=30` (admin) | admin: panel "Errores" — errores de la app agrupados por mensaje, con versiones, teléfonos y detalle |
 | POST | `/api/v1/contributors` | app pasajero: registro anónimo (id + token), máx. 10 por IP y hora |
 | GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas por código, letrero o calle (con lat/lon: las que pasan cerca) |
 | GET | `/api/v1/lines/{code}` | app pasajero: una línea (letrero y calles) para la tarjeta del colectivo |

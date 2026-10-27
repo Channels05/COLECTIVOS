@@ -85,6 +85,9 @@
     .zone:hover { color: var(--primary); }
     .legend .sightings::before { border-top: 8px solid rgba(11, 110, 79, .6); }
     .legend .recordings::before { border-top: 8px solid rgba(224, 122, 31, .6); }
+    pre.stack { background: var(--bg); border-radius: 8px; padding: 8px 10px; font-size: 11px; white-space: pre-wrap;
+                word-break: break-word; max-height: 320px; overflow-y: auto; margin: 6px 0; }
+    .badge.danger { background: #fdecea; color: var(--danger); }
     .secret { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; background: var(--bg); border-radius: 8px; padding: 6px 8px; }
   </style>
 </head>
@@ -96,6 +99,7 @@
       <button data-mode="lines">Líneas propuestas</button>
       <button data-mode="vehicles">Vehículos</button>
       <button data-mode="stats">Datos</button>
+      <button data-mode="errors">Errores</button>
     </div>
     <div class="key">
       <input id="key" type="password" placeholder="Clave de administrador" autocomplete="off" />
@@ -126,6 +130,7 @@ const TABS = {
   lines: [["pending_review", "Pendientes"], ["active", "Aprobadas"], ["rejected", "Rechazadas"]],
   vehicles: [["all", "Todos"]],
   stats: [["28", "4 semanas"], ["7", "7 días"], ["90", "3 meses"]],  // período en días
+  errors: [["7", "7 días"], ["30", "30 días"], ["90", "90 días"]],
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -185,7 +190,7 @@ const lineLabel = (r) => r.line_name ? `${r.line_name} (${r.line_code})` : `Lín
 async function loadList() {
   sessionStorage.setItem("adminKey", keyInput.value);
   return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles()
-    : mode === "stats" ? loadStats() : loadRecordings();
+    : mode === "stats" ? loadStats() : mode === "errors" ? loadErrors() : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -639,11 +644,60 @@ async function selectStatsLine(l, item) {
   } catch {}
 }
 
+// --- Errores de la app (los reporta la app sola, anónimos) --------------------------------------
+async function loadErrors() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  layers.clearLayers();
+  try {
+    const groups = await api(`/admin/errors?days=${currentStatus}`);
+    if (!groups.length) {
+      list.replaceChildren(el("div", { className: "empty", textContent: "Sin errores en el período. 🎉" }));
+      return;
+    }
+    list.replaceChildren(...groups.map((g, i) => {
+      const item = el("div", { className: "item" + (i === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: g.message }),
+        el("div", { className: "meta", textContent: `${g.count} ${g.count === 1 ? "vez" : "veces"} · último ${fmtDate(g.last_seen)}` }),
+        ...(g.fatal ? [el("span", { className: "badge danger", textContent: `Cerró la app ${g.fatal} ${g.fatal === 1 ? "vez" : "veces"}` })] : []),
+        ...g.app_versions.map((v) => el("span", { className: "badge new", textContent: `v${v}` })));
+      item.onclick = () => {
+        selectedId = i;
+        document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+        item.classList.add("selected");
+        showErrorGroup(g);
+      };
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function showErrorGroup(g) {
+  const rows = [
+    ["Veces", g.count], ["Cerraron la app", g.fatal], ["Primera vez", fmtDate(g.first_seen)], ["Última vez", fmtDate(g.last_seen)],
+    ["Versiones", g.app_versions.join(", ") || "—"], ["Pantallas", g.screens.join(", ") || "—"],
+    ["Origen (último)", g.last_source || "—"], ["Actualización por aire", g.last_update_id ? g.last_update_id.slice(0, 8) : "la del APK"],
+  ];
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: "Error de la app" }),
+    el("div", { className: "quote", textContent: g.message }),
+    el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) })))),
+    el("h3", { textContent: `Teléfonos (${g.devices.length})` }),
+    el("div", { className: "status-line", textContent: g.devices.join(" · ") || "—" }),
+    el("h3", { textContent: "Detalle técnico (último reporte)" }),
+    el("pre", { className: "stack", textContent: g.last_stack || "Sin detalle." }),
+  );
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
-  currentStatus = mode === "vehicles" ? "all" : mode === "stats" ? "28" : "pending_review";
+  currentStatus = { vehicles: "all", stats: "28", errors: "30" }[mode] || "pending_review";
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();
   renderTabs();
