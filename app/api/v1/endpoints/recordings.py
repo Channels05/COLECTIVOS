@@ -130,11 +130,13 @@ async def get_recording(recording_id: int, db: DbSession) -> dict:
 async def approve_recording(
     recording_id: int, body: RecordingApproval, request: Request, db: DbSession
 ) -> RouteRecording:
-    """Aprueba: crea el trazado de la línea y recarga la validación de desvíos de inmediato.
+    """Aprueba: suma el trazado a la línea y recarga la validación de desvíos de inmediato.
 
     `direction` es obligatorio si quien grabó (un pasajero) no indicó el sentido."""
     try:
-        recording = await recordings.approve(db, recording_id, body.note, body.direction, body.line_name)
+        recording = await recordings.approve(
+            db, recording_id, body.note, body.direction, body.line_name, body.replace_previous
+        )
     except recordings.RecordingError as exc:
         raise _http(exc) from None
     # Con varios workers de uvicorn, los demás lo verán al reiniciar o con POST /routes/reload.

@@ -2,13 +2,13 @@
 
     conductor: start -> (pings normales del turno) -> finish | cancel
     pasajero:  start_contribution -> add_points (lotes) -> finish | cancel
-    administrador: pending_review -> approve (crea una Route "recorded") | reject
+    administrador: pending_review -> approve (suma una Route "recorded") | reject
 """
 
 from collections.abc import Sequence
 from datetime import UTC, date, datetime, timedelta
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,6 +37,11 @@ Author = Vehicle | Contributor
 
 # Puntos de pasajero menos precisos que esto (GPS en un bolsillo, dentro del auto) se descartan.
 MAX_POINT_ACCURACY_M = 50.0
+# Al sumar una grabación a lo ya grabado de la línea, lo que pasa a menos de esto de un tramo
+# aprobado se da por cubierto (el ruido del GPS separa dos pasadas por la misma calle ~10-20 m).
+MERGE_OVERLAP_M = 25.0
+# Restos más cortos que esto tras quitar lo cubierto son ruido (cruces de calle, bordes).
+MERGE_MIN_PIECE_M = 50.0
 # ≈ 8 h a un punto cada 5 s: más que esto no es un recorrido sino un teléfono que quedó grabando.
 MAX_POINTS_PER_RECORDING = 6_000
 
@@ -224,8 +229,13 @@ async def approve(
     note: str | None,
     direction: RouteDirection | None = None,
     line_name: str | None = None,
+    replace_previous: bool = False,
 ) -> RouteRecording:
-    """Convierte el trazado propuesto en una Route activa de la línea (reemplaza la grabada anterior).
+    """Suma el trazado propuesto a lo ya grabado de la línea en ese sentido.
+
+    Varias grabaciones parciales (cada pasajero graba el tramo que viaja) arman el recorrido: solo
+    se agrega lo que aún no estaba cubierto, como una Route nueva por grabación. Con
+    `replace_previous` se desactiva lo grabado antes (para corregir un trazado malo).
 
     Si el pasajero no indicó el sentido, lo elige el administrador (`direction`). Si la línea era
     una propuesta pendiente, se aprueba junto con su recorrido.
@@ -244,25 +254,39 @@ async def approve(
     if line is not None and (line_name or "").strip():
         line.name = line_name.strip()
 
-    geom_ewkt = await db.scalar(
-        select(func.ST_AsEWKT(func.ST_Multi(RouteRecording.proposed_geom))).where(RouteRecording.id == recording.id)
-    )
+    if replace_previous:
+        await db.execute(
+            update(Route)
+            .where(
+                Route.source == RouteSource.RECORDED,
+                Route.line_code == recording.line_code,
+                Route.direction == direction,
+                Route.is_active.is_(True),
+            )
+            .values(is_active=False)
+        )
+    geom_ewkt, added_m, total_m = (await db.execute(_NEW_PART_SQL, {
+        "recording_id": recording.id, "line_code": recording.line_code, "direction": direction.value,
+        "overlap_m": MERGE_OVERLAP_M, "min_piece_m": MERGE_MIN_PIECE_M,
+    })).one()
+    recording.stats = {
+        **(recording.stats or {}),
+        "merge": {"added_m": round(added_m), "covered_m": round(max(total_m - added_m, 0)), "replaced": replace_previous},
+    }
+    recording.status = RecordingStatus.APPROVED
+    recording.review_note = note
+    recording.reviewed_at = datetime.now(UTC)
+    if geom_ewkt is None:
+        # Todo lo grabado ya estaba cubierto: confirma el trazado pero no agrega nada.
+        await db.commit()
+        await db.refresh(recording)
+        return recording
+
     # Comuna: la de los trazados oficiales de la línea si existen, si no la del catálogo.
     commune = await db.scalar(
         select(Route.commune).where(Route.line_code == recording.line_code, Route.source != RouteSource.RECORDED).limit(1)
     )
     commune = commune or (line.commune if line else None)
-    # Una sola ruta grabada activa por línea y sentido: la nueva reemplaza a la anterior.
-    await db.execute(
-        update(Route)
-        .where(
-            Route.source == RouteSource.RECORDED,
-            Route.line_code == recording.line_code,
-            Route.direction == direction,
-            Route.is_active.is_(True),
-        )
-        .values(is_active=False)
-    )
     label = line.name if line and line.name else recording.line_code
     route = Route(
         source=RouteSource.RECORDED,
@@ -284,13 +308,32 @@ async def approve(
     )
     db.add(route)
     await db.flush()
-    recording.status = RecordingStatus.APPROVED
-    recording.review_note = note
-    recording.reviewed_at = datetime.now(UTC)
     recording.route_id = route.id
     await db.commit()
     await db.refresh(recording)
     return recording
+
+
+# Parte del trazado propuesto que no cubren las rutas grabadas activas de la línea en ese sentido
+# (todo, si no hay ninguna), sin los restos cortos. Devuelve (EWKT o NULL, metros nuevos, metros totales).
+_NEW_PART_SQL = text("""
+    WITH proposed AS (
+        SELECT proposed_geom AS g FROM route_recordings WHERE id = :recording_id
+    ), covered AS (
+        SELECT ST_Buffer(ST_Union(geom)::geography, :overlap_m)::geometry AS g
+        FROM routes
+        WHERE source::text = 'recorded' AND line_code = :line_code
+          AND direction::text = :direction AND is_active
+    ), pieces AS (
+        SELECT (ST_Dump(CASE WHEN c.g IS NULL THEN p.g ELSE ST_Difference(p.g, c.g) END)).geom AS g
+        FROM proposed p, covered c
+    ), kept AS (
+        SELECT g FROM pieces WHERE ST_Dimension(g) = 1 AND ST_Length(g::geography) >= :min_piece_m
+    )
+    SELECT (SELECT ST_AsEWKT(ST_Multi(ST_Collect(g))) FROM kept),
+           (SELECT COALESCE(SUM(ST_Length(g::geography)), 0) FROM kept),
+           (SELECT ST_Length(g::geography) FROM proposed)
+""")
 
 
 async def reject(db: AsyncSession, recording_id: int, note: str | None) -> RouteRecording:

@@ -198,7 +198,7 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/vehicles/{id}/recordings/active` (device token) | conductor: retomar grabación en curso |
 | POST | `/api/v1/vehicles/{id}/recordings/{rid}/finish` · `/cancel` (device token) | conductor: terminar (propone trazado) o cancelar |
 | GET | `/api/v1/admin/recordings?status_filter=` · `/{rid}` (admin) | admin: bandeja y detalle con GeoJSON |
-| POST | `/api/v1/admin/recordings/{rid}/approve` · `/reject` `{note, direction?, line_name?}` (admin) | admin: aprobar (crea la ruta; `line_name` guarda el letrero) o rechazar |
+| POST | `/api/v1/admin/recordings/{rid}/approve` · `/reject` `{note, direction?, line_name?, replace_previous?}` (admin) | admin: aprobar (suma el tramo nuevo; `line_name` guarda el letrero) o rechazar |
 | POST | `/api/v1/contributors` | app pasajero: registro anónimo (id + token), máx. 10 por IP y hora |
 | GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas por código, letrero o calle (con lat/lon: las que pasan cerca) |
 | GET | `/api/v1/lines/{code}` | app pasajero: una línea (letrero y calles) para la tarjeta del colectivo |
@@ -221,10 +221,13 @@ Al revisar una migración autogenerada:
    de 3–5 puntos) y simplifica (Douglas-Peucker 8 m). Guarda métricas y advertencias (pocos
    puntos, recorrido corto, tramos sin señal). Con pings simulados densos y ruido de 5 m: largo
    a 2 % del real y desviación máxima de 7 m respecto a la calle.
-3. **Administrador** en `http://<servidor>/admin`: ve los puntos crudos, el trazado propuesto y el
-   oficial (si existe) sobre el mapa y aprueba o rechaza. Al aprobar se crea una `Route` con
-   `source="recorded"` (reemplaza a la grabada anterior de esa línea y sentido) y se recarga la
-   validación de desvíos de inmediato.
+3. **Administrador** en `http://<servidor>/admin`: ve los puntos crudos, el trazado propuesto, el
+   oficial (si existe) y lo ya grabado sobre el mapa, y aprueba o rechaza. Al aprobar, el tramo
+   **se suma** a lo grabado de esa línea y sentido: solo se agrega como `Route`
+   (`source="recorded"`) la parte que aún no estaba cubierta (a más de 25 m de lo aprobado; restos
+   de menos de 50 m se descartan). Así varias grabaciones parciales arman el recorrido completo.
+   Con `replace_previous` (casilla "Reemplazar" en el panel) se desactiva lo grabado antes, para
+   corregir un trazado malo. Se recarga la validación de desvíos de inmediato.
 
 No hace *map matching* a calles: el administrador valida visualmente. Siguiente paso posible:
 ajustar a la red vial con OSRM/Valhalla.

@@ -44,6 +44,8 @@ class RecordingApproval(RecordingReview):
     direction: RouteDirection | None = None
     # Lo que dice el letrero (p. ej. el que anotó el pasajero): queda como nombre de la línea.
     line_name: str | None = Field(default=None, max_length=120)
+    # Desactiva lo grabado antes en ese sentido (para corregir un trazado malo) en vez de sumarse.
+    replace_previous: bool = False
 
 
 class RecordingRead(BaseModel):

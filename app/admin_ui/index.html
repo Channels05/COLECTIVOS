@@ -61,6 +61,8 @@
     .legend .proposed::before { border-color: var(--primary); }
     .legend .raw::before { border-top: 2px dotted var(--raw); }
     .legend .official::before { border-top: 3px dashed var(--official); }
+    .legend .recorded::before { border-top: 6px solid rgba(224, 122, 31, .45); }
+    .check { display: flex; align-items: center; gap: 8px; font-size: 13px; margin: 8px 0; }
     /* Pantallas chicas: lista más angosta y el detalle abajo del mapa (no tapa el recorrido). */
     @media (max-width: 1100px) {
       main { grid-template-columns: 250px 1fr; }
@@ -221,12 +223,15 @@ async function select(id) {
 async function drawMap(r) {
   layers.clearLayers();
   const bounds = [];
-  // Trazado oficial de la línea (si existe), para comparar con lo grabado.
+  // Trazado oficial de la línea (si existe) y lo ya grabado en el mismo sentido, para comparar.
   try {
     const routes = await fetch(`${API}/routes/${encodeURIComponent(r.line_code)}`).then((x) => x.ok ? x.json() : null);
     for (const f of routes?.features || []) {
-      if (f.properties.source === "recorded") continue;
-      L.geoJSON(f.geometry, { style: { color: "#3f51b5", weight: 3, dashArray: "8 8", opacity: .8 } }).addTo(layers);
+      if (f.properties.source !== "recorded") {
+        L.geoJSON(f.geometry, { style: { color: "#3f51b5", weight: 3, dashArray: "8 8", opacity: .8 } }).addTo(layers);
+      } else if (!r.direction || f.properties.direction === r.direction) {
+        L.geoJSON(f.geometry, { style: { color: "#e07a1f", weight: 8, opacity: .45 } }).addTo(layers);
+      }
     }
   } catch {}
   if (r.raw) {
@@ -266,19 +271,25 @@ function renderPanel(r) {
     ["Saltos de GPS descartados", s.outliers_dropped ?? "—"], ["Puntos detenido descartados", s.stationary_dropped ?? "—"],
     ["Mayor tramo sin señal", s.max_gap_m != null ? `${s.max_gap_m} m` : "—"],
   ];
-  const table = el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) }))));
+  const tableOf = () => el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) }))));
   const legend = el("div", { className: "legend" },
     el("span", { className: "proposed", textContent: "Trazado propuesto" }),
     el("span", { className: "raw", textContent: "Puntos GPS recibidos" }),
     el("span", { className: "official", textContent: "Trazado oficial actual (si existe)" }),
+    el("span", { className: "recorded", textContent: "Ya grabado y aprobado" }),
   );
+  if (s.merge) {
+    rows.push(["Tramo nuevo sumado", s.merge.replaced ? `${km(s.merge.added_m)} (reemplazó lo anterior)` : km(s.merge.added_m)],
+      ["Ya estaba cubierto", km(s.merge.covered_m)]);
+  }
+  const table = tableOf();
   const content = [
     el("h2", { textContent: `${lineLabel(r)} · ${dirLabel(r.direction)}` }),
     el("div", { className: "status-line", textContent: r.line_status === "pending_review"
       ? "Línea nueva propuesta por un pasajero: al aprobar este recorrido también se aprueba la línea."
       : r.line_has_official_route
       ? "La línea ya tiene trazado oficial: compara antes de aprobar."
-      : "La línea no tiene trazado oficial: al aprobar, este pasa a ser su trazado." }),
+      : "La línea no tiene trazado oficial: al aprobar, este tramo se suma a lo ya grabado (en naranjo)." }),
     ...(r.comment ? [el("div", { className: "quote", textContent: `Comentario: “${r.comment}”` })] : []),
     ...(r.sign_text ? [el("div", { className: "quote", textContent: `Letrero según quien grabó: “${r.sign_text}”` })] : []),
     legend, table,
@@ -295,6 +306,8 @@ function renderPanel(r) {
     if (r.direction) direction.value = r.direction;
     // El registro oficial no trae el letrero: lo que anotó el pasajero queda como nombre de la línea.
     const lineName = el("input", { value: r.sign_text || r.line_name || "", placeholder: "Ej. Metro Bellavista – Av. La Florida" });
+    // Por defecto se suma solo lo nuevo; reemplazar sirve para corregir un trazado grabado malo.
+    const replace = el("input", { type: "checkbox" });
     const act = (action) => async () => {
       if (action === "approve" && !direction.value) {
         error.textContent = "Elige si el recorrido es de ida o de regreso.";
@@ -307,6 +320,7 @@ function renderPanel(r) {
           note: note.value || null,
           ...(action === "approve" ? { direction: direction.value } : {}),
           ...(action === "approve" && newName && newName !== r.line_name ? { line_name: newName } : {}),
+          ...(action === "approve" && replace.checked ? { replace_previous: true } : {}),
         };
         await api(`/admin/recordings/${r.id}/${action}`, { method: "POST", body: JSON.stringify(body) });
         closePanel();
@@ -320,7 +334,8 @@ function renderPanel(r) {
     const reject = el("button", { className: "btn-danger", textContent: "Rechazar", onclick: act("reject") });
     const buttons = [approve, reject];
     content.push(el("label", { className: "field" }, "Sentido", direction),
-      el("label", { className: "field" }, "Letrero de la línea (opcional)", lineName), note,
+      el("label", { className: "field" }, "Letrero de la línea (opcional)", lineName),
+      el("label", { className: "check" }, replace, " Reemplazar lo grabado antes en este sentido (en vez de sumar)"), note,
       el("div", { className: "actions" }, approve, reject), error);
   } else if (r.review_note) {
     content.push(el("div", { className: "status-line", textContent: `Nota: ${r.review_note}` }));
