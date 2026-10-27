@@ -1,0 +1,56 @@
+# Corre los tests en cada push a main y en cada pull request. Render espera a que este check pase
+# antes de desplegar (render.yaml: autoDeployTrigger: checksPass): si algo falla, no se publica.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # La misma imagen que docker-compose.yml: las migraciones crean la extensión PostGIS.
+    services:
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: colectivos
+          POSTGRES_PASSWORD: colectivos
+          POSTGRES_DB: colectivos
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U colectivos"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://colectivos:colectivos@localhost:5432/colectivos
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12" # la del Dockerfile
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Tests
+        run: pytest -q
+
+      # Una base nueva (como la de un despliegue desde cero) debe quedar lista con las migraciones.
+      - name: Migraciones desde cero
+        run: alembic upgrade head
+
+      - name: Modelos y migraciones coinciden
+        run: alembic check

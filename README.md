@@ -151,7 +151,10 @@ tienen plan gratis, y borra el historial de posiciones de más de `LOCATION_RETE
 3. En [render.com](https://render.com): New → Blueprint → elegir el repositorio → Apply. Pide
    `DATABASE_URL`: pegar la de Neon tal cual (la app quita `channel_binding`, cambia `sslmode` por
    `ssl` y usa el endpoint directo en vez del `-pooler`, que no funciona con asyncpg).
-4. La URL queda como `https://colectivos-api.onrender.com` (o con un sufijo si el nombre está
+4. Cada push a `main` corre los tests en GitHub Actions (`.github/workflows/tests.yml`: tests,
+   migraciones desde cero sobre PostGIS y `alembic check`). Render despliega solo si pasan
+   (`autoDeployTrigger: checksPass`); si fallan, sigue en línea la versión anterior.
+5. La URL queda como `https://colectivos-api.onrender.com` (o con un sufijo si el nombre está
    tomado). La clave de `/admin` está en el servicio → Environment → `ADMIN_API_KEY`.
 
 Probar la imagen en local contra una base vacía:

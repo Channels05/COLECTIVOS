@@ -13,6 +13,9 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
+    # Despliega solo si pasan los checks de GitHub (.github/workflows/tests.yml): si un push rompe
+    # los tests o las migraciones, la versión anterior sigue en línea.
+    autoDeployTrigger: checksPass
     envVars:
       - key: DATABASE_URL
         sync: false # la de Neon (Dashboard > Connect), tal cual; la app la adapta a asyncpg
