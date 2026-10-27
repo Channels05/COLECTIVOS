@@ -1,6 +1,7 @@
-"""Aportes de pasajeros: grabar el recorrido del colectivo en que van y proponer líneas que faltan.
+"""Aportes de pasajeros: grabar el recorrido del colectivo en que van, proponer líneas que faltan y
+marcar cuándo pasa un colectivo (para estimar la frecuencia de cada línea).
 
-Todo aporte queda pendiente hasta que un administrador lo aprueba en /admin.
+Los recorridos y las líneas quedan pendientes hasta que un administrador los aprueba en /admin.
 """
 
 import uuid
@@ -13,7 +14,8 @@ from app.core.security import generate_device_token, hash_token
 from app.models import Contributor, Line, LineStatus, RouteRecording
 from app.schemas.line import ContributorCreated, LineAdminRead, LineHitRead, LineProposal, LineRead, LineReview
 from app.schemas.recording import ContributionStart, PointBatch, PointBatchAck, RecordingRead
-from app.services import lines, recordings
+from app.schemas.sighting import FrequencyRead, SightingIn, SightingRead
+from app.services import frequency, lines, recordings
 from app.services.errors import ServiceError
 
 public_router = APIRouter(tags=["pasajero"])
@@ -77,7 +79,51 @@ async def get_line(code: str, db: DbSession) -> Line:
     return line
 
 
+def _frequency(line_code: str, headway: frequency.Headway) -> FrequencyRead:
+    return FrequencyRead(
+        line_code=line_code,
+        headway_min=headway.minutes,
+        samples=headway.samples,
+        scope=headway.scope,
+        sightings=headway.sightings,
+        last_seen_at=headway.last_seen_at,
+    )
+
+
+@public_router.get("/frequencies", response_model=list[FrequencyRead])
+async def frequencies_near(
+    db: DbSession,
+    lat: float = Query(ge=-90, le=90),
+    lon: float = Query(ge=-180, le=180),
+    line_code: str | None = Query(default=None, max_length=20),
+) -> list[FrequencyRead]:
+    """Cada cuánto pasa cada línea cerca de (lat, lon), según las marcas de pasajeros.
+
+    Solo aparecen las líneas con marcas en el lugar; la de pasada más reciente primero."""
+    headways = await frequency.near(db, lat, lon, line_code)
+    return [
+        _frequency(code, h)
+        for code, h in sorted(headways.items(), key=lambda kv: kv[1].last_seen_at, reverse=True)
+    ]
+
+
 # --- Pasajero aportante (X-Contributor-Id + X-Contributor-Token) --------------------------------
+
+
+@contributor_router.post("/sightings", response_model=SightingRead, status_code=status.HTTP_201_CREATED)
+async def report_sighting(body: SightingIn, contributor: AuthenticatedContributor, db: DbSession) -> SightingRead:
+    """"Pasó un colectivo": responde con la frecuencia de la línea en ese lugar, ya contando esta marca."""
+    try:
+        sighting = await frequency.report(db, contributor, body.line_code, body.lat, body.lon, body.accuracy_m)
+    except ServiceError as exc:
+        raise _http(exc) from None
+    headway = (await frequency.near(db, body.lat, body.lon, body.line_code)).get(body.line_code)
+    return SightingRead(
+        id=sighting.id,
+        line_code=sighting.line_code,
+        seen_at=sighting.seen_at,
+        frequency=_frequency(body.line_code, headway or frequency.estimate([sighting.seen_at], sighting.seen_at)),
+    )
 
 
 @contributor_router.post("/lines", response_model=LineRead, status_code=status.HTTP_201_CREATED)

@@ -4,6 +4,7 @@ from app.models.line import Line, LineSource, LineStatus, contributed_line_seq
 from app.models.location import LocationUpdate
 from app.models.recording import RecordingPoint, RecordingStatus, RouteRecording
 from app.models.route import Route, RouteDirection, RouteKind, RouteSource
+from app.models.sighting import Sighting
 from app.models.vehicle import Vehicle
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     "RouteKind",
     "RouteRecording",
     "RouteSource",
+    "Sighting",
     "Vehicle",
     "contributed_line_seq",
 ]

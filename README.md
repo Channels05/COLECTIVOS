@@ -202,6 +202,8 @@ Al revisar una migración autogenerada:
 | POST | `/api/v1/contributors` | app pasajero: registro anónimo (id + token), máx. 10 por IP y hora |
 | GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas por código, letrero o calle (con lat/lon: las que pasan cerca) |
 | GET | `/api/v1/lines/{code}` | app pasajero: una línea (letrero y calles) para la tarjeta del colectivo |
+| GET | `/api/v1/frequencies?lat=&lon=&line_code=` | app pasajero: cada cuánto pasa cada línea cerca, según las marcas de pasajeros |
+| POST | `/api/v1/contributions/sightings` `{line_code, lat, lon, accuracy_m?}` (aportante) | pasajero: "pasó un colectivo"; responde la frecuencia ya contando la marca |
 | POST | `/api/v1/contributions/lines` `{name, description, commune}` (aportante) | pasajero: proponer una línea que falta (código `P00001`…) |
 | POST | `/api/v1/contributions/recordings` `{line_code, direction?, comment?, sign_text?}` (aportante) | pasajero: empezar a grabar su viaje |
 | POST | `/api/v1/contributions/recordings/{rid}/points` `{points: [...]}` (aportante) | pasajero: lote de puntos GPS (idempotente) |
@@ -254,3 +256,18 @@ El pasajero también puede grabar el recorrido del colectivo en que va ("Grabar 
 
 Probado de punta a punta (31 verificaciones): búsqueda por ubicación, línea propuesta, puntos en
 lotes con un fix malo, aprobación con sentido, línea visible con su trazado, rechazo y freno anti-spam.
+
+### Frecuencia de paso ("pasó un colectivo")
+
+Mientras espera, el pasajero marca cada colectivo de su línea que pasa (`sightings`: línea, lugar
+y hora del servidor). Con las marcas a menos de 400 m de un lugar (últimas 4 semanas) se estima
+cada cuánto pasa cada línea (`app/services/frequency.py`):
+
+1. Marcas a menos de 90 s entre sí son el mismo auto (dos personas, o un doble toque).
+2. Se mide el tiempo entre pasadas seguidas del mismo día; los huecos de más de 45 min no cuentan
+   (nadie estaba mirando).
+3. La cifra es la mediana: primero con la misma franja (día hábil o fin de semana, ±1 h de la hora
+   actual) y, si faltan datos, con todas las horas. Se necesitan al menos 3 intervalos.
+
+Frenos: una marca por línea por minuto y 60 por hora por pasajero; precisión GPS de hasta 150 m.
+Es una estimación: si los pasajeros no marcan todos los autos, el intervalo sale más largo.
