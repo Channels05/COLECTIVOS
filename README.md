@@ -205,6 +205,7 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/admin/stats?days=28` (admin) | admin: panel "Datos" — pasajeros activos, marcas y grabaciones por línea y por zona (celdas de ~1 km) |
 | POST | `/api/v1/client-errors` `{errors: [...]}` | app: reporta sus errores de JavaScript (anónimos; máx. 60 por IP y hora; se guardan 90 días) |
 | GET | `/api/v1/admin/errors?days=30` (admin) | admin: panel "Errores" — errores de la app agrupados por mensaje, con versiones, teléfonos y detalle |
+| GET | `/api/v1/admin/fleet` (admin) | admin: modo "Flota" — todos los autos transmitiendo, con cupos, velocidad y estado de ruta (se refresca cada 5 s) |
 | GET | `/api/v1/admin/contributors/{id}` (admin) | admin: lo que aportó un pasajero anónimo (marcas, grabaciones por estado, líneas) |
 | POST | `/api/v1/admin/contributors/{id}/block` `{purge?}` · `/unblock` (admin) | admin: bloquearlo (la API le responde 403); con `purge` rechaza sus pendientes, desactiva sus tramos aprobados, borra sus marcas y rechaza sus líneas sin revisar |
 | WS | `/api/v1/vehicles/nearby/live` | app pasajero: cercanos en vivo; manda los parámetros de `GET /vehicles/nearby` y recibe cada cambio (mín. cada 10 s) |

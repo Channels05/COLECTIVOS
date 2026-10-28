@@ -88,6 +88,8 @@
     pre.stack { background: var(--bg); border-radius: 8px; padding: 8px 10px; font-size: 11px; white-space: pre-wrap;
                 word-break: break-word; max-height: 320px; overflow-y: auto; margin: 6px 0; }
     .badge.danger { background: #fdecea; color: var(--danger); }
+    .car-dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35);
+               color: #fff; font: 700 11px/22px system-ui; text-align: center; }
     .secret { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; background: var(--bg); border-radius: 8px; padding: 6px 8px; }
   </style>
 </head>
@@ -98,6 +100,7 @@
       <button data-mode="recordings" class="active">Recorridos grabados</button>
       <button data-mode="lines">Líneas propuestas</button>
       <button data-mode="vehicles">Vehículos</button>
+      <button data-mode="fleet">Flota</button>
       <button data-mode="stats">Datos</button>
       <button data-mode="errors">Errores</button>
     </div>
@@ -131,6 +134,7 @@ const TABS = {
   vehicles: [["all", "Todos"]],
   stats: [["28", "4 semanas"], ["7", "7 días"], ["90", "3 meses"]],  // período en días
   errors: [["7", "7 días"], ["30", "30 días"], ["90", "90 días"]],
+  fleet: [["all", "En vivo"]],
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -190,7 +194,7 @@ const lineLabel = (r) => r.line_name ? `${r.line_name} (${r.line_code})` : `Lín
 async function loadList() {
   sessionStorage.setItem("adminKey", keyInput.value);
   return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles()
-    : mode === "stats" ? loadStats() : mode === "errors" ? loadErrors() : loadRecordings();
+    : mode === "stats" ? loadStats() : mode === "errors" ? loadErrors() : mode === "fleet" ? loadFleet() : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -755,11 +759,102 @@ async function showContributor(id) {
   );
 }
 
+// --- Flota en vivo: todos los autos transmitiendo, se refresca cada 5 s ----------------------------
+const FLEET_STATUS = {
+  on_route: ["En ruta", "#1e8e3e", "ok"], deviating: ["Desviándose", "#e8a317", "warn"],
+  off_route: ["Fuera de ruta", "#c5221f", "danger"], no_route: ["Línea sin trazado", "#80868b", "new"],
+};
+let fleetTimer = null;
+let fleetFitted = false;
+let fleetSelected = null;
+
+function stopFleet() {
+  if (fleetTimer) clearInterval(fleetTimer);
+  fleetTimer = null;
+  fleetFitted = false;
+  fleetSelected = null;
+}
+
+const agoText = (iso) => {
+  const s = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 1000));
+  return s < 60 ? `hace ${s} s` : `hace ${Math.floor(s / 60)} min`;
+};
+
+async function loadFleet() {
+  if (!fleetTimer) fleetTimer = setInterval(() => mode === "fleet" && refreshFleet(), 5000);
+  await refreshFleet();
+}
+
+async function refreshFleet() {
+  const list = document.getElementById("list");
+  let cars;
+  try {
+    cars = await api("/admin/fleet");
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+    return;
+  }
+  const counts = Object.fromEntries(Object.keys(FLEET_STATUS).map((k) => [k, cars.filter((c) => c.route_status === k).length]));
+  list.replaceChildren(
+    el("div", { className: "item" },
+      el("div", { className: "title", textContent: `${cars.length} auto${cars.length === 1 ? "" : "s"} transmitiendo` }),
+      el("div", { className: "meta", textContent: Object.entries(counts).filter(([, n]) => n)
+        .map(([k, n]) => `${n} ${FLEET_STATUS[k][0].toLowerCase()}`).join(" · ") || "Ningún conductor en turno ahora." })),
+    ...cars.map((c) => {
+      const [label, , badge] = FLEET_STATUS[c.route_status];
+      const item = el("div", { className: "item" + (c.vehicle_id === fleetSelected ? " selected" : "") },
+        el("div", { className: "title", textContent: `${c.plate} · línea ${c.line_code}` }),
+        el("div", { className: "meta", textContent: `${c.available_seats} de ${c.max_capacity} cupos · ${c.speed_kmh != null ? `${Math.round(c.speed_kmh)} km/h · ` : ""}${agoText(c.last_seen)}` }),
+        el("span", { className: `badge ${badge}`, textContent: c.route_status === "off_route" || c.route_status === "deviating"
+          ? `${label} (${Math.round(c.distance_to_route_m)} m)` : label }));
+      item.onclick = () => selectFleetCar(c);
+      return item;
+    }));
+  layers.clearLayers();
+  for (const c of cars) {
+    const [label, color] = FLEET_STATUS[c.route_status];
+    L.marker([c.lat, c.lon], { icon: L.divIcon({ className: "", iconSize: [26, 26],
+      html: `<div class="car-dot" style="background:${color}">${c.available_seats}</div>` }) })
+      .bindPopup(`<b>${c.plate}</b> · línea ${c.line_code}<br>${c.available_seats} de ${c.max_capacity} cupos · ${label}<br>${agoText(c.last_seen)}`)
+      .on("click", () => selectFleetCar(c))
+      .addTo(layers);
+  }
+  const selected = cars.find((c) => c.vehicle_id === fleetSelected);
+  if (selected) showFleetCar(selected);
+  if (cars.length && !fleetFitted) {
+    fleetFitted = true;
+    map.fitBounds(L.latLngBounds(cars.map((c) => [c.lat, c.lon])).pad(0.3), { maxZoom: 15, ...panelPadding() });
+  }
+}
+
+function selectFleetCar(c) {
+  fleetSelected = c.vehicle_id;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  showFleetCar(c);
+  map.setView([c.lat, c.lon], Math.max(map.getZoom(), 15));
+}
+
+function showFleetCar(c) {
+  const [label] = FLEET_STATUS[c.route_status];
+  const rows = [
+    ["Línea", c.line_code], ["Cupos libres", `${c.available_seats} de ${c.max_capacity}`], ["Estado", label],
+    ["Distancia al trazado", c.distance_to_route_m != null ? `${Math.round(c.distance_to_route_m)} m` : "—"],
+    ["Velocidad", c.speed_kmh != null ? `${Math.round(c.speed_kmh)} km/h` : "—"], ["Última señal", agoText(c.last_seen)],
+  ];
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(el("h2", { textContent: c.plate }),
+    el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) })))),
+    el("div", { className: "actions" }, el("button", { className: "btn-ghost", textContent: "Cerrar",
+      onclick: () => { fleetSelected = null; document.getElementById("panel").hidden = true; } })));
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
-  currentStatus = { vehicles: "all", stats: "28", errors: "30" }[mode] || "pending_review";
+  currentStatus = { vehicles: "all", stats: "28", errors: "30", fleet: "all" }[mode] || "pending_review";
+  stopFleet();
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();
   renderTabs();

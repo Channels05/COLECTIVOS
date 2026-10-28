@@ -140,3 +140,42 @@ async def find_nearby(redis: Redis, lat: float, lon: float, radius_m: int, limit
     if expired:
         await redis.zrem(GEO_KEY, *expired)
     return vehicles
+
+
+async def fleet(redis: Redis) -> list[dict]:
+    """Todos los vehículos transmitiendo ahora (para el mapa de la flota en /admin).
+
+    Además del estado de cada uno, cuántos pings seguidos lleva fuera de ruta (0 = en ruta).
+    """
+    members = await redis.zrange(GEO_KEY, 0, -1)
+    if not members:
+        return []
+    async with redis.pipeline(transaction=False) as pipe:
+        for member in members:
+            pipe.hgetall(state_key(member))
+            pipe.get(strikes_key(member))
+        results = await pipe.execute()
+
+    vehicles, expired = [], []
+    for member, state, strikes in zip(members, results[0::2], results[1::2], strict=True):
+        if not state:
+            expired.append(member)
+            continue
+        vehicles.append({
+            "vehicle_id": member,
+            "plate": state["plate"],
+            "line_code": state["line_code"],
+            "lat": float(state["lat"]),
+            "lon": float(state["lon"]),
+            "available_seats": int(state["available_seats"]),
+            "max_capacity": int(state["max_capacity"]),
+            "speed_kmh": float(state["speed_kmh"]) if state.get("speed_kmh") else None,
+            "heading": float(state["heading"]) if state.get("heading") else None,
+            "on_route": _decode_bool(state.get("on_route", "")),
+            "distance_to_route_m": float(state["distance_m"]) if state.get("distance_m") else None,
+            "off_route_strikes": int(strikes or 0),
+            "last_seen": datetime.fromisoformat(state["recorded_at"]).astimezone(UTC),
+        })
+    if expired:
+        await redis.zrem(GEO_KEY, *expired)
+    return sorted(vehicles, key=lambda v: (v["line_code"], v["plate"]))

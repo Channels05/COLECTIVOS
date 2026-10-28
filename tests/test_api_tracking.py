@@ -123,3 +123,16 @@ def test_distancia_por_el_recorrido_si_el_pasajero_esta_adelante(client):
     assert behind["vehicles"][0]["route_distance_m"] is None  # ya pasó
     no_user = client.get("/api/v1/vehicles/nearby", params={"lat": -33.53, "lon": ROUTE_LON}).json()
     assert no_user["vehicles"][0]["route_distance_m"] is None
+
+
+def test_flota_para_el_admin(client):
+    from app.api.deps import require_admin
+
+    app.dependency_overrides[require_admin] = lambda: None
+    ping(client, seats=3)
+    off = ROUTE_LON + 0.003  # ≈ 280 m fuera del trazado
+    body = client.get("/api/v1/admin/fleet").json()
+    assert len(body) == 1 and body[0]["route_status"] == "on_route" and body[0]["available_seats"] == 3
+    for _ in range(3):
+        ping(client, lon=off)
+    assert client.get("/api/v1/admin/fleet").json()[0]["route_status"] == "off_route"
