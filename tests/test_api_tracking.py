@@ -97,3 +97,29 @@ def test_outside_service_area_rejected(client):
 def test_stale_ping_goes_only_to_history(client):
     assert ping(client, age_s=120).json()["accepted_live"] is False
     assert client.get("/api/v1/vehicles/nearby", params={"lat": -33.52, "lon": ROUTE_LON}).json()["count"] == 0
+
+
+def test_websocket_sigue_a_los_cercanos(client):
+    ping(client)
+    with client.websocket_connect("/api/v1/vehicles/nearby/live") as ws:
+        ws.send_json({"lat": -33.525, "lon": -70.60})
+        first = ws.receive_json()
+        assert first["count"] == 1 and first["vehicles"][0]["plate"] == "BCDF12"
+        # Mover el mapa lejos: llega de inmediato la lista nueva, vacía.
+        ws.send_json({"lat": -33.45, "lon": -70.60})
+        assert ws.receive_json()["count"] == 0
+        # Un mensaje inválido no corta la conexión.
+        ws.send_json({"lat": 200})
+        assert "error" in ws.receive_json()
+
+
+def test_distancia_por_el_recorrido_si_el_pasajero_esta_adelante(client):
+    # El tramo está dibujado de norte a sur y el auto (en -33,52) va al sur (rumbo 180).
+    ping(client)
+    params = {"lat": -33.53, "lon": ROUTE_LON, "user_lon": ROUTE_LON}
+    ahead = client.get("/api/v1/vehicles/nearby", params={**params, "user_lat": -33.53}).json()
+    assert 1_080 <= ahead["vehicles"][0]["route_distance_m"] <= 1_140  # ~1,1 km más al sur
+    behind = client.get("/api/v1/vehicles/nearby", params={**params, "user_lat": -33.51}).json()
+    assert behind["vehicles"][0]["route_distance_m"] is None  # ya pasó
+    no_user = client.get("/api/v1/vehicles/nearby", params={"lat": -33.53, "lon": ROUTE_LON}).json()
+    assert no_user["vehicles"][0]["route_distance_m"] is None
