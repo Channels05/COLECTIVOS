@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Any, Literal
 
@@ -73,6 +74,7 @@ class RecordingSummary(RecordingRead):
     """Para la lista del administrador: quién grabó (patente del auto o pasajero) y la línea."""
 
     recorded_by: Literal["driver", "passenger"]
+    contributor_id: uuid.UUID | None  # el pasajero anónimo que grabó (para moderarlo)
     plate: str | None
     line_name: str | None
     line_status: LineStatus | None

@@ -194,7 +194,7 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/vehicles` (admin) | admin: vehículos registrados (sin tokens) |
 | POST | `/api/v1/vehicles/{id}/token` (admin) | admin: token nuevo (QR nuevo); el anterior deja de servir |
 | POST | `/api/v1/vehicles/{id}/location` (header `X-Device-Token`) | app conductor, cada 5 s |
-| GET | `/api/v1/vehicles/nearby?lat=&lon=&radius_m=2000&line_code=&min_seats=` | app pasajero |
+| GET | `/api/v1/vehicles/nearby?lat=&lon=&radius_m=2000&line_code=&min_seats=&user_lat=&user_lon=` | app pasajero (con `user_lat/lon`, cada auto trae `route_distance_m`: metros por el recorrido de su línea hasta el pasajero) |
 | GET | `/api/v1/routes/{line_code}` | app pasajero: trazado en GeoJSON (`source`: `gore_rm` / `osm` / `recorded`) |
 | POST | `/api/v1/routes/reload` (header `X-Admin-Key`) | admin: refresca caché de trazados |
 | POST | `/api/v1/vehicles/{id}/recordings` `{direction}` (device token) | conductor: empieza a grabar ida/regreso |
@@ -205,6 +205,9 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/admin/stats?days=28` (admin) | admin: panel "Datos" — pasajeros activos, marcas y grabaciones por línea y por zona (celdas de ~1 km) |
 | POST | `/api/v1/client-errors` `{errors: [...]}` | app: reporta sus errores de JavaScript (anónimos; máx. 60 por IP y hora; se guardan 90 días) |
 | GET | `/api/v1/admin/errors?days=30` (admin) | admin: panel "Errores" — errores de la app agrupados por mensaje, con versiones, teléfonos y detalle |
+| GET | `/api/v1/admin/contributors/{id}` (admin) | admin: lo que aportó un pasajero anónimo (marcas, grabaciones por estado, líneas) |
+| POST | `/api/v1/admin/contributors/{id}/block` `{purge?}` · `/unblock` (admin) | admin: bloquearlo (la API le responde 403); con `purge` rechaza sus pendientes, desactiva sus tramos aprobados, borra sus marcas y rechaza sus líneas sin revisar |
+| WS | `/api/v1/vehicles/nearby/live` | app pasajero: cercanos en vivo; manda los parámetros de `GET /vehicles/nearby` y recibe cada cambio (mín. cada 10 s) |
 | POST | `/api/v1/contributors` | app pasajero: registro anónimo (id + token), máx. 10 por IP y hora |
 | GET | `/api/v1/lines?q=&lat=&lon=&radius_m=300` | app pasajero: buscar líneas activas por código, letrero o calle (con lat/lon: las que pasan cerca) |
 | GET | `/api/v1/lines/{code}` | app pasajero: una línea (letrero y calles) para la tarjeta del colectivo |

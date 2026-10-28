@@ -69,6 +69,26 @@ _LINES = text("""
     LIMIT :max_lines
 """)
 
+# Los pasajeros que más aportaron en el período (para revisar si alguno manda datos falsos).
+_TOP_CONTRIBUTORS = text("""
+    WITH s AS (
+        SELECT contributor_id AS id, count(*) AS sightings FROM sightings
+        WHERE seen_at > now() - make_interval(days => :days) GROUP BY contributor_id
+    ), r AS (
+        SELECT contributor_id AS id, count(*) AS recordings,
+               count(*) FILTER (WHERE status::text = 'rejected') AS rejected
+        FROM route_recordings
+        WHERE contributor_id IS NOT NULL AND started_at > now() - make_interval(days => :days)
+        GROUP BY contributor_id
+    )
+    SELECT c.id, c.is_blocked, coalesce(s.sightings, 0) AS sightings,
+           coalesce(r.recordings, 0) AS recordings, coalesce(r.rejected, 0) AS rejected
+    FROM contributors c LEFT JOIN s ON s.id = c.id LEFT JOIN r ON r.id = c.id
+    WHERE s.id IS NOT NULL OR r.id IS NOT NULL
+    ORDER BY coalesce(s.sightings, 0) + 5 * coalesce(r.recordings, 0) DESC
+    LIMIT 15
+""")
+
 # Celdas con marcas o con inicios de grabación (el primer punto del recorrido crudo).
 _ZONES = text("""
     WITH events AS (
@@ -95,6 +115,7 @@ async def summary(db: AsyncSession, days: int) -> dict:
     by_status = {status: n for status, n in await db.execute(_RECORDINGS_BY_STATUS, {"days": days})}
     lines = (await db.execute(_LINES, {"days": days, "max_lines": MAX_LINES})).mappings().all()
     zones = await db.execute(_ZONES, {"days": days, "cell": ZONE_CELL_DEG, "max_zones": MAX_ZONES})
+    top = (await db.execute(_TOP_CONTRIBUTORS, {"days": days})).mappings().all()
     return {
         "days": days,
         "totals": {
@@ -114,6 +135,7 @@ async def summary(db: AsyncSession, days: int) -> dict:
              "recorded_km": round(row["recorded_m"] / 1000, 1)}
             for row in lines
         ],
+        "top_contributors": [dict(row) for row in top],
         "zones": [
             {
                 # Centro de la celda.

@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -36,8 +37,17 @@ class ZoneStats(BaseModel):
     commune: str | None  # la comuna más común de esas líneas
 
 
+class ContributorStats(BaseModel):
+    id: uuid.UUID
+    is_blocked: bool
+    sightings: int
+    recordings: int
+    rejected: int  # grabaciones rechazadas en el período
+
+
 class StatsRead(BaseModel):
     days: int
     totals: StatsTotals
     lines: list[LineStats]
     zones: list[ZoneStats]
+    top_contributors: list[ContributorStats]

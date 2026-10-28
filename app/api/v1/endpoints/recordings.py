@@ -89,6 +89,7 @@ def _summary(recording: RouteRecording, plate, line_name, line_status, has_offic
     return {
         **RecordingRead.model_validate(recording).model_dump(exclude={"warnings"}),
         "recorded_by": "driver" if recording.vehicle_id else "passenger",
+        "contributor_id": recording.contributor_id,
         "plate": plate,
         "line_name": line_name,
         "line_status": line_status,

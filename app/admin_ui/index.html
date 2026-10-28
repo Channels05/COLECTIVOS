@@ -311,6 +311,8 @@ function renderPanel(r) {
       : r.line_has_official_route
       ? "La línea ya tiene trazado oficial: compara antes de aprobar."
       : "La línea no tiene trazado oficial: al aprobar, este tramo se suma a lo ya grabado (en naranjo)." }),
+    ...(r.contributor_id ? [el("div", { className: "actions" }, el("button", { className: "btn-ghost",
+      textContent: "Ver aportante (moderar)", onclick: () => showContributor(r.contributor_id) }))] : []),
     ...(r.comment ? [el("div", { className: "quote", textContent: `Comentario: “${r.comment}”` })] : []),
     ...(r.sign_text ? [el("div", { className: "quote", textContent: `Letrero según quien grabó: “${r.sign_text}”` })] : []),
     legend, table,
@@ -594,6 +596,11 @@ function showStatsSummary() {
     el("div", { className: "legend" },
       el("span", { className: "sightings", textContent: "Zona con marcas (~1 km)" }),
       el("span", { className: "recordings", textContent: "Zona donde empezaron grabaciones" })),
+    el("h3", { textContent: "Aportantes más activos" }),
+    ...(stats.top_contributors.length ? stats.top_contributors.map((c) => el("div", { className: "zone", onclick: () => showContributor(c.id) },
+      el("span", { textContent: `${c.id.slice(0, 8)}${c.is_blocked ? " · bloqueado" : ""}` }),
+      el("b", { textContent: `${fmtInt(c.sightings)} marcas · ${c.recordings} grab.${c.rejected ? ` (${c.rejected} rechaz.)` : ""}` })))
+      : [el("div", { className: "status-line", textContent: "Sin aportes en el período." })]),
     el("h3", { textContent: "Zonas más activas" }),
     ...(zones.length ? zones.slice(0, 12).map((z) => el("div", { className: "zone", onclick: () => map.setView([z.lat, z.lon], 15) },
       el("span", { textContent: `${communeLabel(z.commune)} · ${z.lines} línea${z.lines === 1 ? "" : "s"}` }),
@@ -693,6 +700,58 @@ function showErrorGroup(g) {
     el("div", { className: "status-line", textContent: g.devices.join(" · ") || "—" }),
     el("h3", { textContent: "Detalle técnico (último reporte)" }),
     el("pre", { className: "stack", textContent: g.last_stack || "Sin detalle." }),
+  );
+}
+
+// --- Moderación: un aportante anónimo -------------------------------------------------------------
+async function showContributor(id) {
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(el("div", { className: "status-line", textContent: "Cargando…" }));
+  let c;
+  try {
+    c = await api(`/admin/contributors/${id}`);
+  } catch (err) {
+    panel.replaceChildren(el("div", { className: "error", textContent: err.message }));
+    return;
+  }
+  const rec = c.recordings;
+  const rows = [
+    ["Registrado", fmtDate(c.created_at)], ["Estado", c.is_blocked ? "Bloqueado" : "Activo"],
+    ["Marcas \"pasó un colectivo\"", c.sightings], ["Última marca", fmtDate(c.last_sighting_at)],
+    ["Grabaciones aprobadas", rec.approved || 0], ["Pendientes", rec.pending_review || 0],
+    ["Rechazadas", rec.rejected || 0], ["Líneas propuestas", c.lines_proposed],
+  ];
+  const purge = el("input", { type: "checkbox", checked: true });
+  const error = el("div", { className: "error" });
+  const done = el("div", { className: "status-line" });
+  const act = (path, body, question) => async () => {
+    if (question && !confirm(question)) return;
+    try {
+      const r = await api(`/admin/contributors/${id}/${path}`, { method: "POST", body: JSON.stringify(body) });
+      await showContributor(id);
+      const summary = [`${r.pending_rejected} grabación(es) pendiente(s) rechazada(s)`, `${r.routes_deactivated} tramo(s) desactivado(s)`,
+        `${r.sightings_deleted} marca(s) borrada(s)`, `${r.lines_rejected} línea(s) rechazada(s)`];
+      document.getElementById("panel").append(el("div", { className: "status-line",
+        textContent: path === "block" && body.purge ? `Listo: ${summary.join(", ")}.` : "Listo." }));
+      if (mode === "stats") loadStats(); else loadList();
+    } catch (err) {
+      error.textContent = err.message;
+    }
+  };
+  panel.replaceChildren(
+    el("h2", { textContent: "Aportante anónimo" }),
+    el("div", { className: "secret", textContent: c.id }),
+    el("table", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { textContent: k }), el("td", { textContent: String(v) })))),
+    ...(c.is_blocked
+      ? [el("div", { className: "warning", textContent: "Bloqueado: la app le responde que no puede enviar aportes." }),
+         el("div", { className: "actions" }, el("button", { className: "btn-ghost", textContent: "Desbloquear",
+           onclick: act("unblock", {}, null) }))]
+      : [el("label", { className: "check" }, purge, " Deshacer también sus aportes (rechazar pendientes, quitar sus tramos aprobados, borrar sus marcas)"),
+         el("div", { className: "actions" }, el("button", { className: "btn-danger", textContent: "Bloquear",
+           onclick: () => act("block", { purge: purge.checked },
+             purge.checked ? "¿Bloquear a este aportante y deshacer sus aportes? Lo borrado no se recupera." : "¿Bloquear a este aportante?")() }))]),
+    done, error,
   );
 }
 
