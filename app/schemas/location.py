@@ -57,6 +57,9 @@ class NearbyVehicle(BaseModel):
     heading: float | None
     on_route: bool | None
     last_seen: datetime
+    # Metros por el recorrido de la línea hasta el pasajero (si mandó su ubicación y el auto viene
+    # hacia él por el trazado); la app calcula la llegada con esto en vez de la línea recta.
+    route_distance_m: float | None = None
 
 
 class NearbyResponse(BaseModel):
