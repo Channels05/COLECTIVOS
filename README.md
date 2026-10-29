@@ -206,6 +206,12 @@ Al revisar una migración autogenerada:
 | POST | `/api/v1/client-errors` `{errors: [...]}` | app: reporta sus errores de JavaScript (anónimos; máx. 60 por IP y hora; se guardan 90 días) |
 | GET | `/api/v1/admin/errors?days=30` (admin) | admin: panel "Errores" — errores de la app agrupados por mensaje, con versiones, teléfonos y detalle |
 | GET | `/api/v1/admin/fleet` (admin) | admin: modo "Flota" — todos los autos transmitiendo, con cupos, velocidad y estado de ruta (se refresca cada 5 s) |
+| GET | `/api/v1/admin/occupancy?days=30` (admin) | admin: modo "Ocupación" — qué tan llenos van los autos de cada línea por hora del día |
+| POST | `/api/v1/driver-applications` `{plate, line_code, max_capacity, note?, token}` | app conductor: pedir la inscripción; el token lo genera el teléfono y será el del vehículo |
+| GET | `/api/v1/driver-applications/{id}` (`X-Application-Token`) | app conductor: estado de su solicitud; aprobada trae `vehicle_id` |
+| GET · POST | `/api/v1/admin/driver-applications` · `/{id}/approve` · `/{id}/reject` (admin) | admin: solicitudes pendientes en "Vehículos"; aprobar crea el vehículo con el token del teléfono |
+| GET | `/api/v1/trips/plan?from_lat=&from_lon=&to_lat=&to_lon=` | app pasajero: ¿qué colectivo me lleva? — líneas que pasan cerca de ambos puntos |
+| GET | `/api/v1/places/search?q=` | app pasajero: buscar un lugar por nombre (Nominatim, con caché de un día) |
 | GET | `/api/v1/admin/contributors/{id}` (admin) | admin: lo que aportó un pasajero anónimo (marcas, grabaciones por estado, líneas) |
 | POST | `/api/v1/admin/contributors/{id}/block` `{purge?}` · `/unblock` (admin) | admin: bloquearlo (la API le responde 403); con `purge` rechaza sus pendientes, desactiva sus tramos aprobados, borra sus marcas y rechaza sus líneas sin revisar |
 | WS | `/api/v1/vehicles/nearby/live` | app pasajero: cercanos en vivo; manda los parámetros de `GET /vehicles/nearby` y recibe cada cambio (mín. cada 10 s) |
