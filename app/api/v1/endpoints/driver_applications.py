@@ -1,8 +1,8 @@
 """Inscripción de conductores desde la app: el conductor la pide y el administrador la aprueba.
 
-El teléfono genera un token aleatorio y lo manda al pedir la inscripción (el servidor guarda solo
-su hash). Al aprobarla, el vehículo se crea con ese hash: el teléfono ya tiene su token y queda
-vinculado sin QR. Mientras espera, consulta el estado con el mismo token.
+Al pedirla, el servidor genera un token y se lo entrega al teléfono una sola vez (guarda solo su
+hash), igual que al registrar un vehículo. Al aprobarla, el vehículo se crea con ese hash: el
+teléfono ya tiene su token y queda vinculado sin QR. Mientras espera, consulta con el mismo token.
 """
 
 import uuid
@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import select
 
 from app.api.deps import DbSession, RedisClient, require_admin
-from app.core.security import hash_token, verify_token
+from app.core.security import generate_device_token, hash_token, verify_token
 from app.models import ApplicationStatus, DriverApplication, LineSource, Vehicle
 from app.schemas.vehicle import PLATE_PATTERN
 from app.services.lines import ensure_line
@@ -30,8 +30,6 @@ class ApplicationIn(BaseModel):
     line_code: str = Field(min_length=1, max_length=20)
     max_capacity: int = Field(default=4, ge=1, le=6)
     note: str | None = Field(default=None, max_length=200)
-    # Lo genera el teléfono (aleatorio); será el token del dispositivo si se aprueba.
-    token: str = Field(min_length=32, max_length=200)
 
     @field_validator("plate", mode="before")
     @classmethod
@@ -59,6 +57,11 @@ class ApplicationRead(BaseModel):
     reviewed_at: datetime | None
 
 
+class ApplicationCreated(ApplicationRead):
+    # Se entrega solo al pedir la inscripción: el teléfono lo guarda y será el token del vehículo.
+    token: str
+
+
 class ApplicationReview(BaseModel):
     note: str | None = Field(default=None, max_length=300)
     # Al aprobar, el administrador puede corregir lo que escribió el conductor.
@@ -70,8 +73,8 @@ async def _plate_taken(db: DbSession, plate: str) -> bool:
     return await db.scalar(select(Vehicle.id).where(Vehicle.plate == plate)) is not None
 
 
-@public_router.post("", response_model=ApplicationRead, status_code=status.HTTP_201_CREATED)
-async def apply(body: ApplicationIn, request: Request, db: DbSession, redis: RedisClient) -> DriverApplication:
+@public_router.post("", response_model=ApplicationCreated, status_code=status.HTTP_201_CREATED)
+async def apply(body: ApplicationIn, request: Request, db: DbSession, redis: RedisClient) -> dict:
     """El conductor pide que se registre su auto. Queda pendiente hasta que lo apruebe el administrador."""
     key = f"ratelimit:driver-applications:{request.client.host if request.client else 'unknown'}"
     count = await redis.incr(key)
@@ -84,14 +87,15 @@ async def apply(body: ApplicationIn, request: Request, db: DbSession, redis: Red
             status.HTTP_409_CONFLICT,
             f"La patente {body.plate} ya está registrada. Pide el código QR a la administración.",
         )
+    token = generate_device_token()
     application = DriverApplication(
         plate=body.plate, line_code=body.line_code, max_capacity=body.max_capacity,
-        note=(body.note or "").strip() or None, token_hash=hash_token(body.token),
+        note=(body.note or "").strip() or None, token_hash=hash_token(token),
     )
     db.add(application)
     await db.commit()
     await db.refresh(application)
-    return application
+    return {**ApplicationRead.model_validate(application).model_dump(), "token": token}
 
 
 @public_router.get("/{application_id}", response_model=ApplicationRead)

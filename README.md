@@ -207,7 +207,7 @@ Al revisar una migración autogenerada:
 | GET | `/api/v1/admin/errors?days=30` (admin) | admin: panel "Errores" — errores de la app agrupados por mensaje, con versiones, teléfonos y detalle |
 | GET | `/api/v1/admin/fleet` (admin) | admin: modo "Flota" — todos los autos transmitiendo, con cupos, velocidad y estado de ruta (se refresca cada 5 s) |
 | GET | `/api/v1/admin/occupancy?days=30` (admin) | admin: modo "Ocupación" — qué tan llenos van los autos de cada línea por hora del día |
-| POST | `/api/v1/driver-applications` `{plate, line_code, max_capacity, note?, token}` | app conductor: pedir la inscripción; el token lo genera el teléfono y será el del vehículo |
+| POST | `/api/v1/driver-applications` `{plate, line_code, max_capacity, note?}` | app conductor: pedir la inscripción; responde una sola vez el `token` que será el del vehículo |
 | GET | `/api/v1/driver-applications/{id}` (`X-Application-Token`) | app conductor: estado de su solicitud; aprobada trae `vehicle_id` |
 | GET · POST | `/api/v1/admin/driver-applications` · `/{id}/approve` · `/{id}/reject` (admin) | admin: solicitudes pendientes en "Vehículos"; aprobar crea el vehículo con el token del teléfono |
 | GET | `/api/v1/trips/plan?from_lat=&from_lon=&to_lat=&to_lon=` | app pasajero: ¿qué colectivo me lleva? — líneas que pasan cerca de ambos puntos |
