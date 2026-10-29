@@ -19,6 +19,9 @@ USER_AGENT = "colectivos-app/1.0 (https://channels05.github.io/colectivos-descar
 VIEWBOX = "-71.05,-33.20,-70.40,-33.80"
 CACHE_S = 24 * 3600
 MAX_RESULTS = 6
+# OpenStreetMap nombra las estaciones sin "Metro" ("Bellavista de La Florida"): si con la palabra
+# no encuentra nada, se reintenta sin ella.
+TRANSIT_WORDS = {"metro", "estacion", "estación", "paradero"}
 
 _lock = asyncio.Lock()
 _last_request = 0.0
@@ -41,12 +44,29 @@ def _label(item: dict) -> tuple[str, str]:
     return name, detail
 
 
+def fallback_query(query: str) -> str | None:
+    """La búsqueda sin la palabra de transporte del comienzo, o None si no empieza con una."""
+    words = query.split()
+    if len(words) > 1 and words[0].lower() in TRANSIT_WORDS:
+        return " ".join(words[1:])
+    return None
+
+
 async def search(redis: Redis, query: str) -> list[dict]:
     key = f"places:{query.strip().lower()}"
     cached = await redis.get(key)
     if cached:
         return json.loads(cached)
 
+    results = await _nominatim(query)
+    if not results and (retry := fallback_query(query)):
+        results = await _nominatim(retry)
+    # Sin resultados se guarda poco rato: puede ser un error de tipeo que se corrige al tiro.
+    await redis.set(key, json.dumps(results), ex=CACHE_S if results else 300)
+    return results
+
+
+async def _nominatim(query: str) -> list[dict]:
     global _last_request
     async with _lock:
         wait = 1.05 - (time.monotonic() - _last_request)
@@ -68,6 +88,4 @@ async def search(redis: Redis, query: str) -> list[dict]:
     for item in items:
         name, detail = _label(item)
         results.append({"name": name, "detail": detail or None, "lat": float(item["lat"]), "lon": float(item["lon"])})
-    # Sin resultados se guarda poco rato: puede ser un error de tipeo que se corrige al tiro.
-    await redis.set(key, json.dumps(results), ex=CACHE_S if results else 300)
     return results
