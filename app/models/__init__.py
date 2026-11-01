@@ -3,6 +3,7 @@ from app.models.client_error import ClientError
 from app.models.contributor import Contributor
 from app.models.driver_application import ApplicationStatus, DriverApplication
 from app.models.line import Line, LineSource, LineStatus, contributed_line_seq
+from app.models.line_info import LineInfoReport, LineNotice, ReportStatus
 from app.models.location import LocationUpdate
 from app.models.recording import RecordingPoint, RecordingStatus, RouteRecording
 from app.models.route import Route, RouteDirection, RouteKind, RouteSource
@@ -15,11 +16,14 @@ __all__ = [
     "ClientError",
     "Contributor",
     "Line",
+    "LineInfoReport",
+    "LineNotice",
     "LineSource",
     "LineStatus",
     "LocationUpdate",
     "RecordingPoint",
     "RecordingStatus",
+    "ReportStatus",
     "Route",
     "RouteDirection",
     "RouteKind",

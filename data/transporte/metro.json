@@ -1,0 +1,826 @@
+{
+ "source": "OpenStreetMap (ODbL)",
+ "lines": [
+  {
+   "ref": "L1",
+   "name": "Línea 1",
+   "color": "#cc0000",
+   "stations": [
+    {
+     "name": "Los Dominicos",
+     "lat": -33.407871,
+     "lon": -70.544995
+    },
+    {
+     "name": "Hernando de Magallanes",
+     "lat": -33.407922,
+     "lon": -70.555842
+    },
+    {
+     "name": "Manquehue",
+     "lat": -33.409296,
+     "lon": -70.569267
+    },
+    {
+     "name": "Escuela Militar",
+     "lat": -33.413469,
+     "lon": -70.582687
+    },
+    {
+     "name": "Alcántara",
+     "lat": -33.415433,
+     "lon": -70.589995
+    },
+    {
+     "name": "El Golf",
+     "lat": -33.416605,
+     "lon": -70.595714
+    },
+    {
+     "name": "Tobalaba",
+     "lat": -33.418457,
+     "lon": -70.602114
+    },
+    {
+     "name": "Los Leones",
+     "lat": -33.422027,
+     "lon": -70.608572
+    },
+    {
+     "name": "Pedro de Valdivia",
+     "lat": -33.425472,
+     "lon": -70.613806
+    },
+    {
+     "name": "Manuel Montt",
+     "lat": -33.428542,
+     "lon": -70.619655
+    },
+    {
+     "name": "Salvador",
+     "lat": -33.432708,
+     "lon": -70.626102
+    },
+    {
+     "name": "Baquedano",
+     "lat": -33.437413,
+     "lon": -70.634051
+    },
+    {
+     "name": "Universidad Católica",
+     "lat": -33.439751,
+     "lon": -70.639908
+    },
+    {
+     "name": "Santa Lucía",
+     "lat": -33.442451,
+     "lon": -70.644751
+    },
+    {
+     "name": "Universidad de Chile",
+     "lat": -33.443853,
+     "lon": -70.650671
+    },
+    {
+     "name": "La Moneda",
+     "lat": -33.444857,
+     "lon": -70.65488
+    },
+    {
+     "name": "Los Héroes",
+     "lat": -33.446316,
+     "lon": -70.66102
+    },
+    {
+     "name": "República",
+     "lat": -33.44769,
+     "lon": -70.667143
+    },
+    {
+     "name": "Unión Latinoamericana",
+     "lat": -33.449349,
+     "lon": -70.673359
+    },
+    {
+     "name": "Central",
+     "lat": -33.450809,
+     "lon": -70.678967
+    },
+    {
+     "name": "Universidad de Santiago",
+     "lat": -33.452841,
+     "lon": -70.686557
+    },
+    {
+     "name": "San Alberto Hurtado",
+     "lat": -33.454189,
+     "lon": -70.692279
+    },
+    {
+     "name": "Ecuador",
+     "lat": -33.455909,
+     "lon": -70.699739
+    },
+    {
+     "name": "Las Rejas",
+     "lat": -33.457526,
+     "lon": -70.706763
+    },
+    {
+     "name": "Pajaritos",
+     "lat": -33.45747,
+     "lon": -70.715449
+    },
+    {
+     "name": "Neptuno",
+     "lat": -33.451579,
+     "lon": -70.72266
+    },
+    {
+     "name": "San Pablo",
+     "lat": -33.445189,
+     "lon": -70.723111
+    }
+   ]
+  },
+  {
+   "ref": "L2",
+   "name": "Línea 2",
+   "color": "#ffbe2e",
+   "stations": [
+    {
+     "name": "Vespucio Norte",
+     "lat": -33.380772,
+     "lon": -70.646347
+    },
+    {
+     "name": "Zapadores",
+     "lat": -33.390939,
+     "lon": -70.642458
+    },
+    {
+     "name": "Dorsal",
+     "lat": -33.396957,
+     "lon": -70.642762
+    },
+    {
+     "name": "Einstein",
+     "lat": -33.405944,
+     "lon": -70.643194
+    },
+    {
+     "name": "Cementerios",
+     "lat": -33.413976,
+     "lon": -70.643615
+    },
+    {
+     "name": "Cerro Blanco",
+     "lat": -33.42275,
+     "lon": -70.645076
+    },
+    {
+     "name": "Patronato",
+     "lat": -33.429729,
+     "lon": -70.647132
+    },
+    {
+     "name": "Puente Cal y Canto",
+     "lat": -33.432786,
+     "lon": -70.652999
+    },
+    {
+     "name": "Santa Ana",
+     "lat": -33.438089,
+     "lon": -70.659979
+    },
+    {
+     "name": "Los Héroes",
+     "lat": -33.446079,
+     "lon": -70.660483
+    },
+    {
+     "name": "Toesca",
+     "lat": -33.453457,
+     "lon": -70.658463
+    },
+    {
+     "name": "Parque O'Higgins",
+     "lat": -33.461659,
+     "lon": -70.656818
+    },
+    {
+     "name": "Rondizzoni",
+     "lat": -33.469659,
+     "lon": -70.656396
+    },
+    {
+     "name": "Franklin",
+     "lat": -33.476593,
+     "lon": -70.649524
+    },
+    {
+     "name": "El Llano",
+     "lat": -33.48259,
+     "lon": -70.649401
+    },
+    {
+     "name": "San Miguel",
+     "lat": -33.488717,
+     "lon": -70.651095
+    },
+    {
+     "name": "Lo Vial",
+     "lat": -33.496832,
+     "lon": -70.653036
+    },
+    {
+     "name": "Departamental",
+     "lat": -33.502441,
+     "lon": -70.654653
+    },
+    {
+     "name": "Ciudad del Niño",
+     "lat": -33.50954,
+     "lon": -70.656667
+    },
+    {
+     "name": "Lo Ovalle",
+     "lat": -33.517276,
+     "lon": -70.658847
+    },
+    {
+     "name": "El Parrón",
+     "lat": -33.526433,
+     "lon": -70.661434
+    },
+    {
+     "name": "La Cisterna",
+     "lat": -33.538368,
+     "lon": -70.664624
+    },
+    {
+     "name": "El Bosque",
+     "lat": -33.54663,
+     "lon": -70.666788
+    },
+    {
+     "name": "Observatorio",
+     "lat": -33.560267,
+     "lon": -70.67054
+    },
+    {
+     "name": "Copa Lo Martínez",
+     "lat": -33.570788,
+     "lon": -70.67344
+    },
+    {
+     "name": "Hospital El Pino",
+     "lat": -33.582885,
+     "lon": -70.676839
+    }
+   ]
+  },
+  {
+   "ref": "L3",
+   "name": "Línea 3",
+   "color": "#83441D",
+   "stations": [
+    {
+     "name": "Plaza Quilicura",
+     "lat": -33.365737,
+     "lon": -70.72889
+    },
+    {
+     "name": "Lo Cruzat",
+     "lat": -33.36685,
+     "lon": -70.719773
+    },
+    {
+     "name": "Ferrocarril",
+     "lat": -33.365483,
+     "lon": -70.70553
+    },
+    {
+     "name": "Los Libertadores",
+     "lat": -33.365446,
+     "lon": -70.691989
+    },
+    {
+     "name": "Cardenal Caro",
+     "lat": -33.373257,
+     "lon": -70.686353
+    },
+    {
+     "name": "Vivaceta",
+     "lat": -33.385389,
+     "lon": -70.679654
+    },
+    {
+     "name": "Conchalí",
+     "lat": -33.397901,
+     "lon": -70.669612
+    },
+    {
+     "name": "Plaza Chacabuco",
+     "lat": -33.406777,
+     "lon": -70.660987
+    },
+    {
+     "name": "Hospitales",
+     "lat": -33.417677,
+     "lon": -70.656475
+    },
+    {
+     "name": "Puente Cal y Canto",
+     "lat": -33.432762,
+     "lon": -70.653264
+    },
+    {
+     "name": "Plaza de Armas",
+     "lat": -33.437453,
+     "lon": -70.652687
+    },
+    {
+     "name": "Universidad de Chile",
+     "lat": -33.444123,
+     "lon": -70.651749
+    },
+    {
+     "name": "Parque Almagro",
+     "lat": -33.451395,
+     "lon": -70.650582
+    },
+    {
+     "name": "Matta",
+     "lat": -33.458285,
+     "lon": -70.64307
+    },
+    {
+     "name": "Irarrázaval",
+     "lat": -33.454996,
+     "lon": -70.628059
+    },
+    {
+     "name": "Monseñor Eyzaguirre",
+     "lat": -33.453212,
+     "lon": -70.613518
+    },
+    {
+     "name": "Ñuñoa",
+     "lat": -33.454143,
+     "lon": -70.605245
+    },
+    {
+     "name": "Chile España",
+     "lat": -33.454925,
+     "lon": -70.598144
+    },
+    {
+     "name": "Villa Frei",
+     "lat": -33.454687,
+     "lon": -70.581479
+    },
+    {
+     "name": "Plaza Egaña",
+     "lat": -33.453538,
+     "lon": -70.57083
+    },
+    {
+     "name": "Fernando Castillo Velasco",
+     "lat": -33.452119,
+     "lon": -70.558115
+    }
+   ]
+  },
+  {
+   "ref": "L4",
+   "name": "Línea 4",
+   "color": "#292d91",
+   "stations": [
+    {
+     "name": "Tobalaba",
+     "lat": -33.418751,
+     "lon": -70.600859
+    },
+    {
+     "name": "Cristóbal Colón",
+     "lat": -33.426333,
+     "lon": -70.591003
+    },
+    {
+     "name": "Francisco Bilbao",
+     "lat": -33.431803,
+     "lon": -70.584728
+    },
+    {
+     "name": "Príncipe de Gales",
+     "lat": -33.439205,
+     "lon": -70.57317
+    },
+    {
+     "name": "Simón Bolívar",
+     "lat": -33.446185,
+     "lon": -70.571947
+    },
+    {
+     "name": "Plaza Egaña",
+     "lat": -33.453295,
+     "lon": -70.570785
+    },
+    {
+     "name": "Los Orientales",
+     "lat": -33.462612,
+     "lon": -70.573943
+    },
+    {
+     "name": "Grecia",
+     "lat": -33.469529,
+     "lon": -70.576522
+    },
+    {
+     "name": "Los Presidentes",
+     "lat": -33.479795,
+     "lon": -70.578674
+    },
+    {
+     "name": "Quilín",
+     "lat": -33.48802,
+     "lon": -70.580391
+    },
+    {
+     "name": "Las Torres",
+     "lat": -33.49891,
+     "lon": -70.586445
+    },
+    {
+     "name": "Macul",
+     "lat": -33.509236,
+     "lon": -70.590068
+    },
+    {
+     "name": "Vicuña Mackenna",
+     "lat": -33.519682,
+     "lon": -70.596199
+    },
+    {
+     "name": "Vicente Valdés",
+     "lat": -33.526409,
+     "lon": -70.596811
+    },
+    {
+     "name": "Rojas Magallanes",
+     "lat": -33.53611,
+     "lon": -70.592714
+    },
+    {
+     "name": "Trinidad",
+     "lat": -33.546299,
+     "lon": -70.58812
+    },
+    {
+     "name": "San José de la Estrella",
+     "lat": -33.553824,
+     "lon": -70.586575
+    },
+    {
+     "name": "Los Quillayes",
+     "lat": -33.561226,
+     "lon": -70.585288
+    },
+    {
+     "name": "Elisa Correa",
+     "lat": -33.569296,
+     "lon": -70.583826
+    },
+    {
+     "name": "Hospital Sótero del Río",
+     "lat": -33.576902,
+     "lon": -70.582337
+    },
+    {
+     "name": "Protectora de la Infancia",
+     "lat": -33.589578,
+     "lon": -70.579854
+    },
+    {
+     "name": "Las Mercedes",
+     "lat": -33.601384,
+     "lon": -70.577494
+    },
+    {
+     "name": "Plaza de Puente Alto",
+     "lat": -33.609527,
+     "lon": -70.575859
+    }
+   ]
+  },
+  {
+   "ref": "L4A",
+   "name": "Línea 4A",
+   "color": "#0099ff",
+   "stations": [
+    {
+     "name": "Vicuña Mackenna",
+     "lat": -33.519752,
+     "lon": -70.596226
+    },
+    {
+     "name": "Santa Julia",
+     "lat": -33.531099,
+     "lon": -70.605568
+    },
+    {
+     "name": "La Granja",
+     "lat": -33.541132,
+     "lon": -70.616088
+    },
+    {
+     "name": "Santa Rosa",
+     "lat": -33.542378,
+     "lon": -70.63412
+    },
+    {
+     "name": "San Ramón",
+     "lat": -33.541207,
+     "lon": -70.643156
+    },
+    {
+     "name": "La Cisterna",
+     "lat": -33.537402,
+     "lon": -70.664141
+    }
+   ]
+  },
+  {
+   "ref": "L5",
+   "name": "Línea 5",
+   "color": "#006633",
+   "stations": [
+    {
+     "name": "Plaza de Maipú",
+     "lat": -33.509935,
+     "lon": -70.757291
+    },
+    {
+     "name": "Santiago Bueras",
+     "lat": -33.496242,
+     "lon": -70.757422
+    },
+    {
+     "name": "Del Sol",
+     "lat": -33.490242,
+     "lon": -70.753104
+    },
+    {
+     "name": "Monte Tabor",
+     "lat": -33.482289,
+     "lon": -70.745421
+    },
+    {
+     "name": "Las Parcelas",
+     "lat": -33.475278,
+     "lon": -70.739968
+    },
+    {
+     "name": "Laguna Sur",
+     "lat": -33.462162,
+     "lon": -70.737895
+    },
+    {
+     "name": "Barrancas",
+     "lat": -33.452978,
+     "lon": -70.739016
+    },
+    {
+     "name": "Pudahuel",
+     "lat": -33.444877,
+     "lon": -70.741133
+    },
+    {
+     "name": "San Pablo",
+     "lat": -33.444157,
+     "lon": -70.722414
+    },
+    {
+     "name": "Lo Prado",
+     "lat": -33.443426,
+     "lon": -70.71675
+    },
+    {
+     "name": "Blanqueado",
+     "lat": -33.441346,
+     "lon": -70.706646
+    },
+    {
+     "name": "Gruta de Lourdes",
+     "lat": -33.438027,
+     "lon": -70.691023
+    },
+    {
+     "name": "Quinta Normal",
+     "lat": -33.440383,
+     "lon": -70.680288
+    },
+    {
+     "name": "Cumming",
+     "lat": -33.439157,
+     "lon": -70.668532
+    },
+    {
+     "name": "Santa Ana",
+     "lat": -33.438236,
+     "lon": -70.659637
+    },
+    {
+     "name": "Plaza de Armas",
+     "lat": -33.437284,
+     "lon": -70.650293
+    },
+    {
+     "name": "Bellas Artes",
+     "lat": -33.436648,
+     "lon": -70.644132
+    },
+    {
+     "name": "Baquedano",
+     "lat": -33.437558,
+     "lon": -70.63328
+    },
+    {
+     "name": "Parque Bustamante",
+     "lat": -33.442807,
+     "lon": -70.631971
+    },
+    {
+     "name": "Santa Isabel",
+     "lat": -33.447123,
+     "lon": -70.630444
+    },
+    {
+     "name": "Irarrázaval",
+     "lat": -33.453016,
+     "lon": -70.628853
+    },
+    {
+     "name": "Ñuble",
+     "lat": -33.467548,
+     "lon": -70.624718
+    },
+    {
+     "name": "Rodrigo de Araya",
+     "lat": -33.477827,
+     "lon": -70.622282
+    },
+    {
+     "name": "Carlos Valdovinos",
+     "lat": -33.486405,
+     "lon": -70.619198
+    },
+    {
+     "name": "Camino Agrícola",
+     "lat": -33.491798,
+     "lon": -70.617536
+    },
+    {
+     "name": "San Joaquín",
+     "lat": -33.499336,
+     "lon": -70.615845
+    },
+    {
+     "name": "Pedrero",
+     "lat": -33.507964,
+     "lon": -70.612455
+    },
+    {
+     "name": "Mirador",
+     "lat": -33.513319,
+     "lon": -70.605916
+    },
+    {
+     "name": "Bellavista de La Florida",
+     "lat": -33.51953,
+     "lon": -70.600042
+    },
+    {
+     "name": "Vicente Valdés",
+     "lat": -33.526412,
+     "lon": -70.596819
+    }
+   ]
+  },
+  {
+   "ref": "L6",
+   "name": "Línea 6",
+   "color": "#8e16a1",
+   "stations": [
+    {
+     "name": "Cerrillos",
+     "lat": -33.483451,
+     "lon": -70.695564
+    },
+    {
+     "name": "Lo Valledor",
+     "lat": -33.47842,
+     "lon": -70.680898
+    },
+    {
+     "name": "Presidente Pedro Aguirre Cerda",
+     "lat": -33.478694,
+     "lon": -70.664789
+    },
+    {
+     "name": "Franklin",
+     "lat": -33.476676,
+     "lon": -70.649448
+    },
+    {
+     "name": "Bío Bío",
+     "lat": -33.476623,
+     "lon": -70.642176
+    },
+    {
+     "name": "Ñuble",
+     "lat": -33.467469,
+     "lon": -70.625095
+    },
+    {
+     "name": "Estadio Nacional",
+     "lat": -33.463041,
+     "lon": -70.60629
+    },
+    {
+     "name": "Ñuñoa",
+     "lat": -33.454287,
+     "lon": -70.604936
+    },
+    {
+     "name": "Inés de Suárez",
+     "lat": -33.438719,
+     "lon": -70.607318
+    },
+    {
+     "name": "Los Leones",
+     "lat": -33.420785,
+     "lon": -70.608091
+    }
+   ]
+  },
+  {
+   "ref": "MTN",
+   "name": "Tren Nos – Estación Central",
+   "color": "#E63323",
+   "stations": [
+    {
+     "name": "Alameda",
+     "lat": -33.45228,
+     "lon": -70.679001
+    },
+    {
+     "name": "Lo Valledor",
+     "lat": -33.477212,
+     "lon": -70.680708
+    },
+    {
+     "name": "Pedro Aguirre Cerda",
+     "lat": -33.492728,
+     "lon": -70.681847
+    },
+    {
+     "name": "Lo Espejo",
+     "lat": -33.514544,
+     "lon": -70.68596
+    },
+    {
+     "name": "Lo Blanco",
+     "lat": -33.572694,
+     "lon": -70.698351
+    },
+    {
+     "name": "Freire",
+     "lat": -33.58672,
+     "lon": -70.698497
+    },
+    {
+     "name": "San Bernardo",
+     "lat": -33.594993,
+     "lon": -70.697795
+    },
+    {
+     "name": "Maestranza",
+     "lat": -33.606375,
+     "lon": -70.697071
+    },
+    {
+     "name": "5 Pinos",
+     "lat": -33.62324,
+     "lon": -70.700681
+    },
+    {
+     "name": "Nos",
+     "lat": -33.632242,
+     "lon": -70.704661
+    }
+   ]
+  }
+ ]
+}

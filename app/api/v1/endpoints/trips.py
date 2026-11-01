@@ -1,6 +1,6 @@
 """Pasajero: ¿qué colectivo me lleva? y buscar un lugar por nombre."""
 
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request, status
 from pydantic import BaseModel
@@ -33,9 +33,41 @@ class TripOptionRead(BaseModel):
     total_min: int
 
 
+class TripStep(BaseModel):
+    """Un paso de un viaje combinado. Según `kind`, vienen unos campos u otros."""
+
+    kind: Literal["walk", "colectivo", "metro"]
+    # walk
+    meters: int | None = None
+    to: str | None = None
+    # colectivo
+    line_code: str | None = None
+    name: str | None = None
+    description: str | None = None
+    ride_m: int | None = None
+    board: Point | None = None
+    alight: Point | None = None
+    # metro
+    ref: str | None = None  # "L5"
+    line_name: str | None = None
+    color: str | None = None
+    from_station: str | None = None
+    to_station: str | None = None
+    stops: int | None = None
+    start: Point | None = None
+    end: Point | None = None
+
+
+class ComboRead(BaseModel):
+    total_min: int
+    steps: list[TripStep]
+
+
 class TripPlanRead(BaseModel):
     straight_m: int  # distancia en línea recta entre origen y destino
     options: list[TripOptionRead]
+    # Colectivo + Metro (o al revés), solo si es más rápido que el mejor viaje en un colectivo.
+    combos: list[ComboRead] = []
 
 
 class PlaceRead(BaseModel):
@@ -55,8 +87,13 @@ async def plan_trip(
     walk_m: Annotated[int, Query(ge=100, le=1000)] = trip_planner.WALK_M_DEFAULT,
 ) -> dict:
     """Líneas que pasan cerca del origen y del destino, la más rápida primero (caminar + viajar)."""
-    straight, options = await trip_planner.plan(db, (from_lat, from_lon), (to_lat, to_lon), walk_m)
+    origin, destination = (from_lat, from_lon), (to_lat, to_lon)
+    straight, options = await trip_planner.plan(db, origin, destination, walk_m)
+    combos = []
+    if straight >= trip_planner.MIN_TRIP_M:
+        combos = await trip_planner.combos(db, origin, destination, options[0].total_min if options else None)
     return {
+        "combos": combos,
         "straight_m": round(straight),
         "options": [
             {**o.__dict__, "board": {"lat": o.board[0], "lon": o.board[1]}, "alight": {"lat": o.alight[0], "lon": o.alight[1]}}

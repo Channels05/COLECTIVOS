@@ -104,6 +104,8 @@
       <button data-mode="recordings" class="active">Recorridos grabados</button>
       <button data-mode="lines">Líneas propuestas</button>
       <button data-mode="vehicles">Vehículos</button>
+      <button data-mode="lineinfo">Tarifas y horarios</button>
+      <button data-mode="notices">Avisos</button>
       <button data-mode="fleet">Flota</button>
       <button data-mode="occupancy">Ocupación</button>
       <button data-mode="stats">Datos</button>
@@ -141,6 +143,8 @@ const TABS = {
   errors: [["7", "7 días"], ["30", "30 días"], ["90", "90 días"]],
   fleet: [["all", "En vivo"]],
   occupancy: [["30", "30 días"], ["7", "7 días"]],
+  lineinfo: [["pending", "Pendientes"], ["applied", "Aplicados"], ["discarded", "Descartados"]],
+  notices: [["active", "Vigentes"]],
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -201,7 +205,8 @@ async function loadList() {
   sessionStorage.setItem("adminKey", keyInput.value);
   return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles()
     : mode === "stats" ? loadStats() : mode === "errors" ? loadErrors() : mode === "fleet" ? loadFleet()
-    : mode === "occupancy" ? loadOccupancy() : loadRecordings();
+    : mode === "occupancy" ? loadOccupancy() : mode === "lineinfo" ? loadLineInfo()
+    : mode === "notices" ? loadNotices() : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -946,11 +951,134 @@ function showOccupancy(l) {
   );
 }
 
+// --- Tarifas y horarios que informan los pasajeros ----------------------------------------------
+const money = (v) => v == null ? "—" : `$${Number(v).toLocaleString("es-CL")}`;
+const infoSummary = (x, empty = "Solo una nota") => [
+  x.fare_day != null || x.fare_night != null ? `Día ${money(x.fare_day)} · noche ${money(x.fare_night)}` : null,
+  x.first_departure || x.last_departure ? `${x.first_departure || "?"} a ${x.last_departure || "?"}` : null,
+].filter(Boolean).join(" · ") || empty;
+
+async function loadLineInfo() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  layers.clearLayers();
+  try {
+    const items = await api(`/admin/line-info?status_filter=${currentStatus}`);
+    if (!items.length) {
+      list.replaceChildren(el("div", { className: "empty", textContent: "No hay datos informados en este estado." }));
+      return;
+    }
+    list.replaceChildren(...items.map((r) => {
+      const item = el("div", { className: "item" + (r.id === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: `Línea ${r.line_code}` }),
+        el("div", { className: "meta", textContent: `${infoSummary(r)} · ${fmtDate(r.created_at)}` }));
+      item.onclick = () => selectLineInfo(r);
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function selectLineInfo(r) {
+  selectedId = r.id;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  const input = (field, type = "text") => el("input", { type, value: r[field] ?? "", placeholder: r.current[field] ?? "" });
+  const fields = { fare_day: input("fare_day", "number"), fare_night: input("fare_night", "number"),
+    first_departure: input("first_departure"), last_departure: input("last_departure") };
+  const error = el("div", { className: "error" });
+  const pending = r.status === "pending";
+  const act = (action) => async () => {
+    buttons.forEach((b) => (b.disabled = true));
+    try {
+      const body = Object.fromEntries(Object.entries(fields).map(([k, i]) => [k, i.value === "" ? null : (i.type === "number" ? Number(i.value) : i.value)]));
+      await api(`/admin/line-info/${r.id}/${action}`, { method: "POST", body: JSON.stringify(action === "apply" ? body : {}) });
+      closePanel();
+      loadList();
+    } catch (err) {
+      error.textContent = err.message;
+      buttons.forEach((b) => (b.disabled = false));
+    }
+  };
+  const apply = el("button", { className: "btn-primary", textContent: "Aplicar a la línea", onclick: act("apply") });
+  const discard = el("button", { className: "btn-danger", textContent: "Descartar", onclick: act("discard") });
+  const buttons = [apply, discard];
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: `Línea ${r.line_code}` }),
+    el("div", { className: "status-line", textContent: `Informado por un pasajero el ${fmtDate(r.created_at)}. Hoy la línea tiene: ${infoSummary(r.current, "nada registrado")}.` }),
+    ...(r.note ? [el("div", { className: "quote", textContent: `Nota: “${r.note}”` })] : []),
+    el("label", { className: "field" }, "Tarifa de día (pesos)", fields.fare_day),
+    el("label", { className: "field" }, "Tarifa nocturna (pesos)", fields.fare_night),
+    el("label", { className: "field" }, "Primer auto (HH:MM)", fields.first_departure),
+    el("label", { className: "field" }, "Último auto (HH:MM)", fields.last_departure),
+    ...(pending ? [el("div", { className: "actions" }, apply, discard)] : []), error,
+  );
+}
+
+// --- Avisos a los pasajeros (por línea o para todas) ---------------------------------------------
+async function loadNotices() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  layers.clearLayers();
+  try {
+    const items = await api("/admin/notices");
+    const add = el("div", { className: "item" }, el("div", { className: "title", textContent: "+ Publicar aviso" }),
+      el("div", { className: "meta", textContent: "Desvíos, ferias, cortes de calle: se ve en la app" }));
+    add.onclick = newNoticeForm;
+    list.replaceChildren(add, ...items.map((n) => {
+      const remove = el("button", { className: "btn-ghost", textContent: "Borrar", onclick: async (e) => {
+        e.stopPropagation();
+        if (!confirm("¿Borrar este aviso? Deja de verse en la app.")) return;
+        await fetch(`${API}/admin/notices/${n.id}`, { method: "DELETE", headers: { "X-Admin-Key": keyInput.value } });
+        loadList();
+      } });
+      return el("div", { className: "item" },
+        el("div", { className: "title", textContent: n.line_code ? `Línea ${n.line_code}` : "Todas las líneas" }),
+        el("div", { className: "meta", textContent: `${n.message} · ${n.ends_at ? `hasta ${fmtDate(n.ends_at)}` : "sin fecha de término"}` }),
+        remove);
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function newNoticeForm() {
+  layers.clearLayers();
+  const line = el("input", { placeholder: "Vacío = todas las líneas" });
+  const message = el("textarea", { placeholder: "Ej: Desvío por feria los domingos en Av. X entre 8 y 16 h", maxLength: 280 });
+  const days = el("input", { type: "number", min: 1, max: 365, placeholder: "Vacío = hasta que lo borres" });
+  const error = el("div", { className: "error" });
+  const publish = el("button", { className: "btn-primary", textContent: "Publicar", onclick: async () => {
+    publish.disabled = true;
+    try {
+      await api("/admin/notices", { method: "POST", body: JSON.stringify({
+        line_code: line.value.trim() || null, message: message.value, days: days.value ? Number(days.value) : null }) });
+      closePanel();
+      loadList();
+    } catch (err) {
+      error.textContent = err.message;
+      publish.disabled = false;
+    }
+  } });
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: "Publicar aviso" }),
+    el("label", { className: "field" }, "Línea", line),
+    el("label", { className: "field" }, "Mensaje para los pasajeros", message),
+    el("label", { className: "field" }, "Días de vigencia", days),
+    el("div", { className: "actions" }, publish), error,
+  );
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
-  currentStatus = { vehicles: "all", stats: "28", errors: "30", fleet: "all", occupancy: "30" }[mode] || "pending_review";
+  currentStatus = { vehicles: "all", stats: "28", errors: "30", fleet: "all", occupancy: "30", lineinfo: "pending",
+    notices: "active" }[mode] || "pending_review";
   stopFleet();
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();

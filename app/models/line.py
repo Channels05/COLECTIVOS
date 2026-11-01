@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import DateTime, ForeignKey, Index, Sequence, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, Sequence, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -48,3 +48,9 @@ class Line(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     review_note: Mapped[str | None] = mapped_column(Text)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Tarifa (pesos) y horario: los informan pasajeros y los confirma el administrador.
+    fare_day: Mapped[int | None] = mapped_column(Integer)
+    fare_night: Mapped[int | None] = mapped_column(Integer)
+    first_departure: Mapped[str | None] = mapped_column(String(5))  # "06:00"
+    last_departure: Mapped[str | None] = mapped_column(String(5))  # "23:30"
+    info_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

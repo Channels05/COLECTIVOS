@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import client_errors, contributions, contributors_admin, driver, driver_applications, fleet, passenger, recordings, routes, stats, trips, vehicles
+from app.api.v1.endpoints import client_errors, contributions, contributors_admin, driver, driver_applications, fleet, line_info, passenger, recordings, routes, stats, trips, vehicles
 
 api_router = APIRouter()
 # `passenger` antes que `driver`/`vehicles` para que /vehicles/nearby no choque con rutas paramétricas futuras.
@@ -21,3 +21,6 @@ api_router.include_router(fleet.admin_router)
 api_router.include_router(trips.router)
 api_router.include_router(driver_applications.public_router)
 api_router.include_router(driver_applications.admin_router)
+api_router.include_router(line_info.public_router)
+api_router.include_router(line_info.contributor_router)
+api_router.include_router(line_info.admin_router)
