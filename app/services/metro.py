@@ -37,6 +37,7 @@ class MetroLeg:
     start: Station
     end: Station
     stops: int  # estaciones que avanza
+    stations: list[Station]  # todas, de `start` a `end`, para dibujar el tramo
 
 
 def distance_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -107,9 +108,10 @@ class Network:
             if legs and legs[-1].ref == sa.line and legs[-1].end.key == a:
                 legs[-1].end = sb
                 legs[-1].stops += 1
+                legs[-1].stations.append(sb)
             else:
                 line = self.lines[sa.line]
-                legs.append(MetroLeg(sa.line, line["name"], line.get("color"), sa, sb, 1))
+                legs.append(MetroLeg(sa.line, line["name"], line.get("color"), sa, sb, 1, [sa, sb]))
         return legs
 
 

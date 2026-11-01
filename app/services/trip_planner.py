@@ -188,6 +188,7 @@ def _metro_steps(net: metro.Network, path: list[int]) -> list[dict]:
             "kind": "metro", "ref": leg.ref, "line_name": leg.line_name, "color": leg.color,
             "from_station": leg.start.name, "to_station": leg.end.name, "stops": leg.stops,
             "start": _point(leg.start.lat, leg.start.lon), "end": _point(leg.end.lat, leg.end.lon),
+            "path": [_point(s.lat, s.lon) for s in leg.stations],
         }
         for leg in net.legs(path)
     ]

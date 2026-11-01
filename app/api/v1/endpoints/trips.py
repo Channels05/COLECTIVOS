@@ -56,6 +56,7 @@ class TripStep(BaseModel):
     stops: int | None = None
     start: Point | None = None
     end: Point | None = None
+    path: list[Point] | None = None  # las estaciones del tramo, en orden (para dibujarlo)
 
 
 class ComboRead(BaseModel):
