@@ -204,6 +204,26 @@ def _walk(meters: float, to: str) -> dict:
     return {"kind": "walk", "meters": round(meters), "to": to}
 
 
+def _metro_only(
+    net: metro.Network, near_origin: list[tuple[metro.Station, float]], near_destination: list[tuple[metro.Station, float]]
+) -> dict | None:
+    """El mejor viaje solo en Metro, caminando a la estación de entrada y desde la de salida."""
+    exits = {s.key: d for s, d in near_destination}
+    best: tuple[float, dict] | None = None
+    for entry, walk_in in near_origin:
+        for exit_key, (metro_min, path) in net.ride(entry.key, set(exits)).items():
+            if not net.legs(path):  # solo cambia de andén en la misma estación
+                continue
+            total = (walk_in + exits[exit_key]) / WALK_SPEED_M_PER_MIN + metro.ACCESS_MIN + metro_min
+            if best is None or total < best[0]:
+                best = (total, {"total_min": round(total), "steps": [
+                    _walk(walk_in, f"Metro {entry.name}"),
+                    *_metro_steps(net, path),
+                    _walk(exits[exit_key], "tu destino"),
+                ]})
+    return best[1] if best else None
+
+
 async def combos(
     db: AsyncSession, origin: tuple[float, float], destination: tuple[float, float], beat_min: float | None
 ) -> list[dict]:
@@ -216,6 +236,9 @@ async def combos(
     near_destination = net.near(*destination, METRO_WALK_M)
     # Si se puede ir caminando a la estación en ambos extremos, el colectivo no aporta: solo Metro.
     if near_origin and near_destination:
+        metro_only = _metro_only(net, near_origin, near_destination)
+        if metro_only and (beat_min is None or metro_only["total_min"] < beat_min):
+            return [metro_only]
         return []
     found: list[tuple[float, str, dict]] = []  # (minutos, línea de colectivo, viaje)
 

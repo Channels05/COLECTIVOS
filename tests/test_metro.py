@@ -1,4 +1,5 @@
 from app.services import metro
+from app.services.trip_planner import _metro_only
 
 
 def _station(net: metro.Network, name: str, line: str) -> metro.Station:
@@ -36,3 +37,13 @@ def test_estaciones_cerca_de_un_punto():
     near = net.near(-33.5195, -70.5985, 600)  # junto a Bellavista de La Florida
     assert near and near[0][0].name == "Bellavista de La Florida"
     assert net.near(-33.30, -70.40, 800) == []  # en la cordillera no hay Metro
+
+
+def test_solo_metro_cuando_ambos_extremos_tienen_estacion():
+    net = metro.network()
+    origin = net.near(-33.5195, -70.5985, 800)  # Bellavista de La Florida
+    destination = net.near(-33.4378, -70.6505, 800)  # Plaza de Armas
+    trip = _metro_only(net, origin, destination)
+    assert trip is not None
+    kinds = [step["kind"] for step in trip["steps"]]
+    assert kinds[0] == "walk" and kinds[-1] == "walk" and "metro" in kinds and "colectivo" not in kinds
