@@ -210,12 +210,17 @@ Al revisar una migración autogenerada:
 | POST | `/api/v1/driver-applications` `{plate, line_code, max_capacity, note?}` | app conductor: pedir la inscripción; responde una sola vez el `token` que será el del vehículo |
 | GET | `/api/v1/driver-applications/{id}` (`X-Application-Token`) | app conductor: estado de su solicitud; aprobada trae `vehicle_id` |
 | GET · POST | `/api/v1/admin/driver-applications` · `/{id}/approve` · `/{id}/reject` (admin) | admin: solicitudes pendientes en "Vehículos"; aprobar crea el vehículo con el token del teléfono |
-| GET | `/api/v1/trips/plan?from_lat=&from_lon=&to_lat=&to_lon=` | app pasajero: ¿qué colectivo me lleva? — líneas que pasan cerca de ambos puntos; `combos`: colectivo + Metro (o al revés) si es más rápido (red en `data/transporte/metro.json`, de `scripts/build_metro`) |
+| GET | `/api/v1/trips/plan?from_lat=&from_lon=&to_lat=&to_lon=` | app pasajero: ¿qué colectivo me lleva? — líneas que pasan cerca de ambos puntos; `combos`: colectivo + Metro (o al revés, o solo Metro) si es más rápido, y dos colectivos con transbordo si ninguno lleva directo (red en `data/transporte/metro.json`, de `scripts/build_metro`) |
 | GET | `/api/v1/lines/{code}/details` | app pasajero: ficha de la línea — tarifa, horario, calles en orden por sentido, autos en vivo y avisos |
 | GET | `/api/v1/notices` | app: avisos vigentes (de una línea o para todas) |
 | POST | `/api/v1/contributions/line-info` `{line_code, fare_day?, fare_night?, first_departure?, last_departure?, note?}` | app pasajero: informar tarifa u horario (queda pendiente; máx. 10 al día) |
 | GET · POST | `/api/v1/admin/line-info` · `/{id}/apply` · `/{id}/discard` (admin) | admin: modo "Tarifas y horarios" — aplicar a la línea lo informado (se puede corregir) |
 | GET · POST · DELETE | `/api/v1/admin/notices` · `/{id}` (admin) | admin: modo "Avisos" — publicar avisos con vigencia en días |
+| POST | `/api/v1/admin/line-info/import` `{csv}` (admin) | admin: cargar tarifas y horarios de muchas líneas (línea; día; noche; primero; último) |
+| POST | `/api/v1/contributions/route-reports` `{line_code, kind, message?, lat?, lon?}` | app pasajero: avisar que una línea cambió (`route_changed`, `not_running`, `sign`, `other`) |
+| GET · POST | `/api/v1/admin/route-reports` · `/{id}/resolve` · `/{id}/discard` (admin) | admin: modo "Reportes" — con el recorrido y dónde estaba el pasajero |
+| GET | `/api/v1/admin/search-misses?days=30` (admin) | admin: modo "Sin resultado" — lugares no encontrados y viajes sin colectivo (anónimos, ~100 m) |
+| POST · GET | `/api/v1/shares` `{vehicle_id}` · `/shares/{id}` | app pasajero: "Seguir mi viaje" — enlace de 3 h a `/seguir/{id}` con la posición del colectivo |
 | GET | `/api/v1/places/search?q=` | app pasajero: buscar un lugar por nombre (Nominatim, con caché de un día) |
 | GET | `/api/v1/admin/contributors/{id}` (admin) | admin: lo que aportó un pasajero anónimo (marcas, grabaciones por estado, líneas) |
 | POST | `/api/v1/admin/contributors/{id}/block` `{purge?}` · `/unblock` (admin) | admin: bloquearlo (la API le responde 403); con `purge` rechaza sus pendientes, desactiva sus tramos aprobados, borra sus marcas y rechaza sus líneas sin revisar |

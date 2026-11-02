@@ -4,6 +4,9 @@ Los pasajeros informan la tarifa y el horario (quedan pendientes) y el administr
 /admin, donde también publica avisos para una línea o para todas.
 """
 
+import csv
+import io
+import re
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -101,6 +104,15 @@ class NoticeIn(BaseModel):
 
 
 INFO_FIELDS = ("fare_day", "fare_night", "first_departure", "last_departure")
+
+
+class CsvImport(BaseModel):
+    csv: str = Field(min_length=1, max_length=200_000)
+
+
+class CsvImportResult(BaseModel):
+    updated: int
+    errors: list[str]
 
 
 def _active_notices(line_code: str | None = None):
@@ -218,6 +230,59 @@ async def discard_report(report_id: int, db: DbSession) -> LineInfoReport:
     await db.commit()
     await db.refresh(report)
     return report
+
+
+def _parse_row(row: list[str]) -> tuple[str, dict]:
+    """línea, tarifa día, tarifa noche, primer auto, último auto (vacío = no cambiar)."""
+    cells = [c.strip() for c in row] + [""] * 5
+    code = cells[0].upper()
+    if not code:
+        raise ValueError("falta el código de la línea")
+    values: dict = {}
+    for field, cell in zip(("fare_day", "fare_night"), cells[1:3], strict=True):
+        if cell:
+            fare = int(re.sub(r"\D", "", cell) or "0")
+            if not 200 <= fare <= 10_000:
+                raise ValueError(f"tarifa fuera de rango: {cell}")
+            values[field] = fare
+    for field, cell in zip(("first_departure", "last_departure"), cells[3:5], strict=True):
+        if cell:
+            cell = cell.replace(".", ":").zfill(5)
+            if not re.fullmatch(TIME_PATTERN, cell):
+                raise ValueError(f"hora inválida: {cell} (usa 06:00)")
+            values[field] = cell
+    if not values:
+        raise ValueError("no trae tarifa ni horario")
+    return code, values
+
+
+@admin_router.post("/line-info/import", response_model=CsvImportResult)
+async def import_line_info(body: CsvImport, db: DbSession) -> dict:
+    """Carga de golpe tarifas y horarios: una fila por línea (con o sin encabezado; separado por
+    coma o punto y coma). Las celdas vacías no cambian lo que la línea ya tiene."""
+    sample = body.csv[:2000]
+    delimiter = ";" if sample.count(";") > sample.count(",") else ","
+    updated, errors, now = 0, [], datetime.now(UTC)
+    for number, row in enumerate(csv.reader(io.StringIO(body.csv), delimiter=delimiter), start=1):
+        if not any(c.strip() for c in row):
+            continue
+        if number == 1 and not any(ch.isdigit() for ch in "".join(row[1:])):
+            continue  # encabezado
+        try:
+            code, values = _parse_row(row)
+        except ValueError as exc:
+            errors.append(f"Fila {number}: {exc}")
+            continue
+        line = await db.get(Line, code)
+        if line is None:
+            errors.append(f"Fila {number}: no existe la línea {code}")
+            continue
+        for field, value in values.items():
+            setattr(line, field, value)
+        line.info_updated_at = now
+        updated += 1
+    await db.commit()
+    return {"updated": updated, "errors": errors[:50]}
 
 
 @admin_router.get("/notices", response_model=list[NoticeRead])

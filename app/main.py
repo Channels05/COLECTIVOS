@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from redis.asyncio import Redis
 
+from app.api.v1.endpoints import shares
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.db.session import SessionLocal, engine
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title=get_settings().app_name, version="0.1.0", lifespan=lifespan)
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(shares.page_router)  # /seguir/{id}: la página del enlace compartido
 
 
 @app.get("/health", tags=["ops"])

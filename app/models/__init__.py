@@ -2,6 +2,7 @@
 from app.models.client_error import ClientError
 from app.models.contributor import Contributor
 from app.models.driver_application import ApplicationStatus, DriverApplication
+from app.models.feedback import RouteReport, RouteReportKind, SearchMiss
 from app.models.line import Line, LineSource, LineStatus, contributed_line_seq
 from app.models.line_info import LineInfoReport, LineNotice, ReportStatus
 from app.models.location import LocationUpdate
@@ -23,12 +24,15 @@ __all__ = [
     "LocationUpdate",
     "RecordingPoint",
     "RecordingStatus",
+    "RouteReport",
+    "RouteReportKind",
     "ReportStatus",
     "Route",
     "RouteDirection",
     "RouteKind",
     "RouteRecording",
     "RouteSource",
+    "SearchMiss",
     "Sighting",
     "Vehicle",
     "contributed_line_seq",

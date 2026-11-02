@@ -283,3 +283,99 @@ async def combos(
         if len(result) == MAX_COMBOS:
             break
     return result
+
+
+# --- Dos colectivos (con transbordo) ---------------------------------------------------------------
+
+TRANSFER_M = 150  # caminando entre el tramo de una línea y el de la otra
+TRANSFER_WAIT_MIN = 5.0  # esperar el segundo colectivo
+MIN_LEG_RIDE_M = 500
+MAX_DETOUR = 2.5
+MAX_TRANSFERS = 3
+
+# Pares (línea que pasa cerca del origen, línea que pasa cerca del destino) cuyos tramos se acercan
+# a menos de TRANSFER_M: el transbordo es el punto donde están más cerca.
+_TRANSFERS = text("""
+    WITH o AS (SELECT ST_SetSRID(ST_MakePoint(:olon, :olat), 4326) AS p),
+         d AS (SELECT ST_SetSRID(ST_MakePoint(:dlon, :dlat), 4326) AS p),
+    a AS (
+        SELECT r.line_code, (ST_Dump(ST_LineMerge(r.geom))).geom AS g
+        FROM routes r, o WHERE r.is_active AND r.kind::text <> 'nocturno' AND ST_DWithin(r.geom, o.p, :deg)
+    ), an AS (
+        SELECT a.*, ST_Distance(a.g::geography, o.p::geography) AS walk_o, ST_LineLocatePoint(a.g, o.p) AS fo
+        FROM a, o WHERE ST_DWithin(a.g::geography, o.p::geography, :walk)
+    ), b AS (
+        SELECT r.line_code, (ST_Dump(ST_LineMerge(r.geom))).geom AS g
+        FROM routes r, d WHERE r.is_active AND r.kind::text <> 'nocturno' AND ST_DWithin(r.geom, d.p, :deg)
+    ), bn AS (
+        SELECT b.*, ST_Distance(b.g::geography, d.p::geography) AS walk_d, ST_LineLocatePoint(b.g, d.p) AS fd
+        FROM b, d WHERE ST_DWithin(b.g::geography, d.p::geography, :walk)
+    ), pairs AS (
+        SELECT an.line_code AS l1, bn.line_code AS l2, an.walk_o, bn.walk_d, an.g AS g1, bn.g AS g2, an.fo, bn.fd,
+               ST_ShortestLine(an.g, bn.g) AS sl
+        FROM an JOIN bn ON an.line_code <> bn.line_code AND ST_DWithin(an.g, bn.g, :tdeg)
+    ), legs AS (
+        SELECT p.*, ST_Length(p.sl::geography) AS walk_t,
+               ST_LineLocatePoint(p.g1, ST_StartPoint(p.sl)) AS f1t, ST_LineLocatePoint(p.g2, ST_EndPoint(p.sl)) AS f2t
+        FROM pairs p
+    )
+    SELECT g.l1, g.l2, g.walk_o, g.walk_d, g.walk_t,
+           abs(g.f1t - g.fo) * ST_Length(g.g1::geography) AS ride1,
+           abs(g.fd - g.f2t) * ST_Length(g.g2::geography) AS ride2,
+           ST_Y(ST_LineInterpolatePoint(g.g1, g.fo)) AS b1_lat, ST_X(ST_LineInterpolatePoint(g.g1, g.fo)) AS b1_lon,
+           ST_Y(ST_StartPoint(g.sl)) AS a1_lat, ST_X(ST_StartPoint(g.sl)) AS a1_lon,
+           ST_Y(ST_EndPoint(g.sl)) AS b2_lat, ST_X(ST_EndPoint(g.sl)) AS b2_lon,
+           ST_Y(ST_LineInterpolatePoint(g.g2, g.fd)) AS a2_lat, ST_X(ST_LineInterpolatePoint(g.g2, g.fd)) AS a2_lon,
+           l1.name AS name1, l1.description AS desc1, l2.name AS name2, l2.description AS desc2
+    FROM legs g
+    LEFT JOIN lines l1 ON l1.code = g.l1
+    LEFT JOIN lines l2 ON l2.code = g.l2
+    WHERE (l1.status IS NULL OR l1.status::text = 'active') AND (l2.status IS NULL OR l2.status::text = 'active')
+""")
+
+
+async def transfers(db: AsyncSession, origin: tuple[float, float], destination: tuple[float, float]) -> list[dict]:
+    """Viajes con dos colectivos y un transbordo caminando, para cuando ninguno lleva directo.
+
+    Mismo formato que `combos` ({total_min, steps}). Como en el viaje directo, cada colectivo tiene
+    que acercar de verdad: su tramo, al menos el 60 % de la distancia en línea recta que cubre.
+    """
+    rows = await db.execute(_TRANSFERS, {
+        "olat": origin[0], "olon": origin[1], "dlat": destination[0], "dlon": destination[1],
+        "walk": WALK_M_DEFAULT, "deg": WALK_M_DEFAULT / 90_000, "tdeg": TRANSFER_M / 90_000,
+    })
+    straight = metro.distance_m(*origin, *destination)
+    best: dict[tuple[str, str], tuple[float, dict]] = {}
+    for r in rows:
+        transfer = (r.a1_lat, r.a1_lon)
+        to_transfer = metro.distance_m(*origin, *transfer)
+        from_transfer = metro.distance_m(*transfer, *destination)
+        if (r.walk_t > TRANSFER_M or r.ride1 < MIN_LEG_RIDE_M or r.ride2 < MIN_LEG_RIDE_M
+                or r.ride1 < 0.6 * to_transfer or r.ride2 < 0.6 * from_transfer
+                # Demasiada vuelta: dos colectivos que suman más de 2,5 veces la distancia directa.
+                or r.ride1 + r.ride2 > max(MAX_DETOUR * straight, straight + 3_000)):
+            continue
+        walk = r.walk_o + r.walk_t + r.walk_d
+        total = walk / WALK_SPEED_M_PER_MIN + (r.ride1 + r.ride2) / RIDE_SPEED_M_PER_MIN + TRANSFER_WAIT_MIN
+        key = (r.l1, r.l2)
+        if key in best and best[key][0] <= total:
+            continue
+        best[key] = (total, {"total_min": round(total), "steps": [
+            _walk(r.walk_o, "el colectivo"),
+            {"kind": "colectivo", "line_code": r.l1, "name": r.name1, "description": r.desc1, "ride_m": round(r.ride1),
+             "board": _point(r.b1_lat, r.b1_lon), "alight": _point(r.a1_lat, r.a1_lon)},
+            _walk(r.walk_t, f"el colectivo {r.l2}"),
+            {"kind": "colectivo", "line_code": r.l2, "name": r.name2, "description": r.desc2, "ride_m": round(r.ride2),
+             "board": _point(r.b2_lat, r.b2_lon), "alight": _point(r.a2_lat, r.a2_lon)},
+            _walk(r.walk_d, "tu destino"),
+        ]})
+    # Variedad: no repetir la primera línea (si no, salen tres opciones casi iguales).
+    result, first_lines = [], set()
+    for (l1, _), (_, trip) in sorted(best.items(), key=lambda kv: kv[1][0]):
+        if l1 in first_lines:
+            continue
+        first_lines.add(l1)
+        result.append(trip)
+        if len(result) == MAX_TRANSFERS:
+            break
+    return result

@@ -106,6 +106,8 @@
       <button data-mode="vehicles">Vehículos</button>
       <button data-mode="lineinfo">Tarifas y horarios</button>
       <button data-mode="notices">Avisos</button>
+      <button data-mode="reports">Reportes</button>
+      <button data-mode="misses">Sin resultado</button>
       <button data-mode="fleet">Flota</button>
       <button data-mode="occupancy">Ocupación</button>
       <button data-mode="stats">Datos</button>
@@ -145,6 +147,8 @@ const TABS = {
   occupancy: [["30", "30 días"], ["7", "7 días"]],
   lineinfo: [["pending", "Pendientes"], ["applied", "Aplicados"], ["discarded", "Descartados"]],
   notices: [["active", "Vigentes"]],
+  reports: [["pending", "Pendientes"], ["applied", "Resueltos"], ["discarded", "Descartados"]],
+  misses: [["30", "30 días"], ["7", "7 días"], ["90", "90 días"]],
 };
 let mode = "recordings";
 let currentStatus = "pending_review";
@@ -206,7 +210,8 @@ async function loadList() {
   return mode === "lines" ? loadLines() : mode === "vehicles" ? loadVehicles()
     : mode === "stats" ? loadStats() : mode === "errors" ? loadErrors() : mode === "fleet" ? loadFleet()
     : mode === "occupancy" ? loadOccupancy() : mode === "lineinfo" ? loadLineInfo()
-    : mode === "notices" ? loadNotices() : loadRecordings();
+    : mode === "notices" ? loadNotices() : mode === "reports" ? loadReports() : mode === "misses" ? loadMisses()
+    : loadRecordings();
 }
 
 async function loadRecordings() {
@@ -964,11 +969,14 @@ async function loadLineInfo() {
   layers.clearLayers();
   try {
     const items = await api(`/admin/line-info?status_filter=${currentStatus}`);
+    const importItem = el("div", { className: "item" }, el("div", { className: "title", textContent: "+ Cargar desde CSV" }),
+      el("div", { className: "meta", textContent: "Tarifas y horarios de muchas líneas de una vez" }));
+    importItem.onclick = csvImportForm;
     if (!items.length) {
-      list.replaceChildren(el("div", { className: "empty", textContent: "No hay datos informados en este estado." }));
+      list.replaceChildren(importItem, el("div", { className: "empty", textContent: "No hay datos informados en este estado." }));
       return;
     }
-    list.replaceChildren(...items.map((r) => {
+    list.replaceChildren(importItem, ...items.map((r) => {
       const item = el("div", { className: "item" + (r.id === selectedId ? " selected" : "") },
         el("div", { className: "title", textContent: `Línea ${r.line_code}` }),
         el("div", { className: "meta", textContent: `${infoSummary(r)} · ${fmtDate(r.created_at)}` }));
@@ -1073,12 +1081,151 @@ function newNoticeForm() {
   );
 }
 
+function csvImportForm() {
+  layers.clearLayers();
+  const text = el("textarea", { placeholder: "linea;dia;noche;primero;ultimo\n233035;900;1100;06:15;23:30\n233025;;1200;;", style: "min-height:160px;font-family:monospace" });
+  const result = el("div", { className: "status-line" });
+  const run = el("button", { className: "btn-primary", textContent: "Cargar", onclick: async () => {
+    run.disabled = true;
+    result.textContent = "Cargando…";
+    try {
+      const r = await api("/admin/line-info/import", { method: "POST", body: JSON.stringify({ csv: text.value }) });
+      result.replaceChildren(el("div", { textContent: `${r.updated} línea(s) actualizada(s).` }),
+        ...r.errors.map((e) => el("div", { className: "error", textContent: e })));
+    } catch (err) {
+      result.replaceChildren(el("div", { className: "error", textContent: err.message }));
+    } finally {
+      run.disabled = false;
+    }
+  } });
+  const file = el("input", { type: "file", accept: ".csv,text/csv,text/plain", onchange: async () => {
+    if (file.files[0]) text.value = await file.files[0].text();
+  } });
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: "Cargar tarifas y horarios" }),
+    el("div", { className: "status-line", textContent: "Una fila por línea: código, tarifa de día, tarifa de noche, primer auto, último auto (HH:MM). Separado por coma o punto y coma; el encabezado es opcional. Una celda vacía no cambia lo que la línea ya tiene." }),
+    el("label", { className: "field" }, "Archivo (opcional)", file),
+    text, el("div", { className: "actions" }, run), result,
+  );
+}
+
+// --- Reportes de pasajeros: "este recorrido cambió" -----------------------------------------------
+const REPORT_KINDS = { route_changed: "Cambió el recorrido", not_running: "Ya no pasa / no funciona", sign: "El letrero dice otra cosa", other: "Otro" };
+
+async function loadReports() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  layers.clearLayers();
+  try {
+    const items = await api(`/admin/route-reports?status_filter=${currentStatus}`);
+    if (!items.length) {
+      list.replaceChildren(el("div", { className: "empty", textContent: "No hay reportes en este estado." }));
+      return;
+    }
+    list.replaceChildren(...items.map((r) => {
+      const item = el("div", { className: "item" + (r.id === selectedId ? " selected" : "") },
+        el("div", { className: "title", textContent: `Línea ${r.line_code} · ${REPORT_KINDS[r.kind] || r.kind}` }),
+        el("div", { className: "meta", textContent: `${r.message ? `“${r.message}” · ` : ""}${fmtDate(r.created_at)}` }));
+      item.onclick = () => selectReport(r);
+      return item;
+    }));
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+async function selectReport(r) {
+  selectedId = r.id;
+  document.querySelectorAll(".item").forEach((n) => n.classList.remove("selected"));
+  layers.clearLayers();
+  // El recorrido oficial de la línea y dónde estaba el pasajero al reportar.
+  try {
+    const route = await api(`/routes/${encodeURIComponent(r.line_code)}`);
+    const shape = L.geoJSON(route, { style: { color: "#0B6E4F", weight: 4, opacity: 0.8 } }).addTo(layers);
+    if (r.lat == null && shape.getBounds().isValid()) map.fitBounds(shape.getBounds(), { padding: [30, 30] });
+  } catch {}
+  if (r.lat != null) {
+    L.circleMarker([r.lat, r.lon], { radius: 9, color: "#C5221F", fillOpacity: 0.8 }).addTo(layers).bindTooltip("Aquí estaba el pasajero");
+    map.setView([r.lat, r.lon], 15);
+  }
+  const error = el("div", { className: "error" });
+  const act = (action) => async () => {
+    buttons.forEach((b) => (b.disabled = true));
+    try {
+      await api(`/admin/route-reports/${r.id}/${action}`, { method: "POST" });
+      closePanel();
+      loadList();
+    } catch (err) {
+      error.textContent = err.message;
+      buttons.forEach((b) => (b.disabled = false));
+    }
+  };
+  const resolve = el("button", { className: "btn-primary", textContent: "Resuelto", onclick: act("resolve") });
+  const discard = el("button", { className: "btn-danger", textContent: "Descartar", onclick: act("discard") });
+  const buttons = [resolve, discard];
+  const panel = document.getElementById("panel");
+  panel.hidden = false;
+  panel.replaceChildren(
+    el("h2", { textContent: `Línea ${r.line_code}: ${REPORT_KINDS[r.kind] || r.kind}` }),
+    el("div", { className: "status-line", textContent: `${r.line_description || ""} · reportado el ${fmtDate(r.created_at)}` }),
+    ...(r.message ? [el("div", { className: "quote", textContent: `“${r.message}”` })] : []),
+    el("div", { className: "status-line", textContent: "En verde el recorrido que tenemos; en rojo, dónde estaba el pasajero. Para corregirlo: graba el recorrido nuevo (o pídeselo a un conductor) y apruébalo con «Reemplazar»." }),
+    ...(r.status === "pending" ? [el("div", { className: "actions" }, resolve, discard)] : []),
+    el("button", { className: "btn-ghost", textContent: "Ver al aportante", onclick: () => showContributor(r.contributor_id) }),
+    error,
+  );
+}
+
+// --- Búsquedas sin resultado: dónde faltan líneas o nombres de lugares ---------------------------
+async function loadMisses() {
+  const list = document.getElementById("list");
+  list.replaceChildren(el("div", { className: "empty", textContent: "Cargando…" }));
+  layers.clearLayers();
+  try {
+    const m = await api(`/admin/search-misses?days=${currentStatus}`);
+    const tripItems = m.trips.map((t) => {
+      const item = el("div", { className: "item" },
+        el("div", { className: "title", textContent: `Viaje sin colectivo · ${t.count} vez/veces` }),
+        el("div", { className: "meta", textContent: `Destino cerca de ${t.to_lat.toFixed(3)}, ${t.to_lon.toFixed(3)} · ${fmtDate(t.last_at)}` }));
+      item.onclick = () => showTripMiss(t);
+      return item;
+    });
+    const placeItems = m.places.map((pl) => el("div", { className: "item" },
+      el("div", { className: "title", textContent: `“${pl.query}”` }),
+      el("div", { className: "meta", textContent: `Lugar no encontrado · ${pl.count} vez/veces · ${fmtDate(pl.last_at)}` })));
+    // En el mapa, todos los destinos sin resultado (más grande = más búsquedas).
+    m.trips.forEach((t) => L.circleMarker([t.to_lat, t.to_lon], { radius: 5 + Math.min(15, t.count * 2), color: "#C5221F", fillOpacity: 0.4 })
+      .addTo(layers).bindTooltip(`${t.count} búsqueda(s) sin colectivo`));
+    list.replaceChildren(
+      el("div", { className: "empty", textContent: "Viajes que el planificador no pudo resolver (ni con Metro ni con dos colectivos) y lugares que OpenStreetMap no conoce. Anónimo, redondeado a ~100 m." }),
+      ...(tripItems.length ? tripItems : [el("div", { className: "empty", textContent: "Ningún viaje sin resultado en el período." })]),
+      ...(placeItems.length ? placeItems : [el("div", { className: "empty", textContent: "Ningún lugar sin resultado en el período." })]),
+    );
+  } catch (err) {
+    list.replaceChildren(el("div", { className: "empty error", textContent: err.message }));
+  }
+}
+
+function showTripMiss(t) {
+  layers.clearLayers();
+  const dest = L.circleMarker([t.to_lat, t.to_lon], { radius: 10, color: "#C5221F", fillOpacity: 0.7 }).addTo(layers).bindTooltip("Destino");
+  const pts = [dest.getLatLng()];
+  t.origins.forEach((o) => {
+    L.circleMarker([o.lat, o.lon], { radius: 6, color: "#0B6E4F", fillOpacity: 0.7 }).addTo(layers).bindTooltip("Desde aquí");
+    L.polyline([[o.lat, o.lon], [t.to_lat, t.to_lon]], { color: "#5F6B66", dashArray: "6 6", weight: 2 }).addTo(layers);
+    pts.push(L.latLng(o.lat, o.lon));
+  });
+  map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 15 });
+}
+
 document.getElementById("modes").onclick = (e) => {
   const next = e.target.dataset?.mode;
   if (!next || next === mode) return;
   mode = next;
   currentStatus = { vehicles: "all", stats: "28", errors: "30", fleet: "all", occupancy: "30", lineinfo: "pending",
-    notices: "active" }[mode] || "pending_review";
+    notices: "active", reports: "pending", misses: "30" }[mode] || "pending_review";
   stopFleet();
   document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("active", b === e.target));
   closePanel();

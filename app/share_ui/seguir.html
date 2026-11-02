@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Colectivos · Seguir el viaje</title>
+  <meta name="theme-color" content="#0B6E4F" />
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root { --primary: #0B6E4F; --on-primary: #fff; --bg: #F3F6F4; --surface: #fff; --text: #16201B; --muted: #5F6B66; --border: #DCE3DF; --warn: #8A5A00; --warn-bg: #FFF4DB; }
+    @media (prefers-color-scheme: dark) {
+      :root { --primary: #2FA77A; --on-primary: #0B1F18; --bg: #0F1513; --surface: #18201D; --text: #E7EEEA; --muted: #A3B0AA; --border: #2C3833; --warn: #F2C14E; --warn-bg: #3A2F14; }
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; background: var(--bg); color: var(--text); font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    #map { flex: 1; min-height: 50vh; }
+    .card { background: var(--surface); border-top: 1px solid var(--border); padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); display: grid; gap: 6px; }
+    .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge { background: var(--primary); color: var(--on-primary); font-weight: 800; border-radius: 8px; padding: 3px 10px; }
+    .plate { border: 2px solid var(--text); border-radius: 6px; padding: 1px 8px; font-weight: 800; letter-spacing: 1px; }
+    h1 { font-size: 18px; margin: 0; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .warn { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+    a { color: var(--primary); font-weight: 700; }
+    .car { width: 34px; height: 34px; border-radius: 50%; background: #0B6E4F; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <section class="card" aria-live="polite">
+    <div class="row"><span class="badge" id="line">…</span><h1 id="title">Buscando el colectivo…</h1></div>
+    <div class="row" id="plateRow" hidden><span class="muted">Patente</span><span class="plate" id="plate"></span><span class="muted" id="seats"></span></div>
+    <div class="muted" id="updated"></div>
+    <div class="warn" id="warning" hidden></div>
+    <div class="muted">Te compartieron este enlace desde la app <a href="https://channels05.github.io/colectivos-descarga/">Colectivos</a>. Muestra dónde va el colectivo, no el teléfono de la persona.</div>
+  </section>
+<script>
+const id = location.pathname.split("/").filter(Boolean).pop();
+const map = L.map("map", { zoomControl: false }).setView([-33.45, -70.65], 12);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" }).addTo(map);
+const icon = L.divIcon({ className: "", html: '<div class="car">🚕</div>', iconSize: [34, 34], iconAnchor: [17, 17] });
+let marker = null;
+let timer = null;
+const $ = (x) => document.getElementById(x);
+
+function ago(iso) {
+  const s = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 1000));
+  return s < 5 ? "ahora" : s < 60 ? `hace ${s} s` : `hace ${Math.floor(s / 60)} min`;
+}
+
+function warn(text) {
+  $("warning").hidden = !text;
+  $("warning").textContent = text || "";
+}
+
+async function refresh() {
+  let res;
+  try {
+    res = await fetch(`/api/v1/shares/${encodeURIComponent(id)}`, { cache: "no-store" });
+  } catch {
+    warn("Sin conexión: se vuelve a intentar sola.");
+    return;
+  }
+  if (res.status === 404) {
+    $("title").textContent = "El enlace venció";
+    $("line").textContent = "—";
+    warn("Los enlaces para seguir un viaje duran 3 horas.");
+    clearInterval(timer);
+    return;
+  }
+  const s = await res.json();
+  $("line").textContent = s.line_code;
+  $("title").textContent = s.line_description || `Colectivo línea ${s.line_code}`;
+  $("plateRow").hidden = !s.plate;
+  $("plate").textContent = s.plate || "";
+  $("seats").textContent = s.available_seats != null ? `· ${s.available_seats} cupo${s.available_seats === 1 ? "" : "s"} libre${s.available_seats === 1 ? "" : "s"}` : "";
+  $("updated").textContent = s.last_seen ? `Posición ${s.active ? "actualizada" : "vista por última vez"} ${ago(s.last_seen)}` : "";
+  if (!s.active) {
+    warn(s.lat != null
+      ? "El colectivo dejó de enviar su ubicación (terminó el turno o se quedó sin señal). Se muestra la última posición conocida."
+      : "El colectivo dejó de enviar su ubicación (terminó el turno o se quedó sin señal).");
+  } else {
+    warn(null);
+  }
+  if (s.lat == null) return;
+  const pos = [s.lat, s.lon];
+  if (!marker) {
+    marker = L.marker(pos, { icon }).addTo(map);
+    map.setView(pos, 15);
+  } else {
+    marker.setLatLng(pos);
+    if (!map.getBounds().pad(-0.2).contains(pos)) map.panTo(pos);
+  }
+}
+
+refresh();
+timer = setInterval(refresh, 5000);
+</script>
+</body>
+</html>

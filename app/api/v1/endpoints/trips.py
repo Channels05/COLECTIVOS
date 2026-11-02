@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query, Request, status
 from pydantic import BaseModel
 
 from app.api.deps import DbSession, RedisClient
+from app.api.v1.endpoints.feedback import log_miss
 from app.services import places, trip_planner
 
 router = APIRouter(tags=["pasajero"])
@@ -67,7 +68,8 @@ class ComboRead(BaseModel):
 class TripPlanRead(BaseModel):
     straight_m: int  # distancia en línea recta entre origen y destino
     options: list[TripOptionRead]
-    # Colectivo + Metro (o al revés), solo si es más rápido que el mejor viaje en un colectivo.
+    # Colectivo + Metro (o al revés, o solo Metro) si es más rápido que un colectivo, y dos
+    # colectivos con transbordo si ninguno lleva directo.
     combos: list[ComboRead] = []
 
 
@@ -93,6 +95,10 @@ async def plan_trip(
     combos = []
     if straight >= trip_planner.MIN_TRIP_M:
         combos = await trip_planner.combos(db, origin, destination, options[0].total_min if options else None)
+        if not options:  # ningún colectivo lleva directo: con transbordo entre dos
+            combos = sorted(combos + await trip_planner.transfers(db, origin, destination), key=lambda c: c["total_min"])[:4]
+        if not options and not combos:
+            await log_miss(db, "trip", origin=origin, destination=destination)
     return {
         "combos": combos,
         "straight_m": round(straight),
@@ -105,7 +111,7 @@ async def plan_trip(
 
 @router.get("/places/search", response_model=list[PlaceRead])
 async def search_places(
-    request: Request, redis: RedisClient, q: Annotated[str, Query(min_length=3, max_length=80)]
+    request: Request, db: DbSession, redis: RedisClient, q: Annotated[str, Query(min_length=3, max_length=80)]
 ) -> list[dict]:
     """Lugares del Gran Santiago con ese nombre o dirección (OpenStreetMap)."""
     key = f"ratelimit:places:{request.client.host if request.client else 'unknown'}"
@@ -115,6 +121,9 @@ async def search_places(
     if count > MAX_PLACE_SEARCHES_PER_MINUTE:
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Demasiadas búsquedas. Espera un minuto.")
     try:
-        return await places.search(redis, q)
+        found = await places.search(redis, q)
     except places.PlacesUnavailable:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "El buscador de lugares no responde. Intenta de nuevo.") from None
+    if not found:
+        await log_miss(db, "place", query=q)
+    return found
