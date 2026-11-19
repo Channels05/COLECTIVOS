@@ -7,11 +7,14 @@ agente) la implementa; **Felipe** decide qué se hace y aprueba lo que se sube.
 
 1. **Claude escribe la tarea** en esta carpeta (`NNN-nombre.md`): qué hacer, en qué archivos, qué
    no tocar y cómo se comprueba que quedó bien.
-2. **Felipe se la pasa a Copilot**: abre la carpeta `backend` en VS Code, abre el chat de
-   Copilot en modo **Agent** y escribe:
+2. **Felipe se la pasa a Copilot**: con la carpeta `PROYECTO COLECTIVOS` abierta en VS Code, abre
+   el chat de Copilot, elige el modo **Agent** (no "Ask") y escribe:
 
-   > Haz la tarea `docs/tareas/NNN-nombre.md`. Sigue `.github/copilot-instructions.md`. Al terminar,
-   > completa la sección "Resultado" de la tarea.
+   > Haz la tarea `backend/docs/tareas/NNN-nombre.md`. Sigue `backend/.github/copilot-instructions.md`.
+   > Al terminar, completa la sección "Resultado" de la tarea.
+
+   Copilot va a ir mostrando los archivos que cambia: hay que **aceptar los cambios** ("Keep" /
+   "Mantener") y dejar que corra los comandos que pida (por ejemplo los tests).
 
 3. **Felipe le avisa a Claude** ("Copilot terminó la tarea NNN"). Claude revisa los cambios en la
    carpeta (sin que se hayan subido): lee el diff, corre los tests, prueba lo que corresponda y
