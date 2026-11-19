@@ -396,11 +396,28 @@ async function loadLines() {
     let items = await api(`/admin/lines?status_filter=${currentStatus}`);
     // "Aprobadas" muestra solo las que vinieron de pasajeros, no las ~400 del registro oficial.
     if (currentStatus === "active") items = items.filter((l) => l.source === "contributed");
+    const searchItem = el("div", { className: "item" },
+      el("div", { className: "title", textContent: "Buscar línea por código" }),
+      el("div", { className: "meta", textContent: "Línea oficial o aprobada" }),
+    );
+    searchItem.onclick = async () => {
+      const codigo = prompt("Código de la línea");
+      if (!codigo) return;
+      const limpio = codigo.trim();
+      if (!limpio) return;
+      try {
+        const line = await api(`/lines/${encodeURIComponent(limpio)}`);
+        selectLine(line);
+      } catch (err) {
+        list.replaceChildren(searchItem, el("div", { className: "empty error", textContent: err.message }));
+      }
+    };
+    const initialItems = currentStatus === "active" ? [searchItem] : [];
     if (!items.length) {
-      list.replaceChildren(el("div", { className: "empty", textContent: "No hay líneas en este estado." }));
+      list.replaceChildren(...initialItems, el("div", { className: "empty", textContent: "No hay líneas en este estado." }));
       return;
     }
-    list.replaceChildren(...items.map((l) => {
+    list.replaceChildren(...initialItems, ...items.map((l) => {
       const item = el("div", { className: "item" + (l.code === selectedId ? " selected" : "") },
         el("div", { className: "title", textContent: l.name || l.code }),
         el("div", { className: "meta", textContent: `${l.code} · ${l.commune || "Comuna sin indicar"} · ${fmtDate(l.created_at)}` }),
@@ -424,11 +441,15 @@ function selectLine(l) {
   panel.hidden = false;
   const content = [
     el("h2", { textContent: l.name || l.code }),
-    el("div", { className: "status-line", textContent: `Código asignado ${l.code} · propuesta el ${fmtDate(l.created_at)}` }),
+    el("div", { className: "status-line", textContent: l.created_at
+      ? `Código asignado ${l.code} · propuesta el ${fmtDate(l.created_at)}`
+      : `Código asignado ${l.code}` }),
     ...(l.description ? [el("div", { className: "quote", textContent: `“${l.description}”` })] : []),
     el("div", { className: "status-line", textContent: l.recordings
       ? `Tiene ${l.recordings} grabación(es): revísalas en "Recorridos grabados". Aprobar un recorrido aprueba también la línea.`
-      : "Aún no tiene recorrido grabado: si la apruebas, aparecerá en la búsqueda de líneas pero sin trazado." }),
+      : (l.status === "pending_review"
+        ? "Aún no tiene recorrido grabado: si la apruebas, aparecerá en la búsqueda de líneas pero sin trazado."
+        : "") }),
   ];
   if (l.status === "pending_review") {
     const name = el("input", { value: l.name || "" });
@@ -456,8 +477,32 @@ function selectLine(l) {
       note, el("div", { className: "actions" }, approve, reject), error,
       el("div", { className: "status-line", textContent: "Rechazar la línea también rechaza sus grabaciones pendientes." }),
     );
-  } else if (l.review_note) {
-    content.push(el("div", { className: "status-line", textContent: `Nota: ${l.review_note}` }));
+  } else if (l.status) {
+    const name = el("input", { value: l.name || "" });
+    const commune = el("input", { value: l.commune || "", placeholder: "Ej. La Florida" });
+    const error = el("div", { className: "error" });
+    const save = el("button", { className: "btn-primary", textContent: "Guardar cambios" });
+    save.onclick = async () => {
+      save.disabled = true;
+      try {
+        await api(`/admin/lines/${encodeURIComponent(l.code)}`, {
+          method: "PATCH",
+          body: JSON.stringify({ name: name.value, commune: commune.value }),
+        });
+        closePanel();
+        loadList();
+      } catch (err) {
+        error.textContent = err.message;
+        save.disabled = false;
+      }
+    };
+    content.push(
+      el("label", { className: "field" }, "Letrero / nombre", name),
+      el("label", { className: "field" }, "Comuna", commune),
+      el("div", { className: "actions" }, save),
+      error,
+      ...(l.review_note ? [el("div", { className: "status-line", textContent: `Nota: ${l.review_note}` })] : []),
+    );
   }
   panel.replaceChildren(...content);
 }

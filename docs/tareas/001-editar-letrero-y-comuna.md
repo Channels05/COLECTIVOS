@@ -1,6 +1,6 @@
 # 001 · Editar el letrero y la comuna de cualquier línea desde /admin
 
-Estado: pendiente
+Estado: lista
 
 ## Por qué
 
@@ -74,8 +74,62 @@ test la cubra.)
 
 ## Resultado (lo completa Copilot)
 
-_(archivos cambiados, comandos corridos y su salida, dudas)_
+### Resultado
+
+- Archivos cambiados:
+  - `app/schemas/line.py`: se agregó `LineEdit` con limpieza de espacios y borrado de textos vacíos.
+  - `app/api/v1/endpoints/contributions.py`: se agregó `PATCH /api/v1/admin/lines/{code}`.
+  - `app/admin_ui/index.html`: se agregó la edición de letrero y comuna y la búsqueda por código en Líneas aprobadas.
+  - `README.md`: se agregó el endpoint nuevo a la tabla de API.
+  - `tests/test_line_edit.py`: se agregaron las cuatro comprobaciones solicitadas.
+  - `docs/tareas/001-editar-letrero-y-comuna.md`: se completó esta sección.
+- Comandos corridos:
+  - `.venv/Scripts/python.exe -m pytest -q tests/test_line_edit.py`
+  - `.venv/Scripts/python.exe -m pytest -q`
+- Salida:
+  - Test específico: `4 passed`.
+  - Suite completa: `69 passed, 1 warning` (único aviso: deprecación de Starlette/FastAPI en `testclient`).
+- Dudas: ninguna.
+
+### Resultado 2
+
+- Archivos cambiados:
+  - `app/schemas/line.py`: `limpiar_texto` devuelve sin modificar cualquier valor que no sea texto, para que Pydantic responda 422.
+  - `app/api/v1/endpoints/contributions.py`: se agregó el docstring de `edit_line` y se dividió el import largo del esquema.
+  - `tests/test_line_edit.py`: se agregó la comprobación de que `{"name": 123}` produce `ValidationError`.
+- Comandos corridos:
+  - `.venv/Scripts/python.exe -m pytest -q`
+- Salida:
+  - Suite completa: `70 passed, 1 warning` (único aviso: deprecación de Starlette/FastAPI en `testclient`).
+- Dudas: ninguna.
 
 ## Revisión (la completa Claude)
 
-_(pendiente)_
+### Revisión 1 — cambios pedidos
+
+Bien hecho en general. Probado contra la API local: editar una línea oficial (233035) y una
+aprobada (P00017), borrar la comuna con texto vacío sin tocar el letrero, 404 con código
+inexistente, 403 sin clave de admin, y en el panel "Buscar línea por código" abre la línea con sus
+campos. Tests: 69 pasan.
+
+Falta corregir:
+
+1. **Error 500 con un valor que no es texto.** `PATCH /api/v1/admin/lines/233035` con
+   `{"name": 123}` responde **500** (en el validador, `value.strip()` falla con `AttributeError`).
+   Tiene que responder **422** como cualquier dato inválido. En `limpiar_texto` (de
+   `app/schemas/line.py`), si `value` no es `str`, devuélvelo tal cual para que Pydantic lo
+   rechace. Agrega en `tests/test_line_edit.py`:
+   `LineEdit.model_validate({"name": 123})` → `ValidationError`.
+2. **Docstring del endpoint.** `edit_line` no tiene docstring; agrega uno corto en español, como
+   los otros endpoints del archivo (por ejemplo: corrige el letrero y la comuna de cualquier
+   línea; solo cambia los campos que vienen en el cuerpo).
+3. **Línea larga.** El `from app.schemas.line import ...` de `contributions.py` quedó de 121
+   caracteres: pártelo en varias líneas entre paréntesis.
+
+Después: `.venv/Scripts/python.exe -m pytest -q` y agrega abajo un "Resultado 2".
+
+### Revisión 2 — aprobada
+
+Los tres puntos quedaron bien. Tests: 70 pasan. Contra la API local: `{"name": 123}` y
+`{"commune": ["x"]}` → 422; texto con espacios se guarda limpio; texto vacío borra; cuerpo vacío no
+cambia nada. Subido a `main` (Render lo despliega cuando pasan los tests de GitHub).

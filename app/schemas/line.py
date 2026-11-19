@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.models import LineSource, LineStatus
 
@@ -35,6 +35,21 @@ class LineReview(BaseModel):
     # Al aprobar, el administrador puede corregir lo que escribió el pasajero.
     name: str | None = Field(default=None, max_length=120)
     commune: str | None = Field(default=None, max_length=60)
+
+
+class LineEdit(BaseModel):
+    name: str | None = Field(default=None, max_length=120)
+    commune: str | None = Field(default=None, max_length=60)
+
+    @field_validator("name", "commune", mode="before")
+    @classmethod
+    def limpiar_texto(cls, value: object) -> object:
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            return value
+        value = value.strip()
+        return value or None
 
 
 class LineAdminRead(LineRead):

@@ -12,7 +12,15 @@ from sqlalchemy import func, select
 from app.api.deps import AuthenticatedContributor, DbSession, RedisClient, require_admin
 from app.core.security import generate_device_token, hash_token
 from app.models import Contributor, Line, LineStatus, RouteRecording
-from app.schemas.line import ContributorCreated, LineAdminRead, LineHitRead, LineProposal, LineRead, LineReview
+from app.schemas.line import (
+    ContributorCreated,
+    LineAdminRead,
+    LineEdit,
+    LineHitRead,
+    LineProposal,
+    LineRead,
+    LineReview,
+)
 from app.schemas.recording import ContributionStart, PointBatch, PointBatchAck, RecordingRead
 from app.schemas.sighting import FrequencyRead, SightingIn, SightingRead
 from app.services import frequency, lines, recordings
@@ -225,6 +233,22 @@ async def approve_line(code: str, body: LineReview, db: DbSession) -> Line:
         return await lines.approve(db, code, body.note, body.name, body.commune)
     except ServiceError as exc:
         raise _http(exc) from None
+
+
+@admin_router.patch("/{code}", response_model=LineRead)
+async def edit_line(code: str, body: LineEdit, db: DbSession) -> Line:
+    """Corrige el letrero y la comuna de cualquier línea; solo cambia los campos que vienen en el cuerpo."""
+    line = await db.get(Line, code)
+    if line is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Línea no encontrada.")
+
+    if "name" in body.model_fields_set:
+        line.name = body.name
+    if "commune" in body.model_fields_set:
+        line.commune = body.commune
+
+    await db.commit()
+    return line
 
 
 @admin_router.post("/{code}/reject", response_model=LineRead)

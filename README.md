@@ -237,6 +237,7 @@ Al revisar una migración autogenerada:
 | POST | `/api/v1/contributions/recordings/{rid}/finish` · `/cancel` (aportante) | pasajero: terminar o descartar |
 | GET | `/api/v1/admin/lines?status_filter=` (admin) | admin: líneas propuestas por pasajeros |
 | POST | `/api/v1/admin/lines/{code}/approve` · `/reject` (admin) | admin: aprobar (puede corregir letrero y comuna) o rechazar |
+| PATCH | `/api/v1/admin/lines/{code}` `{name?, commune?}` (admin) | admin: editar el letrero y la comuna de cualquier línea |
 | GET | `/admin` | página web: recorridos grabados, líneas propuestas y vehículos (registrar y entregar el QR del conductor) |
 
 ## Grabación de recorridos (líneas sin trazado o recorridos que cambiaron)
