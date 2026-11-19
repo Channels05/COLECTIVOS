@@ -11,6 +11,8 @@ cupos, los pasajeros ven los autos cercanos, graban recorridos y planifican viaj
 - **No hagas commit, push ni merge.** Otra persona (Claude) revisa el cambio antes de subirlo.
 - Al terminar, escribe al final de la tarea, en la sección "Resultado", qué archivos cambiaste,
   qué comandos corriste y su salida (tests), y cualquier duda.
+- Si la tarea ya tiene una "Revisión", agrega un "Resultado N" nuevo como **última sección del
+  archivo** (después de la última Revisión). Nunca escribas dentro de una Revisión.
 
 ## Stack
 

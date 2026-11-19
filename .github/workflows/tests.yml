@@ -45,12 +45,12 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Tests
-        run: pytest -q
-
-      # Una base nueva (como la de un despliegue desde cero) debe quedar lista con las migraciones.
+      # Una base nueva (como la de un despliegue desde cero) debe quedar lista antes de probarla.
       - name: Migraciones desde cero
         run: alembic upgrade head
+
+      - name: Tests
+        run: pytest -q
 
       - name: Modelos y migraciones coinciden
         run: alembic check
