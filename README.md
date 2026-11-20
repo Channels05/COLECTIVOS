@@ -234,6 +234,7 @@ Al revisar una migración autogenerada:
 | POST | `/api/v1/contributions/recordings` `{line_code, direction?, comment?, sign_text?}` (aportante) | pasajero: empezar a grabar su viaje |
 | POST | `/api/v1/contributions/recordings/{rid}/points` `{points: [...]}` (aportante) | pasajero: lote de puntos GPS (idempotente) |
 | GET | `/api/v1/contributions/recordings` · `/active` (aportante) | pasajero: mis aportes / retomar |
+| GET | `/api/v1/contributions/me` (aportante) | pasajero: "Tus aportes" (cuánto aportó y cuánto sirvió) |
 | POST | `/api/v1/contributions/recordings/{rid}/finish` · `/cancel` (aportante) | pasajero: terminar o descartar |
 | GET | `/api/v1/admin/lines?status_filter=` (admin) | admin: líneas propuestas por pasajeros |
 | POST | `/api/v1/admin/lines/{code}/approve` · `/reject` (admin) | admin: aprobar (puede corregir letrero y comuna) o rechazar |

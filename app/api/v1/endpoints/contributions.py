@@ -21,9 +21,11 @@ from app.schemas.line import (
     LineRead,
     LineReview,
 )
+from app.schemas.my_contributions import MyContributions
 from app.schemas.recording import ContributionStart, PointBatch, PointBatchAck, RecordingRead
 from app.schemas.sighting import FrequencyRead, SightingIn, SightingRead
 from app.services import frequency, lines, recordings
+from app.services import my_contributions as my_contributions_service
 from app.services.errors import ServiceError
 
 public_router = APIRouter(tags=["pasajero"])
@@ -141,6 +143,12 @@ async def propose_line(body: LineProposal, contributor: AuthenticatedContributor
         return await lines.propose(db, contributor, body.name, body.description, body.commune)
     except ServiceError as exc:
         raise _http(exc) from None
+
+
+@contributor_router.get("/me", response_model=MyContributions)
+async def contribution_summary(contributor: AuthenticatedContributor, db: DbSession) -> dict:
+    """"Tus aportes": cuánto aportó este pasajero y cuánto sirvió."""
+    return await my_contributions_service.summary(db, contributor.id)
 
 
 @contributor_router.post("/recordings", response_model=RecordingRead, status_code=status.HTTP_201_CREATED)
